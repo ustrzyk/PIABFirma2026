@@ -1,0 +1,66 @@
+﻿@model Firma.Data.Data.CMS.Strona
+
+@{
+    ViewData["Title"] = "Dodaj stronę";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Dodaj stronę</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: strony.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Create" class="crud-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="LinkTytul" class="form-label"></label>
+                        <input asp-for="LinkTytul" class="form-control" />
+                        <span asp-validation-for="LinkTytul" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tytul" class="form-label"></label>
+                        <input asp-for="Tytul" class="form-control" />
+                        <span asp-validation-for="Tytul" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tresc" class="form-label"></label>
+                        <textarea asp-for="Tresc" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Tresc" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Pozycja" class="form-label"></label>
+                        <input asp-for="Pozycja" class="form-control" />
+                        <span asp-validation-for="Pozycja" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input class="form-check-input" asp-for="CzyAktywny" />
+                        <label class="form-check-label" asp-for="CzyAktywny"></label>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex gap-2 pt-2">
+                            <input type="submit" value="Zapisz" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

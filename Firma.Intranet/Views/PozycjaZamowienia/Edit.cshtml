@@ -1,0 +1,54 @@
+@model Firma.Data.Data.Sklep.PozycjaZamowienia
+
+@{
+    ViewData["Title"] = "Edytuj pozycję zamówienia";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Edytuj pozycję zamówienia</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: pozycje zamówień.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Edit" class="crud-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="IdPozycjiZamowienia" />
+            <div class="mb-3">
+                <label asp-for="Ilosc" class="form-label"></label>
+                <input asp-for="Ilosc" class="form-control" />
+                <span asp-validation-for="Ilosc" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CenaJednostkowa" class="form-label"></label>
+                <input asp-for="CenaJednostkowa" class="form-control kwota-input" type="text" inputmode="decimal" asp-format="{0:0.00}" placeholder="np. 49,99" />
+                <span asp-validation-for="CenaJednostkowa" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IdZamowienia" class="form-label"></label>
+                <select asp-for="IdZamowienia" class="form-select" asp-items="ViewBag.IdZamowienia"></select>
+                <span asp-validation-for="IdZamowienia" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="IdTowaru" class="form-label"></label>
+                <select asp-for="IdTowaru" class="form-select" asp-items="ViewBag.IdTowaru"></select>
+                <span asp-validation-for="IdTowaru" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex gap-2 pt-2"><input type="submit" value="Zapisz zmiany" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+            </div>
+            </div>
+        </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

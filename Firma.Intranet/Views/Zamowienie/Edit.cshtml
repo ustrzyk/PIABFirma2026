@@ -1,0 +1,87 @@
+@model Firma.Data.Data.Sklep.Zamowienie
+
+@{
+    ViewData["Title"] = "Edytuj zamówienie";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Edytuj zamówienie</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: zamówienia.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Edit" class="crud-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="IdZamowienia" />
+                    <div class="mb-3">
+                        <label asp-for="NumerZamowienia" class="form-label"></label>
+                        <input asp-for="NumerZamowienia" class="form-control" />
+                        <span asp-validation-for="NumerZamowienia" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="DataZamowienia" class="form-label"></label>
+                        <input asp-for="DataZamowienia" class="form-control" />
+                        <span asp-validation-for="DataZamowienia" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Status" class="form-label"></label>
+                        <input asp-for="Status" class="form-control" />
+                        <span asp-validation-for="Status" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="WartoscRazem" class="form-label"></label>
+                        <input asp-for="WartoscRazem" class="form-control kwota-input" type="text" inputmode="decimal" asp-format="{0:0.00}" placeholder="np. 1499,99" />
+                        <span asp-validation-for="WartoscRazem" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Ulica" class="form-label"></label>
+                        <input asp-for="Ulica" class="form-control" />
+                        <span asp-validation-for="Ulica" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NumerDomu" class="form-label"></label>
+                        <input asp-for="NumerDomu" class="form-control" />
+                        <span asp-validation-for="NumerDomu" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="NumerLokalu" class="form-label"></label>
+                        <input asp-for="NumerLokalu" class="form-control" />
+                        <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="KodPocztowy" class="form-label"></label>
+                        <input asp-for="KodPocztowy" class="form-control" />
+                        <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Miasto" class="form-label"></label>
+                        <input asp-for="Miasto" class="form-control" />
+                        <span asp-validation-for="Miasto" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="IdKlienta" class="form-label"></label>
+                        <select asp-for="IdKlienta" class="form-select" asp-items="ViewBag.IdKlienta"></select>
+                        <span asp-validation-for="IdKlienta" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex gap-2 pt-2">
+                            <input type="submit" value="Zapisz zmiany" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

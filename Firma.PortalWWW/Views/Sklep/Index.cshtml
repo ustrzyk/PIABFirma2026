@@ -1,0 +1,101 @@
+@model IEnumerable<Firma.Data.Data.Sklep.Towar>
+
+@{
+    ViewData["Title"] = "Sklep";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Oferta</span>
+        <h1 class="h2 mt-2 mb-1">Sklep z drukarkami 3D i akcesoriami</h1>
+        <p class="text-muted mb-0">
+            Produkty są dodawane i edytowane w panelu Intranet.
+        </p>
+    </div>
+</div>
+
+<div class="card page-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 sklep-table">
+                <thead>
+                    <tr>
+                        <th>Zdjęcie</th>
+                        <th>Nazwa</th>
+                        <th>Kod</th>
+                        <th>Rodzaj</th>
+                        <th>Producent</th>
+                        <th>Cena</th>
+                        <th>Dostępność</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width: 110px;">
+                                @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                                {
+                                    <img src="@item.FotoUrl"
+                                         alt="@item.Nazwa"
+                                         class="product-mini-img" />
+                                }
+                                else
+                                {
+                                    <img src="~/content/CA.png"
+                                         alt="@item.Nazwa"
+                                         class="product-mini-img" />
+                                }
+                            </td>
+
+                            <td>
+                                <strong>@item.Nazwa</strong>
+                                <div class="small text-muted tekst-skrot">
+                                    @item.Opis
+                                </div>
+                            </td>
+
+                            <td>@item.Kod</td>
+                            <td>@item.Rodzaj?.Nazwa</td>
+                            <td>@item.Producent?.Nazwa</td>
+
+                            <td>
+                                <strong>@item.Cena.ToString("C")</strong>
+                            </td>
+
+                            <td>
+                                @if (item.StanMagazynowy != null && item.StanMagazynowy.IloscSztuk > 0)
+                                {
+                                    <span class="badge bg-success">@item.StanMagazynowy.IloscSztuk szt.</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">brak danych</span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-primary"
+                                   asp-controller="Sklep"
+                                   asp-action="Szczegoly"
+                                   asp-route-id="@item.IdTowaru">
+                                    Szczegóły
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info mt-4">
+        Brak towarów w tej kategorii.
+    </div>
+}

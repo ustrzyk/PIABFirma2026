@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Firma.Data.Data.CMS.UstawieniePortalu>
+
+@{
+    ViewData["Title"] = "Ustawienia portalu";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Ustawienia portalu</h1>
+        <p class="crud-podtytul">Lista rekordów w module: ustawienia portalu.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0 crud-tabela">
+                <thead class="table-light">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Klucz)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Wartosc)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Opis)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.CzyAktywny)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Klucz)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Wartosc)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Opis)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CzyAktywny)
+                            </td>
+                            <td class="crud-akcje">
+                                <a asp-action="Edit" asp-route-id="@item.IdUstawieniaPortalu" class="btn btn-sm btn-outline-primary">Edytuj</a>
+                                <a asp-action="Details" asp-route-id="@item.IdUstawieniaPortalu" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
+                                <a asp-action="Delete" asp-route-id="@item.IdUstawieniaPortalu" class="btn btn-sm btn-outline-danger">Usuń</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

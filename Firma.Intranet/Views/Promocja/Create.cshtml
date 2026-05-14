@@ -1,0 +1,72 @@
+﻿@model Firma.Data.Data.CMS.Promocja
+
+@{
+    ViewData["Title"] = "Dodaj promocję";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Dodaj promocję</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: promocje.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Create" class="crud-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Tytul" class="form-label"></label>
+                        <input asp-for="Tytul" class="form-control" />
+                        <span asp-validation-for="Tytul" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Opis" class="form-label"></label>
+                        <textarea asp-for="Opis" class="form-control" rows="5"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RabatProcentowy" class="form-label"></label>
+                        <input asp-for="RabatProcentowy" class="form-control" />
+                        <span asp-validation-for="RabatProcentowy" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DataOd" class="form-label"></label>
+                        <input asp-for="DataOd" class="form-control" />
+                        <span asp-validation-for="DataOd" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="DataDo" class="form-label"></label>
+                        <input asp-for="DataDo" class="form-control" />
+                        <span asp-validation-for="DataDo" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input class="form-check-input" asp-for="CzyAktywny" />
+                        <label class="form-check-label" asp-for="CzyAktywny"></label>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex gap-2 pt-2">
+                            <input type="submit" value="Zapisz" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

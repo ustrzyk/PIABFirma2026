@@ -1,0 +1,47 @@
+@model IEnumerable<Firma.Data.Data.CMS.UstawieniePortalu>
+
+@{
+    ViewData["Title"] = "Informacje";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Portal</span>
+        <h1 class="h2 mt-2 mb-1">Informacje</h1>
+        <p class="text-muted mb-0">Wybrane ustawienia i informacje publikowane w portalu.</p>
+    </div>
+</div>
+
+<div class="row g-3">
+    @foreach (var item in Model)
+    {
+        <div class="col-12 col-md-6">
+            <div class="card page-card h-100 info-card">
+                <div class="card-body p-4">
+                    <span class="portal-badge">@item.Klucz</span>
+
+                    <h2 class="h5 mt-3">@item.Opis</h2>
+
+                    <p class="text-muted tekst-skrot mb-4">
+                        @item.Wartosc
+                    </p>
+
+                    <a class="btn btn-sm btn-primary"
+                       asp-controller="UstawieniePortalu"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdUstawieniaPortalu">
+                        Szczegóły
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        Brak informacji do wyświetlenia.
+    </div>
+}

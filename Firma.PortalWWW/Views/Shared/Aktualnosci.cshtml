@@ -1,0 +1,37 @@
+@model IEnumerable<Firma.Data.Data.CMS.Aktualnosc>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container py-4">
+        <div class="section-heading text-center mb-3">
+            <span class="portal-badge">Aktualności</span>
+            <h2 class="h4 mt-2 mb-1">Najnowsze informacje</h2>
+            <p class="text-muted mb-0">Komunikaty publikowane z poziomu Intranetu.</p>
+        </div>
+
+        <div class="row g-3">
+            @foreach (var item in Model)
+            {
+                <div class="col-12 col-md-4">
+                    <div class="card news-card h-100">
+                        <div class="card-body text-center p-4">
+                            <span class="small text-muted">Aktualność</span>
+                            <h3 class="h5 mt-2">@item.Tytul</h3>
+                            <p class="card-text text-muted small">
+                                Przejdź do szczegółów aktualności.
+                            </p>
+
+                            <a class="btn btn-sm btn-primary"
+                               asp-area=""
+                               asp-controller="Aktualnosc"
+                               asp-action="Index"
+                               asp-route-id="@item.IdAktualnosci">
+                                Szczegóły
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,30 @@
+@model Firma.Data.Data.CMS.Aktualnosc
+
+@{
+    ViewData["Title"] = Model.LinkTytul;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Aktualność</span>
+        <h1 class="h2 mt-2 mb-1">@Model.Tytul</h1>
+        <p class="text-muted mb-0">
+            Szczegóły informacji opublikowanej w portalu.
+        </p>
+    </div>
+
+    <div class="mt-3 mt-md-0">
+        <a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">
+            Powrót na stronę główną
+        </a>
+    </div>
+</div>
+
+<div class="card page-card">
+    <div class="card-body p-4">
+        <div class="tekst-strony">
+            @Model.Tresc
+        </div>
+    </div>
+</div>

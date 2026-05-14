@@ -1,0 +1,130 @@
+# =========================
+# Visual Studio / .NET
+# =========================
+
+.vs/
+.vscode/
+.idea/
+
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.sln.iml
+
+# =========================
+# Build / publish
+# =========================
+
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+
+publish/
+Publish/
+
+# =========================
+# NuGet
+# =========================
+
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.assets.json
+
+# Nie ignoruj plików projektów i rozwiązania
+!*.csproj
+!*.sln
+!*.slnx
+
+# =========================
+# ASP.NET config / secrets
+# =========================
+
+appsettings.json
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+secrets.json
+
+# =========================
+# Database files
+# =========================
+
+*.mdf
+*.ldf
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Logs
+# =========================
+
+*.log
+logs/
+Logs/
+
+# =========================
+# OS files
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Temporary files
+# =========================
+
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+
+# =========================
+# Archives / backups
+# =========================
+
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+
+# =========================
+# Test results / coverage
+# =========================
+
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# =========================
+# Frontend build output
+# Nie ignorujemy wwwroot/lib/*/dist, bo tam są biblioteki Bootstrap/jQuery
+# =========================
+
+/dist/
+*/wwwroot/dist/
+
+# =========================
+# Visual Studio publish/service local files
+# =========================
+
+*.pubxml
+*.pubxml.user
+*.Publish.xml
+serviceDependencies.local.json

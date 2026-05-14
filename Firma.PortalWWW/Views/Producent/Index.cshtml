@@ -1,0 +1,70 @@
+@model IEnumerable<Firma.Data.Data.Sklep.Producent>
+
+@{
+    ViewData["Title"] = "Producenci";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Sklep</span>
+        <h1 class="h2 mt-2 mb-1">Producenci</h1>
+        <p class="text-muted mb-0">Lista producentów obsługiwanych w sklepie.</p>
+    </div>
+</div>
+
+<div class="card page-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 sklep-table">
+                <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Kraj</th>
+                        <th>Strona WWW</th>
+                        <th>Liczba towarów</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.Nazwa</strong></td>
+                            <td>@item.Kraj</td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
+                                {
+                                    <a href="@item.StronaWWW" target="_blank" rel="noopener" class="link-primary">
+                                        @item.StronaWWW
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">brak</span>
+                                }
+                            </td>
+                            <td>@item.Towar.Count</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-primary"
+                                   asp-controller="Producent"
+                                   asp-action="Szczegoly"
+                                   asp-route-id="@item.IdProducenta">
+                                    Szczegóły
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info mt-4">
+        Brak producentów do wyświetlenia.
+    </div>
+}

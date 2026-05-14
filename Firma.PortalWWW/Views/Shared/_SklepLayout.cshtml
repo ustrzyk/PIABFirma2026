@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Sklep z drukarkami 3D</title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Firma.PortalWWW.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm portal-navbar">
+            <div class="container">
+                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
+                    Sklep 3D
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#menuGlowne"
+                        aria-controls="menuGlowne"
+                        aria-expanded="false"
+                        aria-label="Przełącz menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="menuGlowne">
+                    @await Html.PartialAsync("Odnosniki", (IEnumerable<Firma.Data.Data.CMS.Strona>)ViewBag.ModelStrony)
+                </div>
+            </div>
+        </nav>
+
+        <div class="category-bar border-bottom">
+            <div class="container py-2">
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <span class="small text-muted me-1">Kategorie:</span>
+                    @await Html.PartialAsync("RodzajeMenu", (IEnumerable<Firma.Data.Data.Sklep.Rodzaj>)ViewBag.Rodzaje)
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-bg">
+        <main class="container py-4">
+            @RenderBody()
+        </main>
+    </div>
+
+    <section class="bg-white border-top">
+        @await Html.PartialAsync("Aktualnosci", (IEnumerable<Firma.Data.Data.CMS.Aktualnosc>)ViewBag.ModelAktualnosci)
+    </section>
+
+    <footer class="border-top footer text-muted bg-light">
+        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>&copy; 2026 - Sklep z drukarkami 3D - projekt studencki</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

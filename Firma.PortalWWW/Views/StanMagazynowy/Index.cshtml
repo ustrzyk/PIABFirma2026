@@ -1,0 +1,72 @@
+@model IEnumerable<Firma.Data.Data.Sklep.StanMagazynowy>
+
+@{
+    ViewData["Title"] = "Stany magazynowe";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Sklep</span>
+        <h1 class="h2 mt-2 mb-1">Stany magazynowe</h1>
+        <p class="text-muted mb-0">Publiczny podgląd dostępności produktów.</p>
+    </div>
+</div>
+
+<div class="card page-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 sklep-table">
+                <thead>
+                    <tr>
+                        <th>Towar</th>
+                        <th>Rodzaj</th>
+                        <th>Producent</th>
+                        <th>Ilość</th>
+                        <th>Minimalna ilość</th>
+                        <th>Lokalizacja</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.Towar?.Nazwa</strong></td>
+                            <td>@item.Towar?.Rodzaj?.Nazwa</td>
+                            <td>@item.Towar?.Producent?.Nazwa</td>
+                            <td>
+                                @if (item.IloscSztuk <= item.MinimalnaIlosc)
+                                {
+                                    <span class="badge bg-warning text-dark">@item.IloscSztuk szt.</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@item.IloscSztuk szt.</span>
+                                }
+                            </td>
+                            <td>@item.MinimalnaIlosc</td>
+                            <td>@item.Lokalizacja</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-primary"
+                                   asp-controller="StanMagazynowy"
+                                   asp-action="Szczegoly"
+                                   asp-route-id="@item.IdStanuMagazynowego">
+                                    Szczegóły
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info mt-4">
+        Brak stanów magazynowych do wyświetlenia.
+    </div>
+}

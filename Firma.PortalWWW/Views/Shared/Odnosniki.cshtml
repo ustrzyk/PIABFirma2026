@@ -1,0 +1,49 @@
+@model IEnumerable<Firma.Data.Data.CMS.Strona>
+
+<ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <li class="nav-item">
+                <a class="nav-link"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index"
+                   asp-route-id="@item.IdStrony">
+                    @item.LinkTytul
+                </a>
+            </li>
+        }
+    }
+
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Sklep" asp-action="Index">
+            Sklep
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Producent" asp-action="Index">
+            Producenci
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="Promocja" asp-action="Index">
+            Promocje
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="StanMagazynowy" asp-action="Index">
+            Magazyn
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" asp-area="" asp-controller="UstawieniePortalu" asp-action="Index">
+            Info
+        </a>
+    </li>
+</ul>

@@ -1,0 +1,48 @@
+﻿@model Firma.Data.Data.Sklep.PozycjaZamowienia
+
+@{
+    ViewData["Title"] = "Szczegóły - Pozycja zamówienia";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Szczegóły</h1>
+        <p class="crud-podtytul">Podgląd danych rekordu: pozycja zamówienia.</p>
+    </div>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Ilosc)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Ilosc)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.CenaJednostkowa)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.CenaJednostkowa)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Zamowienie)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Zamowienie.NumerZamowienia)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Towar)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Towar.Nazwa)
+            </dd>
+        </dl>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Edit" asp-route-id="@Model?.IdPozycjiZamowienia" class="btn btn-primary">Edytuj</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+        </div>
+    </div>
+</div>

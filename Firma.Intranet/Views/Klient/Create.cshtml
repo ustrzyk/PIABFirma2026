@@ -1,0 +1,56 @@
+﻿@model Firma.Data.Data.Sklep.Klient
+
+@{
+    ViewData["Title"] = "Dodaj klienta";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Dodaj klienta</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: klienci.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Create" class="crud-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <div class="mb-3">
+                        <label asp-for="Imie" class="form-label"></label>
+                        <input asp-for="Imie" class="form-control" />
+                        <span asp-validation-for="Imie" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Nazwisko" class="form-label"></label>
+                        <input asp-for="Nazwisko" class="form-control" />
+                        <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Telefon" class="form-label"></label>
+                        <input asp-for="Telefon" class="form-control" />
+                        <span asp-validation-for="Telefon" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex gap-2 pt-2">
+                            <input type="submit" value="Zapisz" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

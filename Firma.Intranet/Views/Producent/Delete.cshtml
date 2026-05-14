@@ -1,0 +1,55 @@
+﻿@model Firma.Data.Data.Sklep.Producent
+
+@{
+    ViewData["Title"] = "Usuń - Producent";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Usuń rekord</h1>
+        <p class="crud-podtytul">Przed usunięciem sprawdź, czy wybrany rekord jest poprawny.</p>
+    </div>
+</div>
+
+<div class="card crud-karta border-danger-subtle">
+    <div class="card-body p-4">
+        <div class="alert alert-warning" role="alert">
+            Czy na pewno chcesz usunąć ten rekord?
+        </div>
+
+        <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Nazwa)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Nazwa)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Kraj)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Kraj)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.StronaWWW)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.StronaWWW)
+            </dd>
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.Opis)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @Html.DisplayFor(model => model.Opis)
+            </dd>
+        </dl>
+
+        <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
+
+            <input type="hidden" asp-for="IdProducenta" />
+            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
+    
+        </form>
+    </div>
+</div>

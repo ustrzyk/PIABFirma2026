@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Panel główny";
+}
+
+<div class="mb-4">
+    <h1 class="h2">Panel pracownika</h1>
+    <p class="text-muted mb-0">
+        Zarządzanie treścią portalu, asortymentem oraz zamówieniami firmy sprzedającej drukarki 3D.
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100 shadow-sm panel-karta">
+            <div class="card-body">
+                <h2 class="h5">CMS</h2>
+                <p class="text-muted">Zarządzanie treściami portalu klienta.</p>
+                <div class="d-grid gap-2">
+                    <a class="btn btn-outline-primary" asp-controller="Aktualnosc" asp-action="Index">Aktualności</a>
+                    <a class="btn btn-outline-primary" asp-controller="Promocja" asp-action="Index">Promocje</a>
+                    <a class="btn btn-outline-primary" asp-controller="Strona" asp-action="Index">Strony</a>
+                    <a class="btn btn-outline-primary" asp-controller="UstawieniePortalu" asp-action="Index">Ustawienia portalu</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100 shadow-sm panel-karta">
+            <div class="card-body">
+                <h2 class="h5">Asortyment</h2>
+                <p class="text-muted">Obsługa produktów i magazynu.</p>
+                <div class="d-grid gap-2">
+                    <a class="btn btn-outline-success" asp-controller="Towar" asp-action="Index">Towary</a>
+                    <a class="btn btn-outline-success" asp-controller="Producent" asp-action="Index">Producenci</a>
+                    <a class="btn btn-outline-success" asp-controller="Rodzaj" asp-action="Index">Rodzaje</a>
+                    <a class="btn btn-outline-success" asp-controller="StanMagazynowy" asp-action="Index">Stany magazynowe</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100 shadow-sm panel-karta">
+            <div class="card-body">
+                <h2 class="h5">Sprzedaż</h2>
+                <p class="text-muted">Obsługa klientów i zamówień.</p>
+                <div class="d-grid gap-2">
+                    <a class="btn btn-outline-dark" asp-controller="Zamowienie" asp-action="Index">Zamówienia</a>
+                    <a class="btn btn-outline-dark" asp-controller="PozycjaZamowienia" asp-action="Index">Pozycje zamówień</a>
+                    <a class="btn btn-outline-dark" asp-controller="Klient" asp-action="Index">Klienci</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Błąd";
+}
+
+<div class="portal-header mb-4">
+    <div>
+        <span class="portal-badge">Błąd</span>
+        <h1 class="h2 mt-2 mb-1">Wystąpił błąd</h1>
+        <p class="text-muted mb-0">Nie udało się poprawnie obsłużyć żądania.</p>
+    </div>
+</div>
+
+<div class="card page-card">
+    <div class="card-body p-4">
+        @if (Model.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong>
+                <code>@Model.RequestId</code>
+            </p>
+        }
+
+        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
+            Wróć na stronę główną
+        </a>
+    </div>
+</div>

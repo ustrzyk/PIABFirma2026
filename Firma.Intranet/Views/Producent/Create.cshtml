@@ -1,0 +1,66 @@
+﻿@model Producent
+
+@{
+    ViewData["Title"] = "Dodaj producenta";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Dodaj producenta</h1>
+        <p class="crud-podtytul">Formularz pozwala zapisać dane w module: producenci.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <form asp-action="Create" class="crud-form">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Nazwa" class="form-label"></label>
+                        <input asp-for="Nazwa" class="form-control" />
+                        <span asp-validation-for="Nazwa" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Kraj" class="form-label"></label>
+                        <input asp-for="Kraj" class="form-control" />
+                        <span asp-validation-for="Kraj" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StronaWWW" class="form-label"></label>
+                        <input asp-for="StronaWWW" class="form-control" />
+                        <span asp-validation-for="StronaWWW" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Opis" class="form-label"></label>
+                        <input asp-for="Opis" class="form-control" />
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input class="form-check-input" asp-for="CzyAktywny" />
+                        <label class="form-check-label" asp-for="CzyAktywny"></label>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex gap-2 pt-2">
+                            <input type="submit" value="Zapisz" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

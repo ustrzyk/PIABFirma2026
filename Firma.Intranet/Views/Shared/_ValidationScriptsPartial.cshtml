@@ -1,0 +1,29 @@
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Domyślna walidacja jquery.validate akceptuje zwykle tylko kropkę.
+    // W projekcie pozwalamy na kwoty z przecinkiem lub kropką: 12,50 albo 12.50.
+    if (window.jQuery && $.validator) {
+        function parsePolishDecimal(value) {
+            if (typeof value !== "string") {
+                return value;
+            }
+
+            return parseFloat(value.replace(/\s/g, "").replace(",", "."));
+        }
+
+        $.validator.methods.number = function (value, element) {
+            return this.optional(element) || /^-?\d+([,.]\d{1,2})?$/.test(value.replace(/\s/g, ""));
+        };
+
+        $.validator.methods.range = function (value, element, param) {
+            if (this.optional(element)) {
+                return true;
+            }
+
+            var val = parsePolishDecimal(value);
+            return val >= param[0] && val <= param[1];
+        };
+    }
+</script>
