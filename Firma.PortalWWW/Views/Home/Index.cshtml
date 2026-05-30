@@ -1,4 +1,4 @@
-@model Firma.Data.Data.CMS.Strona
+@model Firma.Services.Data.Dto.CMS.StronaSzczegolyDto
 
 @{
     ViewData["Title"] = Model != null ? Model.LinkTytul : "Strona główna";
@@ -9,32 +9,39 @@
     <div class="portal-header mb-4">
         <div>
             <span class="portal-badge">Portal klienta</span>
-            <h1 class="h2 mt-2 mb-1">@Model.Tytul</h1>
+            <h1 class="h3 mt-2 mb-1">@Model.Tytul</h1>
             <p class="text-muted mb-0">
                 Treść strony jest zarządzana w panelu Intranet.
             </p>
         </div>
 
-        <div class="mt-3 mt-md-0 d-flex gap-2 flex-wrap">
-            <a class="btn btn-primary" asp-controller="Sklep" asp-action="Index">
+        <div class="d-flex gap-2">
+            <a asp-controller="Sklep"
+               asp-action="Index"
+               class="btn btn-primary">
                 Przejdź do sklepu
             </a>
-            <a class="btn btn-outline-secondary" asp-controller="Promocja" asp-action="Index">
+
+            <a asp-controller="Promocja"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
                 Promocje
             </a>
         </div>
     </div>
 
-    <div class="card page-card">
+    <div class="card page-card shadow-sm">
         <div class="card-body p-4">
             <div class="tekst-strony">
                 @Model.Tresc
             </div>
-        </div>
-    </div>
 
-    <div class="small text-muted mt-3">
-        Data i godzina wejścia: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+            <hr />
+
+            <p class="text-muted small mb-0">
+                Data i godzina wejścia: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+            </p>
+        </div>
     </div>
 }
 else

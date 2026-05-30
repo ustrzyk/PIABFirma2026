@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
+﻿using Firma.Data.Data;
 using Firma.Interfaces.CMS;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.CMS;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.CMS
@@ -17,23 +13,40 @@ namespace Firma.Services.CMS
         {
         }
 
-        public async Task<Aktualnosc?> GetAktualnosc(int idAktualnosci)
+        public async Task<AktualnoscSzczegolyDto?> GetAktualnosc(int idAktualnosci)
         {
-            // Pobiera jedną aktywną aktualność
+            // Pobieram aktualność do szczegółów
             var aktualnosc = await _context.Aktualnosc
                 .Where(a => a.CzyAktywny)
-                .FirstOrDefaultAsync(a => a.IdAktualnosci == idAktualnosci);
+                .Where(a => a.IdAktualnosci == idAktualnosci)
+                .Select(a => new AktualnoscSzczegolyDto
+                {
+                    IdAktualnosci = a.IdAktualnosci,
+                    LinkTytul = a.LinkTytul,
+                    Tytul = a.Tytul,
+                    Tresc = a.Tresc,
+                    Pozycja = a.Pozycja
+                })
+                .FirstOrDefaultAsync();
 
             return aktualnosc;
         }
 
-        public async Task<IList<Aktualnosc>> GetAktualnoscByPozycjaTake(int ilePobrac)
+        public async Task<IList<AktualnoscListaItemDto>> GetAktualnoscByPozycjaTake(int ilePobrac)
         {
-            // Pobiera aktywne aktualności do layoutu
+            // Pobieram aktualności do layoutu
             var aktualnosci = await _context.Aktualnosc
                 .Where(a => a.CzyAktywny)
                 .OrderByDescending(a => a.Pozycja)
                 .Take(ilePobrac)
+                .Select(a => new AktualnoscListaItemDto
+                {
+                    IdAktualnosci = a.IdAktualnosci,
+                    LinkTytul = a.LinkTytul,
+                    Tytul = a.Tytul,
+                    Tresc = a.Tresc,
+                    Pozycja = a.Pozycja
+                })
                 .ToListAsync();
 
             return aktualnosci;

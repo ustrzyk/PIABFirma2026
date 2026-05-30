@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Firma.PortalWWW.styles.css" asp-append-version="true" />
 </head>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm portal-navbar">
@@ -31,7 +32,9 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="menuGlowne">
-                    @await Html.PartialAsync("Odnosniki", (IEnumerable<Firma.Data.Data.CMS.Strona>)ViewBag.ModelStrony)
+                    @await Html.PartialAsync(
+                        "Odnosniki",
+                        (IEnumerable<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>)ViewBag.ModelStrony)
                 </div>
             </div>
         </nav>
@@ -44,12 +47,14 @@
     </div>
 
     <section class="bg-white border-top">
-        @await Html.PartialAsync("Aktualnosci", (IEnumerable<Firma.Data.Data.CMS.Aktualnosc>)ViewBag.ModelAktualnosci)
+        @await Html.PartialAsync(
+            "Aktualnosci",
+            (IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>)ViewBag.ModelAktualnosci)
     </section>
 
     <footer class="border-top footer text-muted bg-light">
-        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between gap-2">
-            <span>&copy; 2026 - Sklep z drukarkami 3D - projekt studencki</span>
+        <div class="container py-3">
+            &copy; 2026 - Sklep z drukarkami 3D - projekt studencki
             <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
         </div>
     </footer>

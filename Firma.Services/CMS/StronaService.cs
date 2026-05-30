@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
+﻿using Firma.Data.Data;
 using Firma.Interfaces.CMS;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.CMS;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.CMS
@@ -17,41 +13,72 @@ namespace Firma.Services.CMS
         {
         }
 
-        public async Task<Strona?> GetStrona(int? idStrony)
+        public async Task<StronaSzczegolyDto?> GetStrona(int? idStrony)
         {
-            // Jeżeli id jest puste, pobiera pierwszą aktywną stronę według pozycji
             if (idStrony == null)
             {
+                // Pobieram pierwszą aktywną stronę
                 return await _context.Strona
                     .Where(s => s.CzyAktywny)
                     .OrderBy(s => s.Pozycja)
+                    .Select(s => new StronaSzczegolyDto
+                    {
+                        IdStrony = s.IdStrony,
+                        LinkTytul = s.LinkTytul,
+                        Tytul = s.Tytul,
+                        Tresc = s.Tresc,
+                        Pozycja = s.Pozycja
+                    })
                     .FirstOrDefaultAsync();
             }
 
-            // Pobiera aktywną stronę o podanym id
+            // Pobieram wybraną aktywną stronę
             var strona = await _context.Strona
                 .Where(s => s.CzyAktywny)
-                .FirstOrDefaultAsync(s => s.IdStrony == idStrony);
+                .Where(s => s.IdStrony == idStrony)
+                .Select(s => new StronaSzczegolyDto
+                {
+                    IdStrony = s.IdStrony,
+                    LinkTytul = s.LinkTytul,
+                    Tytul = s.Tytul,
+                    Tresc = s.Tresc,
+                    Pozycja = s.Pozycja
+                })
+                .FirstOrDefaultAsync();
 
-            // Jeżeli ktoś poda id strony nieaktywnej albo nieistniejącej
-            // pokazuje pierwszą aktywną stronę
             if (strona == null)
             {
+                // Wracam do pierwszej aktywnej strony
                 strona = await _context.Strona
                     .Where(s => s.CzyAktywny)
                     .OrderBy(s => s.Pozycja)
+                    .Select(s => new StronaSzczegolyDto
+                    {
+                        IdStrony = s.IdStrony,
+                        LinkTytul = s.LinkTytul,
+                        Tytul = s.Tytul,
+                        Tresc = s.Tresc,
+                        Pozycja = s.Pozycja
+                    })
                     .FirstOrDefaultAsync();
             }
 
             return strona;
         }
 
-        public async Task<IList<Strona>> GetStronyByPozycja()
+        public async Task<IList<StronaMenuItemDto>> GetStronyByPozycja()
         {
-            // Pobiera aktywne strony do menu
+            // Pobieram strony do menu
             var strony = await _context.Strona
                 .Where(s => s.CzyAktywny)
                 .OrderBy(s => s.Pozycja)
+                .Select(s => new StronaMenuItemDto
+                {
+                    IdStrony = s.IdStrony,
+                    LinkTytul = s.LinkTytul,
+                    Tytul = s.Tytul,
+                    Pozycja = s.Pozycja
+                })
                 .ToListAsync();
 
             return strony;

@@ -1,27 +1,33 @@
-@model IEnumerable<Firma.Data.Data.CMS.Aktualnosc>
+@model IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>
 
 @if (Model != null && Model.Any())
 {
     <div class="container py-4">
-        <div class="section-heading text-center mb-3">
+        <div class="section-heading mb-3">
             <span class="portal-badge">Aktualności</span>
             <h2 class="h4 mt-2 mb-1">Najnowsze informacje</h2>
-            <p class="text-muted mb-0">Komunikaty publikowane z poziomu Intranetu.</p>
+            <p class="text-muted mb-0">
+                Komunikaty publikowane z poziomu Intranetu.
+            </p>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-4">
             @foreach (var item in Model)
             {
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6 col-lg-4">
                     <div class="card news-card h-100">
-                        <div class="card-body text-center p-4">
-                            <span class="small text-muted">Aktualność</span>
-                            <h3 class="h5 mt-2">@item.Tytul</h3>
-                            <p class="card-text text-muted small">
-                                Przejdź do szczegółów aktualności.
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-2">
+                                <span class="portal-badge">Aktualność</span>
+                            </div>
+
+                            <h3 class="h5">@item.Tytul</h3>
+
+                            <p class="card-text text-muted tekst-skrot">
+                                @item.Tresc
                             </p>
 
-                            <a class="btn btn-sm btn-primary"
+                            <a class="btn btn-outline-primary mt-auto"
                                asp-area=""
                                asp-controller="Aktualnosc"
                                asp-action="Index"

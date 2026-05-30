@@ -1,6 +1,6 @@
-@model IEnumerable<Firma.Data.Data.CMS.Strona>
+@model IEnumerable<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>
 
-<ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
     @if (Model != null)
     {
         foreach (var item in Model)
@@ -18,31 +18,46 @@
     }
 
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="Sklep" asp-action="Index">
+        <a class="nav-link"
+           asp-area=""
+           asp-controller="Sklep"
+           asp-action="Index">
             Sklep
         </a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="Producent" asp-action="Index">
+        <a class="nav-link"
+           asp-area=""
+           asp-controller="Producent"
+           asp-action="Index">
             Producenci
         </a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="Promocja" asp-action="Index">
+        <a class="nav-link"
+           asp-area=""
+           asp-controller="Promocja"
+           asp-action="Index">
             Promocje
         </a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="StanMagazynowy" asp-action="Index">
+        <a class="nav-link"
+           asp-area=""
+           asp-controller="StanMagazynowy"
+           asp-action="Index">
             Magazyn
         </a>
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" asp-area="" asp-controller="UstawieniePortalu" asp-action="Index">
+        <a class="nav-link"
+           asp-area=""
+           asp-controller="UstawieniePortalu"
+           asp-action="Index">
             Info
         </a>
     </li>

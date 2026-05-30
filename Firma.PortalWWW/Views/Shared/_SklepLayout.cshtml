@@ -15,7 +15,7 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm portal-navbar">
             <div class="container">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
                     Sklep 3D
@@ -32,7 +32,9 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="menuGlowne">
-                    @await Html.PartialAsync("Odnosniki", (IEnumerable<Firma.Data.Data.CMS.Strona>)ViewBag.ModelStrony)
+                    @await Html.PartialAsync(
+                        "Odnosniki",
+                        (IEnumerable<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>)ViewBag.ModelStrony)
                 </div>
             </div>
         </nav>
@@ -55,7 +57,9 @@
     </div>
 
     <section class="bg-white border-top">
-        @await Html.PartialAsync("Aktualnosci", (IEnumerable<Firma.Data.Data.CMS.Aktualnosc>)ViewBag.ModelAktualnosci)
+        @await Html.PartialAsync(
+            "Aktualnosci",
+            (IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>)ViewBag.ModelAktualnosci)
     </section>
 
     <footer class="border-top footer text-muted bg-light">
