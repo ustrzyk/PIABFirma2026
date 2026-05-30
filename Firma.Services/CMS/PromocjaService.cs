@@ -1,5 +1,4 @@
 ﻿using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 using Firma.Interfaces.CMS;
 using Firma.Services.Abstrakcja;
 using Firma.Services.Data.Dto.Promocje;
@@ -34,12 +33,22 @@ namespace Firma.Services.CMS
             return promocje;
         }
 
-        public async Task<Promocja?> GetPromocja(int idPromocji)
+        public async Task<PromocjaSzczegolyDto?> GetPromocja(int idPromocji)
         {
-            // Pobieram jedną promocję
+            // Pobieram promocję do szczegółów
             var promocja = await _context.Promocja
                 .Where(p => p.CzyAktywny)
-                .FirstOrDefaultAsync(p => p.IdPromocji == idPromocji);
+                .Where(p => p.IdPromocji == idPromocji)
+                .Select(p => new PromocjaSzczegolyDto
+                {
+                    IdPromocji = p.IdPromocji,
+                    Tytul = p.Tytul,
+                    Opis = p.Opis,
+                    RabatProcentowy = p.RabatProcentowy,
+                    DataOd = p.DataOd,
+                    DataDo = p.DataDo
+                })
+                .FirstOrDefaultAsync();
 
             return promocja;
         }
