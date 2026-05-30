@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data.Sklep;
+﻿using Firma.Data.Data.Sklep;
+using Firma.Services.Data.Dto.StanyMagazynowe;
 
 namespace Firma.Interfaces.Sklep
 {
     public interface IStanMagazynowyService
     {
-        // Pobieram aktywne stany magazynowe
-        Task<IList<StanMagazynowy>> GetStanyMagazynowe();
+        // Pobieram stany magazynowe do listy
+        Task<IList<StanMagazynowyListaItemDto>> GetStanyMagazynowe();
 
         // Pobieram jeden aktywny stan magazynowy
         Task<StanMagazynowy?> GetStanMagazynowy(int idStanuMagazynowego);

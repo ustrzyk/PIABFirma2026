@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
+﻿using Firma.Data.Data;
 using Firma.Data.Data.CMS;
 using Firma.Interfaces.CMS;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.UstawieniaPortalu;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.CMS
@@ -17,12 +14,19 @@ namespace Firma.Services.CMS
         {
         }
 
-        public async Task<IList<UstawieniePortalu>> GetUstawieniaPortalu()
+        public async Task<IList<UstawieniePortaluListaItemDto>> GetUstawieniaPortalu()
         {
-            // Pobieram aktywne ustawienia portalu
+            // Pobieram ustawienia do listy
             var ustawienia = await _context.UstawieniePortalu
                 .Where(u => u.CzyAktywny)
                 .OrderBy(u => u.Klucz)
+                .Select(u => new UstawieniePortaluListaItemDto
+                {
+                    IdUstawieniaPortalu = u.IdUstawieniaPortalu,
+                    Klucz = u.Klucz,
+                    Wartosc = u.Wartosc,
+                    Opis = u.Opis
+                })
                 .ToListAsync();
 
             return ustawienia;
@@ -30,7 +34,7 @@ namespace Firma.Services.CMS
 
         public async Task<UstawieniePortalu?> GetUstawieniePortalu(int idUstawieniaPortalu)
         {
-            // Pobieram jedno aktywne ustawienie portalu
+            // Pobieram jedno ustawienie
             var ustawienie = await _context.UstawieniePortalu
                 .Where(u => u.CzyAktywny)
                 .FirstOrDefaultAsync(u => u.IdUstawieniaPortalu == idUstawieniaPortalu);

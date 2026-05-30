@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
+﻿using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
 using Firma.Interfaces.Sklep;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.StanyMagazynowe;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.Sklep
@@ -17,19 +14,26 @@ namespace Firma.Services.Sklep
         {
         }
 
-        public async Task<IList<StanMagazynowy>> GetStanyMagazynowe()
+        public async Task<IList<StanMagazynowyListaItemDto>> GetStanyMagazynowe()
         {
-            // Pobieram aktywne stany magazynowe
+            // Pobieram stany magazynowe do listy
             var stany = await _context.StanMagazynowy
                 .Where(s =>
                     s.CzyAktywny &&
                     s.Towar != null &&
                     s.Towar.CzyAktywny)
-                .Include(s => s.Towar)
-                    .ThenInclude(t => t.Rodzaj)
-                .Include(s => s.Towar)
-                    .ThenInclude(t => t.Producent)
                 .OrderBy(s => s.Towar != null ? s.Towar.Nazwa : "")
+                .Select(s => new StanMagazynowyListaItemDto
+                {
+                    IdStanuMagazynowego = s.IdStanuMagazynowego,
+                    NazwaTowaru = s.Towar != null ? s.Towar.Nazwa : "",
+                    KodTowaru = s.Towar != null ? s.Towar.Kod : "",
+                    Rodzaj = s.Towar != null && s.Towar.Rodzaj != null ? s.Towar.Rodzaj.Nazwa : "",
+                    Producent = s.Towar != null && s.Towar.Producent != null ? s.Towar.Producent.Nazwa : "",
+                    IloscSztuk = s.IloscSztuk,
+                    MinimalnaIlosc = s.MinimalnaIlosc,
+                    Lokalizacja = s.Lokalizacja
+                })
                 .ToListAsync();
 
             return stany;
@@ -37,7 +41,7 @@ namespace Firma.Services.Sklep
 
         public async Task<StanMagazynowy?> GetStanMagazynowy(int idStanuMagazynowego)
         {
-            // Pobieram jeden aktywny stan magazynowy
+            // Pobieram jeden stan magazynowy
             var stan = await _context.StanMagazynowy
                 .Include(s => s.Towar)
                     .ThenInclude(t => t.Rodzaj)

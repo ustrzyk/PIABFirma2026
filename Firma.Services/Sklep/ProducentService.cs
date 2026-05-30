@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
+﻿using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
 using Firma.Interfaces.Sklep;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.Producenci;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.Sklep
@@ -17,13 +14,21 @@ namespace Firma.Services.Sklep
         {
         }
 
-        public async Task<IList<Producent>> GetProducenci()
+        public async Task<IList<ProducentListaItemDto>> GetProducenci()
         {
-            // Pobieram aktywnych producentów
+            // Pobieram producentów do listy
             var producenci = await _context.Producent
                 .Where(p => p.CzyAktywny)
-                .Include(p => p.Towar)
                 .OrderBy(p => p.Nazwa)
+                .Select(p => new ProducentListaItemDto
+                {
+                    IdProducenta = p.IdProducenta,
+                    Nazwa = p.Nazwa,
+                    Kraj = p.Kraj,
+                    StronaWWW = p.StronaWWW,
+                    Opis = p.Opis,
+                    IloscTowarow = p.Towar.Count(t => t.CzyAktywny)
+                })
                 .ToListAsync();
 
             return producenci;
@@ -31,7 +36,7 @@ namespace Firma.Services.Sklep
 
         public async Task<Producent?> GetProducent(int idProducenta)
         {
-            // Pobieram jednego aktywnego producenta
+            // Pobieram jednego producenta
             var producent = await _context.Producent
                 .Where(p => p.CzyAktywny)
                 .Include(p => p.Towar.Where(t => t.CzyAktywny))

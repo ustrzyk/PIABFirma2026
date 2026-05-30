@@ -1,4 +1,4 @@
-@model IEnumerable<Firma.Data.Data.Sklep.Producent>
+@model IEnumerable<Firma.Services.Data.Dto.Producenci.ProducentListaItemDto>
 
 @{
     ViewData["Title"] = "Producenci";
@@ -7,64 +7,77 @@
 
 <div class="portal-header mb-4">
     <div>
-        <span class="portal-badge">Sklep</span>
-        <h1 class="h2 mt-2 mb-1">Producenci</h1>
-        <p class="text-muted mb-0">Lista producentów obsługiwanych w sklepie.</p>
+        <h1 class="h3 mb-1">Producenci</h1>
+        <p class="text-muted mb-0">
+            Lista producentów dostępnych w sklepie.
+        </p>
     </div>
 </div>
 
-<div class="card page-card">
+<div class="card page-card shadow-sm">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 sklep-table">
-                <thead>
-                    <tr>
-                        <th>Nazwa</th>
-                        <th>Kraj</th>
-                        <th>Strona WWW</th>
-                        <th>Liczba towarów</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 sklep-table">
+                    <thead>
                         <tr>
-                            <td><strong>@item.Nazwa</strong></td>
-                            <td>@item.Kraj</td>
-                            <td>
-                                @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
-                                {
-                                    <a href="@item.StronaWWW" target="_blank" rel="noopener" class="link-primary">
-                                        @item.StronaWWW
-                                    </a>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">brak</span>
-                                }
-                            </td>
-                            <td>@item.Towar.Count</td>
-                            <td class="text-end">
-                                <a class="btn btn-sm btn-primary"
-                                   asp-controller="Producent"
-                                   asp-action="Szczegoly"
-                                   asp-route-id="@item.IdProducenta">
-                                    Szczegóły
-                                </a>
-                            </td>
+                            <th>Nazwa</th>
+                            <th>Kraj</th>
+                            <th>Strona WWW</th>
+                            <th>Opis</th>
+                            <th>Towary</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.Nazwa</strong>
+                                </td>
+                                <td>@item.Kraj</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
+                                    {
+                                        <a href="@item.StronaWWW" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                            Strona
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="text-muted">@item.Opis</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@item.IloscTowarow</span>
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-primary"
+                                       asp-controller="Producent"
+                                       asp-action="Szczegoly"
+                                       asp-route-id="@item.IdProducenta">
+                                        Szczegóły
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak producentów do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info mt-4">
-        Brak producentów do wyświetlenia.
-    </div>
-}

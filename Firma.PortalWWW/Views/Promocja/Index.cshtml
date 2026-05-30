@@ -1,4 +1,4 @@
-@model IEnumerable<Firma.Data.Data.CMS.Promocja>
+@model IEnumerable<Firma.Services.Data.Dto.Promocje.PromocjaListaItemDto>
 
 @{
     ViewData["Title"] = "Promocje";
@@ -7,55 +7,62 @@
 
 <div class="portal-header mb-4">
     <div>
-        <span class="portal-badge">Sklep</span>
-        <h1 class="h2 mt-2 mb-1">Promocje</h1>
-        <p class="text-muted mb-0">Aktualne promocje widoczne w portalu.</p>
+        <h1 class="h3 mb-1">Promocje</h1>
+        <p class="text-muted mb-0">
+            Aktualne promocje i informacje handlowe.
+        </p>
     </div>
 </div>
 
-<div class="card page-card">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 sklep-table">
-                <thead>
-                    <tr>
-                        <th>Tytuł</th>
-                        <th>Rabat</th>
-                        <th>Data od</th>
-                        <th>Data do</th>
-                        <th></th>
-                    </tr>
-                </thead>
+<div class="row g-4">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card page-card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="mb-3">
+                            <span class="badge bg-danger">
+                                -@item.RabatProcentowy%
+                            </span>
+                        </div>
 
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td><strong>@item.Tytul</strong></td>
-                            <td>
-                                <span class="badge bg-primary">@item.RabatProcentowy %</span>
-                            </td>
-                            <td>@item.DataOd?.ToString("dd.MM.yyyy")</td>
-                            <td>@item.DataDo?.ToString("dd.MM.yyyy")</td>
-                            <td class="text-end">
-                                <a class="btn btn-sm btn-primary"
-                                   asp-controller="Promocja"
-                                   asp-action="Szczegoly"
-                                   asp-route-id="@item.IdPromocji">
-                                    Szczegóły
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                        <h2 class="h5">@item.Tytul</h2>
+
+                        <p class="text-muted tekst-skrot">
+                            @item.Opis
+                        </p>
+
+                        <div class="small text-muted mb-3">
+                            @if (item.DataOd != null)
+                            {
+                                <div>Od: @item.DataOd.Value.ToShortDateString()</div>
+                            }
+
+                            @if (item.DataDo != null)
+                            {
+                                <div>Do: @item.DataDo.Value.ToShortDateString()</div>
+                            }
+                        </div>
+
+                        <a class="btn btn-primary mt-auto"
+                           asp-controller="Promocja"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdPromocji">
+                            Szczegóły
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <div class="alert alert-info">
+                Brak promocji do wyświetlenia.
+            </div>
         </div>
-    </div>
+    }
 </div>
-
-@if (!Model.Any())
-{
-    <div class="alert alert-info mt-4">
-        Brak promocji do wyświetlenia.
-    </div>
-}
