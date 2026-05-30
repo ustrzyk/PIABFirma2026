@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
+﻿using Firma.Data.Data;
 using Firma.Interfaces.Sklep;
 using Firma.Services.Abstrakcja;
+using Firma.Services.Data.Dto.Rodzaje;
 using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Services.Sklep
@@ -17,12 +13,18 @@ namespace Firma.Services.Sklep
         {
         }
 
-        public async Task<IList<Rodzaj>> GetRodzaje()
+        public async Task<IList<RodzajMenuItemDto>> GetRodzaje()
         {
-            // Pobiera aktywne rodzaje produktów do menu kategori
+            // Pobieram aktywne rodzaje do menu
             var rodzaje = await _context.Rodzaj
                 .Where(r => r.CzyAktywny)
                 .OrderBy(r => r.Nazwa)
+                .Select(r => new RodzajMenuItemDto
+                {
+                    IdRodzaju = r.IdRodzaju,
+                    Nazwa = r.Nazwa,
+                    Opis = r.Opis
+                })
                 .ToListAsync();
 
             return rodzaje;

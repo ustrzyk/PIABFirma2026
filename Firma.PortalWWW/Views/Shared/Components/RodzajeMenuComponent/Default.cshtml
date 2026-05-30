@@ -1,9 +1,7 @@
-﻿@model IEnumerable<Firma.Data.Data.Sklep.Rodzaj>
+﻿@model IEnumerable<Firma.Services.Data.Dto.Rodzaje.RodzajMenuItemDto>
 
-<a class="btn btn-sm btn-outline-secondary"
-   asp-area=""
-   asp-controller="Sklep"
-   asp-action="Index">
+<a class="btn btn-sm btn-outline-secondary category-link"
+   href="@Url.Content("~/Sklep")">
     Wszystkie
 </a>
 
@@ -11,7 +9,7 @@
 {
     foreach (var item in Model)
     {
-        <a class="btn btn-sm btn-outline-secondary"
+        <a class="btn btn-sm btn-outline-secondary category-link"
            asp-area=""
            asp-controller="Sklep"
            asp-action="Index"

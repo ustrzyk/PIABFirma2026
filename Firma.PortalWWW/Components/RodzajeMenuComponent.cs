@@ -14,6 +14,7 @@ namespace Firma.PortalWWW.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            // Pobieram rodzaje do menu
             var rodzaje = await _rodzajService.GetRodzaje();
 
             return View(rodzaje);
