@@ -1,5 +1,4 @@
 ﻿using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 using Firma.Interfaces.Sklep;
 using Firma.Services.Abstrakcja;
 using Firma.Services.Data.Dto.Towary;
@@ -14,20 +13,34 @@ namespace Firma.Services.Sklep
         {
         }
 
-        public async Task<Towar?> GetTowar(int idTowaru)
+        public async Task<TowarSzczegolyDto?> GetTowar(int idTowaru)
         {
-            // Pobieram jeden aktywny towar
+            // Pobieram towar do szczegółów
             var towar = await _context.Towar
-                .Include(t => t.Rodzaj)
-                .Include(t => t.Producent)
-                .Include(t => t.StanMagazynowy)
-                .FirstOrDefaultAsync(t =>
+                .Where(t =>
                     t.IdTowaru == idTowaru &&
                     t.CzyAktywny &&
                     t.Rodzaj != null &&
                     t.Rodzaj.CzyAktywny &&
                     t.Producent != null &&
-                    t.Producent.CzyAktywny);
+                    t.Producent.CzyAktywny)
+                .Select(t => new TowarSzczegolyDto
+                {
+                    IdTowaru = t.IdTowaru,
+                    Kod = t.Kod,
+                    Nazwa = t.Nazwa,
+                    Cena = t.Cena,
+                    FotoUrl = t.FotoUrl,
+                    Opis = t.Opis,
+                    Rodzaj = t.Rodzaj != null ? t.Rodzaj.Nazwa : "",
+                    Producent = t.Producent != null ? t.Producent.Nazwa : "",
+                    KrajProducenta = t.Producent != null ? t.Producent.Kraj : "",
+                    StronaWWWProducenta = t.Producent != null ? t.Producent.StronaWWW : "",
+                    IloscSztuk = t.StanMagazynowy != null ? t.StanMagazynowy.IloscSztuk : null,
+                    MinimalnaIlosc = t.StanMagazynowy != null ? t.StanMagazynowy.MinimalnaIlosc : null,
+                    Lokalizacja = t.StanMagazynowy != null ? t.StanMagazynowy.Lokalizacja : ""
+                })
+                .FirstOrDefaultAsync();
 
             return towar;
         }
@@ -36,9 +49,6 @@ namespace Firma.Services.Sklep
         {
             // Przygotowuję zapytanie listy towarów
             var towary = _context.Towar
-                .Include(t => t.Rodzaj)
-                .Include(t => t.Producent)
-                .Include(t => t.StanMagazynowy)
                 .Where(t =>
                     t.CzyAktywny &&
                     t.Rodzaj != null &&
@@ -76,9 +86,6 @@ namespace Firma.Services.Sklep
         {
             // Pobieram towary do DTO
             var towary = await _context.Towar
-                .Include(t => t.Rodzaj)
-                .Include(t => t.Producent)
-                .Include(t => t.StanMagazynowy)
                 .Where(t =>
                     t.CzyAktywny &&
                     t.Rodzaj != null &&
