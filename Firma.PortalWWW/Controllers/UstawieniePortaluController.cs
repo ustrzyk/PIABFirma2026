@@ -3,27 +3,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Firma.PortalWWW.Controllers
 {
-    public class UstawieniePortaluController : Controller
+    public class UstawieniePortaluController : PortalControllerBase
     {
         private readonly IUstawieniePortaluService _ustawieniePortaluService;
-        private readonly IStronaService _stronaService;
-        private readonly IAktualnoscService _aktualnoscService;
 
         public UstawieniePortaluController(
             IUstawieniePortaluService ustawieniePortaluService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
+            : base(stronaService, aktualnoscService)
         {
             _ustawieniePortaluService = ustawieniePortaluService;
-            _stronaService = stronaService;
-            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram ustawienia portalu
             var items = await _ustawieniePortaluService.GetUstawieniaPortalu();
 
             return View(items);
@@ -31,9 +28,9 @@ namespace Firma.PortalWWW.Controllers
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram szczegóły ustawienia
             var item = await _ustawieniePortaluService.GetUstawieniePortalu(id);
 
             if (item == null)

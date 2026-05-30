@@ -4,27 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Firma.PortalWWW.Controllers
 {
-    public class StanMagazynowyController : Controller
+    public class StanMagazynowyController : PortalControllerBase
     {
         private readonly IStanMagazynowyService _stanMagazynowyService;
-        private readonly IStronaService _stronaService;
-        private readonly IAktualnoscService _aktualnoscService;
 
         public StanMagazynowyController(
             IStanMagazynowyService stanMagazynowyService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
+            : base(stronaService, aktualnoscService)
         {
             _stanMagazynowyService = stanMagazynowyService;
-            _stronaService = stronaService;
-            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram stany magazynowe
             var items = await _stanMagazynowyService.GetStanyMagazynowe();
 
             return View(items);
@@ -32,9 +29,9 @@ namespace Firma.PortalWWW.Controllers
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram szczegóły stanu magazynowego
             var item = await _stanMagazynowyService.GetStanMagazynowy(id);
 
             if (item == null)

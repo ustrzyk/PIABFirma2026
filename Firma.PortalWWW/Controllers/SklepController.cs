@@ -4,27 +4,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Firma.PortalWWW.Controllers
 {
-    public class SklepController : Controller
+    public class SklepController : PortalControllerBase
     {
         private readonly ITowarService _towarService;
-        private readonly IStronaService _stronaService;
-        private readonly IAktualnoscService _aktualnoscService;
 
         public SklepController(
             ITowarService towarService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
+            : base(stronaService, aktualnoscService)
         {
             _towarService = towarService;
-            _stronaService = stronaService;
-            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index(int? id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram towary dla wybranej kategorii
             var items = await _towarService.GetTowaryDanegoRodzaju(id);
 
             return View(items);
@@ -32,9 +29,9 @@ namespace Firma.PortalWWW.Controllers
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram szczegóły towaru
             var item = await _towarService.GetTowar(id);
 
             if (item == null)

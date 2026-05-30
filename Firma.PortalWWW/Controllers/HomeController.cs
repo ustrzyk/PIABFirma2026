@@ -5,24 +5,20 @@ using System.Diagnostics;
 
 namespace Firma.PortalWWW.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : PortalControllerBase
     {
-        private readonly IStronaService _stronaService;
-        private readonly IAktualnoscService _aktualnoscService;
-
         public HomeController(
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
+            : base(stronaService, aktualnoscService)
         {
-            _stronaService = stronaService;
-            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index(int? id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram stronę główną lub wybraną stronę
             var item = await _stronaService.GetStrona(id);
 
             return View(item);
@@ -30,8 +26,7 @@ namespace Firma.PortalWWW.Controllers
 
         public async Task<IActionResult> Privacy()
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
             return View();
         }

@@ -3,24 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Firma.PortalWWW.Controllers
 {
-    public class AktualnoscController : Controller
+    public class AktualnoscController : PortalControllerBase
     {
-        private readonly IAktualnoscService _aktualnoscService;
-        private readonly IStronaService _stronaService;
-
         public AktualnoscController(
             IAktualnoscService aktualnoscService,
             IStronaService stronaService)
+            : base(stronaService, aktualnoscService)
         {
-            _aktualnoscService = aktualnoscService;
-            _stronaService = stronaService;
         }
 
         public async Task<IActionResult> Index(int id)
         {
-            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
-            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+            await PrzygotujDaneDoLayoutu();
 
+            // Pobieram jedną aktualność
             var item = await _aktualnoscService.GetAktualnosc(id);
 
             if (item == null)
