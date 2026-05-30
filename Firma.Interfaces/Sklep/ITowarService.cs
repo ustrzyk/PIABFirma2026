@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Firma.Data.Data.Sklep;
+﻿using Firma.Data.Data.Sklep;
 using Firma.Services.Data.Dto.Towary;
 
 namespace Firma.Interfaces.Sklep
 {
     public interface ITowarService
     {
-        // Pobiera jeden aktywny towar po id
+        // Pobieram jeden aktywny towar
         Task<Towar?> GetTowar(int idTowaru);
 
-        // Pobiera aktywne towary danego rodzaju
-        Task<IList<Towar>> GetTowaryDanegoRodzaju(int? idRodzaju);
+        // Pobieram aktywne towary dla listy sklepu
+        Task<IList<TowarListaItemDto>> GetTowaryDanegoRodzaju(int? idRodzaju);
 
-        // Pobiera aktywne towary do prostego DTO
+        // Pobieram aktywne towary do DTO
         Task<IList<TowarListaItemDto>> GetTowary();
     }
 }
