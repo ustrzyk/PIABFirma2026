@@ -4,24 +4,40 @@
 
 <div class="portal-header mb-4">
     <div>
-        <span class="portal-badge">Portal</span>
-        <h1 class="h2 mt-2 mb-1">Prywatność</h1>
-        <p class="text-muted mb-0">Informacje o działaniu portalu klienta.</p>
+        <span class="portal-badge">Informacje</span>
+        <h1 class="h3 mt-2 mb-1">Prywatność</h1>
+        <p class="text-muted mb-0">
+            Informacja techniczna dla portalu klienta.
+        </p>
     </div>
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-outline-secondary">
+        Powrót na stronę główną
+    </a>
 </div>
 
-<div class="card page-card">
+<div class="card page-card shadow-sm">
     <div class="card-body p-4">
-        <p>
-            Portal klienta firmy Druk 3D służy do prezentacji oferty oraz publikacji informacji dla klientów.
+        <h2 class="h5 mb-3">Projekt studencki</h2>
+
+        <p class="text-muted">
+            Ten portal jest częścią sklepu z drukarkami 3D oraz akcesoriami.
+            Dane widoczne w portalu są zarządzane z poziomu panelu Intranet.
         </p>
 
-        <p>
-            Treści publikowane w portalu są zarządzane przez pracowników firmy z poziomu systemu intranetowego.
-        </p>
+        <hr />
 
-        <p class="mb-0">
-            Portal ma charakter informacyjny i prezentacyjny.
-        </p>
+        <dl class="row details-list mb-0">
+            <dt class="col-sm-3">Portal</dt>
+            <dd class="col-sm-9">Firma.PortalWWW</dd>
+
+            <dt class="col-sm-3">Panel zarządzania</dt>
+            <dd class="col-sm-9">Firma.Intranet</dd>
+
+            <dt class="col-sm-3">Baza danych</dt>
+            <dd class="col-sm-9">Firma.Data</dd>
+        </dl>
     </div>
 </div>

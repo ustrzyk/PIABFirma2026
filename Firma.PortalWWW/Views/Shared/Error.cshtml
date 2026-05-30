@@ -1,4 +1,5 @@
 @model ErrorViewModel
+
 @{
     ViewData["Title"] = "Błąd";
 }
@@ -6,23 +7,33 @@
 <div class="portal-header mb-4">
     <div>
         <span class="portal-badge">Błąd</span>
-        <h1 class="h2 mt-2 mb-1">Wystąpił błąd</h1>
-        <p class="text-muted mb-0">Nie udało się poprawnie obsłużyć żądania.</p>
+        <h1 class="h3 mt-2 mb-1">Wystąpił błąd</h1>
+        <p class="text-muted mb-0">
+            Nie udało się poprawnie wyświetlić żądanej strony.
+        </p>
     </div>
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-outline-secondary">
+        Powrót na stronę główną
+    </a>
 </div>
 
-<div class="card page-card">
+<div class="card page-card shadow-sm">
     <div class="card-body p-4">
-        @if (Model.ShowRequestId)
-        {
-            <p>
-                <strong>Request ID:</strong>
-                <code>@Model.RequestId</code>
-            </p>
-        }
+        <div class="alert alert-danger">
+            Wystąpił nieoczekiwany błąd podczas obsługi żądania.
+        </div>
 
-        <a class="btn btn-primary" asp-controller="Home" asp-action="Index">
-            Wróć na stronę główną
-        </a>
+        @if (Model != null && Model.ShowRequestId)
+        {
+            <dl class="row details-list mb-0">
+                <dt class="col-sm-3">Request ID</dt>
+                <dd class="col-sm-9">
+                    <code>@Model.RequestId</code>
+                </dd>
+            </dl>
+        }
     </div>
 </div>
