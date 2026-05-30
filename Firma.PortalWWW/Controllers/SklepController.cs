@@ -1,89 +1,41 @@
-﻿using Firma.Data.Data;
+﻿using Firma.Interfaces.CMS;
+using Firma.Interfaces.Sklep;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.PortalWWW.Controllers
 {
     public class SklepController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly ITowarService _towarService;
+        private readonly IStronaService _stronaService;
+        private readonly IAktualnoscService _aktualnoscService;
 
-        public SklepController(FirmaContext context)
+        public SklepController(
+            ITowarService towarService,
+            IStronaService stronaService,
+            IAktualnoscService aktualnoscService)
         {
-            _context = context;
+            _towarService = towarService;
+            _stronaService = stronaService;
+            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index(int? id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var towary = _context.Towar
-                .Include(t => t.Rodzaj)
-                .Include(t => t.Producent)
-                .Include(t => t.StanMagazynowy)
-                .Where(t =>
-                    t.CzyAktywny &&
-                    t.Rodzaj != null &&
-                    t.Rodzaj.CzyAktywny &&
-                    t.Producent != null &&
-                    t.Producent.CzyAktywny)
-                .AsQueryable();
-
-            if (id != null)
-            {
-                towary = towary.Where(t => t.IdRodzaju == id);
-            }
-
-            var items = await towary
-                .OrderBy(t => t.Nazwa)
-                .ToListAsync();
+            var items = await _towarService.GetTowaryDanegoRodzaju(id);
 
             return View(items);
         }
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var item = await _context.Towar
-                .Include(t => t.Rodzaj)
-                .Include(t => t.Producent)
-                .Include(t => t.StanMagazynowy)
-                .FirstOrDefaultAsync(t =>
-                    t.IdTowaru == id &&
-                    t.CzyAktywny &&
-                    t.Rodzaj != null &&
-                    t.Rodzaj.CzyAktywny &&
-                    t.Producent != null &&
-                    t.Producent.CzyAktywny);
+            var item = await _towarService.GetTowar(id);
 
             if (item == null)
             {

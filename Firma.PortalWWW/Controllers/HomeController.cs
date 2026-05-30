@@ -1,64 +1,37 @@
-using Firma.Data.Data;
+using Firma.Interfaces.CMS;
 using Firma.PortalWWW.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace Firma.PortalWWW.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IStronaService _stronaService;
+        private readonly IAktualnoscService _aktualnoscService;
 
-        public HomeController(FirmaContext context)
+        public HomeController(
+            IStronaService stronaService,
+            IAktualnoscService aktualnoscService)
         {
-            _context = context;
+            _stronaService = stronaService;
+            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index(int? id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            if (id == null)
-            {
-                id = 1;
-            }
-
-            var item = await _context.Strona
-                .FirstOrDefaultAsync(s => s.IdStrony == id && s.CzyAktywny);
-
-            if (item == null)
-            {
-                item = await _context.Strona
-                    .Where(s => s.CzyAktywny)
-                    .OrderBy(s => s.Pozycja)
-                    .FirstOrDefaultAsync();
-            }
+            var item = await _stronaService.GetStrona(id);
 
             return View(item);
         }
 
         public async Task<IActionResult> Privacy()
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
-
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
             return View();
         }

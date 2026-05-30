@@ -1,0 +1,22 @@
+﻿@model IEnumerable<Firma.Data.Data.Sklep.Rodzaj>
+
+<a class="btn btn-sm btn-outline-secondary"
+   asp-area=""
+   asp-controller="Sklep"
+   asp-action="Index">
+    Wszystkie
+</a>
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <a class="btn btn-sm btn-outline-secondary"
+           asp-area=""
+           asp-controller="Sklep"
+           asp-action="Index"
+           asp-route-id="@item.IdRodzaju">
+            @item.Nazwa
+        </a>
+    }
+}

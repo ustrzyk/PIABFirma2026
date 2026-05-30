@@ -14,6 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Firma.Data\Firma.Data.csproj" />
+    <ProjectReference Include="..\Firma.Interfaces\Firma.Interfaces.csproj" />
+    <ProjectReference Include="..\Firma.Services.Data\Firma.Services.Data.csproj" />
+    <ProjectReference Include="..\Firma.Services\Firma.Services.csproj" />
   </ItemGroup>
 
 </Project>

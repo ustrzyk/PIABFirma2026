@@ -11,8 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("FirmaContext")
     ?? throw new InvalidOperationException("Connection string 'FirmaContext' not found.");
 
-builder.Services.AddDbContext<FirmaContext>(options =>
-    options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<FirmaContext>(options => options.UseSqlServer(connectionString));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>

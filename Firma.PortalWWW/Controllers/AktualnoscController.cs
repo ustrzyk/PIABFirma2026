@@ -1,33 +1,27 @@
-﻿using Firma.Data.Data;
+﻿using Firma.Interfaces.CMS;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.PortalWWW.Controllers
 {
     public class AktualnoscController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IAktualnoscService _aktualnoscService;
+        private readonly IStronaService _stronaService;
 
-        public AktualnoscController(FirmaContext context)
+        public AktualnoscController(
+            IAktualnoscService aktualnoscService,
+            IStronaService stronaService)
         {
-            _context = context;
+            _aktualnoscService = aktualnoscService;
+            _stronaService = stronaService;
         }
 
         public async Task<IActionResult> Index(int id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            var item = await _context.Aktualnosc
-                .FirstOrDefaultAsync(a => a.IdAktualnosci == id && a.CzyAktywny);
+            var item = await _aktualnoscService.GetAktualnosc(id);
 
             if (item == null)
             {
