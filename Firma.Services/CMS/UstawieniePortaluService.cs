@@ -1,5 +1,4 @@
 ﻿using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 using Firma.Interfaces.CMS;
 using Firma.Services.Abstrakcja;
 using Firma.Services.Data.Dto.UstawieniaPortalu;
@@ -32,12 +31,20 @@ namespace Firma.Services.CMS
             return ustawienia;
         }
 
-        public async Task<UstawieniePortalu?> GetUstawieniePortalu(int idUstawieniaPortalu)
+        public async Task<UstawieniePortaluSzczegolyDto?> GetUstawieniePortalu(int idUstawieniaPortalu)
         {
-            // Pobieram jedno ustawienie
+            // Pobieram ustawienie do szczegółów
             var ustawienie = await _context.UstawieniePortalu
                 .Where(u => u.CzyAktywny)
-                .FirstOrDefaultAsync(u => u.IdUstawieniaPortalu == idUstawieniaPortalu);
+                .Where(u => u.IdUstawieniaPortalu == idUstawieniaPortalu)
+                .Select(u => new UstawieniePortaluSzczegolyDto
+                {
+                    IdUstawieniaPortalu = u.IdUstawieniaPortalu,
+                    Klucz = u.Klucz,
+                    Wartosc = u.Wartosc,
+                    Opis = u.Opis
+                })
+                .FirstOrDefaultAsync();
 
             return ustawienie;
         }

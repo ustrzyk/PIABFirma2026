@@ -1,5 +1,4 @@
-﻿using Firma.Data.Data.CMS;
-using Firma.Services.Data.Dto.Promocje;
+﻿using Firma.Services.Data.Dto.Promocje;
 
 namespace Firma.Interfaces.CMS
 {
@@ -8,7 +7,7 @@ namespace Firma.Interfaces.CMS
         // Pobieram promocje do listy
         Task<IList<PromocjaListaItemDto>> GetPromocje();
 
-        // Pobieram jedną aktywną promocję
-        Task<Promocja?> GetPromocja(int idPromocji);
+        // Pobieram promocję do szczegółów
+        Task<PromocjaSzczegolyDto?> GetPromocja(int idPromocji);
     }
 }

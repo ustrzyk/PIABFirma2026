@@ -1,5 +1,4 @@
-﻿using Firma.Data.Data.Sklep;
-using Firma.Services.Data.Dto.StanyMagazynowe;
+﻿using Firma.Services.Data.Dto.StanyMagazynowe;
 
 namespace Firma.Interfaces.Sklep
 {
@@ -8,7 +7,7 @@ namespace Firma.Interfaces.Sklep
         // Pobieram stany magazynowe do listy
         Task<IList<StanMagazynowyListaItemDto>> GetStanyMagazynowe();
 
-        // Pobieram jeden aktywny stan magazynowy
-        Task<StanMagazynowy?> GetStanMagazynowy(int idStanuMagazynowego);
+        // Pobieram stan magazynowy do szczegółów
+        Task<StanMagazynowySzczegolyDto?> GetStanMagazynowy(int idStanuMagazynowego);
     }
 }

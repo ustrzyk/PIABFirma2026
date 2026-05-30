@@ -1,5 +1,4 @@
 ﻿using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 using Firma.Interfaces.Sklep;
 using Firma.Services.Abstrakcja;
 using Firma.Services.Data.Dto.StanyMagazynowe;
@@ -39,19 +38,35 @@ namespace Firma.Services.Sklep
             return stany;
         }
 
-        public async Task<StanMagazynowy?> GetStanMagazynowy(int idStanuMagazynowego)
+        public async Task<StanMagazynowySzczegolyDto?> GetStanMagazynowy(int idStanuMagazynowego)
         {
-            // Pobieram jeden stan magazynowy
+            // Pobieram stan magazynowy do szczegółów
             var stan = await _context.StanMagazynowy
-                .Include(s => s.Towar)
-                    .ThenInclude(t => t.Rodzaj)
-                .Include(s => s.Towar)
-                    .ThenInclude(t => t.Producent)
-                .FirstOrDefaultAsync(s =>
+                .Where(s =>
                     s.IdStanuMagazynowego == idStanuMagazynowego &&
                     s.CzyAktywny &&
                     s.Towar != null &&
-                    s.Towar.CzyAktywny);
+                    s.Towar.CzyAktywny &&
+                    s.Towar.Rodzaj != null &&
+                    s.Towar.Rodzaj.CzyAktywny &&
+                    s.Towar.Producent != null &&
+                    s.Towar.Producent.CzyAktywny)
+                .Select(s => new StanMagazynowySzczegolyDto
+                {
+                    IdStanuMagazynowego = s.IdStanuMagazynowego,
+                    IloscSztuk = s.IloscSztuk,
+                    MinimalnaIlosc = s.MinimalnaIlosc,
+                    Lokalizacja = s.Lokalizacja,
+                    IdTowaru = s.Towar != null ? s.Towar.IdTowaru : 0,
+                    KodTowaru = s.Towar != null ? s.Towar.Kod : "",
+                    NazwaTowaru = s.Towar != null ? s.Towar.Nazwa : "",
+                    CenaTowaru = s.Towar != null ? s.Towar.Cena : 0,
+                    OpisTowaru = s.Towar != null ? s.Towar.Opis : "",
+                    Rodzaj = s.Towar != null && s.Towar.Rodzaj != null ? s.Towar.Rodzaj.Nazwa : "",
+                    Producent = s.Towar != null && s.Towar.Producent != null ? s.Towar.Producent.Nazwa : "",
+                    FotoUrl = s.Towar != null ? s.Towar.FotoUrl : ""
+                })
+                .FirstOrDefaultAsync();
 
             return stan;
         }
