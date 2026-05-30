@@ -1,64 +1,40 @@
-﻿using Firma.Data.Data;
+﻿using Firma.Interfaces.CMS;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.PortalWWW.Controllers
 {
     public class UstawieniePortaluController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IUstawieniePortaluService _ustawieniePortaluService;
+        private readonly IStronaService _stronaService;
+        private readonly IAktualnoscService _aktualnoscService;
 
-        public UstawieniePortaluController(FirmaContext context)
+        public UstawieniePortaluController(
+            IUstawieniePortaluService ustawieniePortaluService,
+            IStronaService stronaService,
+            IAktualnoscService aktualnoscService)
         {
-            _context = context;
+            _ustawieniePortaluService = ustawieniePortaluService;
+            _stronaService = stronaService;
+            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var items = await _context.UstawieniePortalu
-                .Where(u => u.CzyAktywny)
-                .OrderBy(u => u.Klucz)
-                .ToListAsync();
+            var items = await _ustawieniePortaluService.GetUstawieniaPortalu();
 
             return View(items);
         }
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var item = await _context.UstawieniePortalu
-                .FirstOrDefaultAsync(u => u.IdUstawieniaPortalu == id && u.CzyAktywny);
+            var item = await _ustawieniePortaluService.GetUstawieniePortalu(id);
 
             if (item == null)
             {

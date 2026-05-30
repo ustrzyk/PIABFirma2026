@@ -9,13 +9,17 @@ namespace Firma.PortalWWW
     {
         public static void Resolve(IServiceCollection services, IConfiguration configuration)
         {
-            // Serwisy CMS
+            // Rejestruję serwisy CMS
             services.AddScoped<IStronaService, StronaService>();
             services.AddScoped<IAktualnoscService, AktualnoscService>();
+            services.AddScoped<IPromocjaService, PromocjaService>();
+            services.AddScoped<IUstawieniePortaluService, UstawieniePortaluService>();
 
-            // Serwisy sklepu
+            // Rejestruję serwisy sklepu
             services.AddScoped<IRodzajService, RodzajService>();
             services.AddScoped<ITowarService, TowarService>();
+            services.AddScoped<IProducentService, ProducentService>();
+            services.AddScoped<IStanMagazynowyService, StanMagazynowyService>();
         }
     }
 }

@@ -1,64 +1,40 @@
-﻿using Firma.Data.Data;
+﻿using Firma.Interfaces.CMS;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.PortalWWW.Controllers
 {
     public class PromocjaController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IPromocjaService _promocjaService;
+        private readonly IStronaService _stronaService;
+        private readonly IAktualnoscService _aktualnoscService;
 
-        public PromocjaController(FirmaContext context)
+        public PromocjaController(
+            IPromocjaService promocjaService,
+            IStronaService stronaService,
+            IAktualnoscService aktualnoscService)
         {
-            _context = context;
+            _promocjaService = promocjaService;
+            _stronaService = stronaService;
+            _aktualnoscService = aktualnoscService;
         }
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var items = await _context.Promocja
-                .Where(p => p.CzyAktywny)
-                .OrderByDescending(p => p.DataOd)
-                .ToListAsync();
+            var items = await _promocjaService.GetPromocje();
 
             return View(items);
         }
 
         public async Task<IActionResult> Szczegoly(int id)
         {
-            ViewBag.ModelStrony = await _context.Strona
-                .Where(s => s.CzyAktywny)
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync();
+            ViewBag.ModelStrony = await _stronaService.GetStronyByPozycja();
+            ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
 
-            ViewBag.ModelAktualnosci = await _context.Aktualnosc
-                .Where(a => a.CzyAktywny)
-                .OrderByDescending(a => a.Pozycja)
-                .Take(3)
-                .ToListAsync();
-
-            ViewBag.Rodzaje = await _context.Rodzaj
-                .Where(r => r.CzyAktywny)
-                .OrderBy(r => r.Nazwa)
-                .ToListAsync();
-
-            var item = await _context.Promocja
-                .FirstOrDefaultAsync(p => p.IdPromocji == id && p.CzyAktywny);
+            var item = await _promocjaService.GetPromocja(id);
 
             if (item == null)
             {
