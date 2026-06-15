@@ -4,6 +4,76 @@
     ViewData["Title"] = "Zamówienia";
 }
 
+<style>
+    .zamowienie-mobile-list {
+        display: none;
+    }
+
+    .zamowienie-mobile-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.06);
+    }
+
+    .zamowienie-mobile-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+        .zamowienie-mobile-actions .btn {
+            width: 100%;
+        }
+
+    .zamowienie-mobile-info {
+        display: grid;
+        grid-template-columns: 40% 60%;
+        gap: 0.35rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+        .zamowienie-mobile-info dt {
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .zamowienie-mobile-info dd {
+            margin-bottom: 0;
+            word-break: break-word;
+        }
+
+    @@media (max-width: 767.98px) {
+        .zamowienie-desktop-table {
+            display: none;
+        }
+
+        .zamowienie-mobile-list {
+            display: block;
+        }
+
+        .zamowienie-toolbar {
+            align-items: stretch !important;
+        }
+
+            .zamowienie-toolbar .btn {
+                width: 100%;
+            }
+
+        .crud-naglowek {
+            display: block;
+        }
+
+            .crud-naglowek .btn {
+                width: 100%;
+                margin-top: 0.75rem;
+            }
+    }
+</style>
+
 <div class="crud-naglowek">
     <div>
         <h1 class="h2 mb-1">Zamówienia</h1>
@@ -17,29 +87,162 @@
     <div class="card-body p-0">
         @if (Model != null && Model.Any())
         {
-            <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0 crud-tabela">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Numer zamówienia</th>
-                            <th>Data</th>
-                            <th>Status</th>
-                            <th>Wartość razem</th>
-                            <th>Adres</th>
-                            <th>Klient</th>
-                            <th class="text-end">Akcje</th>
-                        </tr>
-                    </thead>
+            <form method="post">
+                @Html.AntiForgeryToken()
 
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap zamowienie-toolbar">
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="zaznaczWszystkieZamowienia" />
+
+                        <label for="zaznaczWszystkieZamowienia" class="form-check-label">
+                            Zaznacz wszystko
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            asp-action="PobierzFakturyPdfZip"
+                            class="btn btn-dark">
+                        Pobierz zaznaczone faktury ZIP
+                    </button>
+                </div>
+
+                <div class="table-responsive zamowienie-desktop-table">
+                    <table class="table table-hover table-striped mb-0 crud-tabela">
+                        <thead class="table-light">
                             <tr>
-                                <td>
-                                    <strong>@item.NumerZamowienia</strong>
-                                </td>
+                                <th style="width: 45px;"></th>
+                                <th>Numer zamówienia</th>
+                                <th>Data</th>
+                                <th>Status</th>
+                                <th>Wartość razem</th>
+                                <th>Adres</th>
+                                <th>Klient</th>
+                                <th class="text-end">Akcje</th>
+                            </tr>
+                        </thead>
 
-                                <td>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input checkbox-zamowienie"
+                                               name="ids"
+                                               value="@item.IdZamowienia" />
+                                    </td>
+
+                                    <td>
+                                        <strong>@item.NumerZamowienia</strong>
+                                    </td>
+
+                                    <td>
+                                        @if (item.DataZamowienia != null)
+                                        {
+                                            @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">brak</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-secondary">@item.Status</span>
+                                    </td>
+
+                                    <td>
+                                        <strong>@item.WartoscRazem.ToString("N2")</strong>
+                                    </td>
+
+                                    <td>
+                                        @item.Ulica @item.NumerDomu
+                                        @if (!string.IsNullOrWhiteSpace(item.NumerLokalu))
+                                        {
+                                            <span>/@item.NumerLokalu</span>
+                                        }
+                                        <br />
+                                        <small class="text-muted">@item.KodPocztowy @item.Miasto</small>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Klient != null)
+                                        {
+                                            <div>@item.Klient.Email</div>
+                                            <small class="text-muted">@item.Klient.Imie @item.Klient.Nazwisko</small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">brak klienta</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="PobierzFakturePdf"
+                                               asp-route-id="@item.IdZamowienia"
+                                               class="btn btn-outline-dark">
+                                                PDF
+                                            </a>
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.IdZamowienia"
+                                               class="btn btn-outline-primary">
+                                                Edytuj
+                                            </a>
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.IdZamowienia"
+                                               class="btn btn-outline-secondary">
+                                                Szczegóły
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdZamowienia"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="zamowienie-mobile-list p-3">
+                    @foreach (var item in Model)
+                    {
+                        <div class="zamowienie-mobile-card">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                                <div>
+                                    <h2 class="h6 mb-1">@item.NumerZamowienia</h2>
+
+                                    @if (item.Klient != null)
+                                    {
+                                        <div class="small text-muted">
+                                            @item.Klient.Email
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="small text-muted">
+                                            brak klienta
+                                        </div>
+                                    }
+                                </div>
+
+                                <input type="checkbox"
+                                       class="form-check-input checkbox-zamowienie"
+                                       name="ids"
+                                       value="@item.IdZamowienia" />
+                            </div>
+
+                            <dl class="zamowienie-mobile-info">
+                                <dt>Data</dt>
+                                <dd>
                                     @if (item.DataZamowienia != null)
                                     {
                                         @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
@@ -48,70 +251,71 @@
                                     {
                                         <span class="text-muted">brak</span>
                                     }
-                                </td>
+                                </dd>
 
-                                <td>
+                                <dt>Status</dt>
+                                <dd>
                                     <span class="badge bg-secondary">@item.Status</span>
-                                </td>
+                                </dd>
 
-                                <td>
+                                <dt>Wartość</dt>
+                                <dd>
                                     <strong>@item.WartoscRazem.ToString("N2")</strong>
-                                </td>
+                                </dd>
 
-                                <td>
+                                <dt>Adres</dt>
+                                <dd>
                                     @item.Ulica @item.NumerDomu
                                     @if (!string.IsNullOrWhiteSpace(item.NumerLokalu))
                                     {
                                         <span>/@item.NumerLokalu</span>
                                     }
                                     <br />
-                                    <small class="text-muted">@item.KodPocztowy @item.Miasto</small>
-                                </td>
+                                    <span class="text-muted">@item.KodPocztowy @item.Miasto</span>
+                                </dd>
 
-                                <td>
+                                <dt>Klient</dt>
+                                <dd>
                                     @if (item.Klient != null)
                                     {
-                                        <div>@item.Klient.Email</div>
-                                        <small class="text-muted">@item.Klient.Imie @item.Klient.Nazwisko</small>
+                                        <span>@item.Klient.Imie @item.Klient.Nazwisko</span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">brak klienta</span>
+                                        <span class="text-muted">brak</span>
                                     }
-                                </td>
+                                </dd>
+                            </dl>
 
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <a asp-action="PobierzFakturePdf"
-                                           asp-route-id="@item.IdZamowienia"
-                                           class="btn btn-outline-dark">
-                                            PDF
-                                        </a>
+                            <div class="zamowienie-mobile-actions">
+                                <a asp-action="PobierzFakturePdf"
+                                   asp-route-id="@item.IdZamowienia"
+                                   class="btn btn-outline-dark">
+                                    PDF
+                                </a>
 
-                                        <a asp-action="Edit"
-                                           asp-route-id="@item.IdZamowienia"
-                                           class="btn btn-outline-primary">
-                                            Edytuj
-                                        </a>
+                                <a asp-action="Details"
+                                   asp-route-id="@item.IdZamowienia"
+                                   class="btn btn-outline-secondary">
+                                    Szczegóły
+                                </a>
 
-                                        <a asp-action="Details"
-                                           asp-route-id="@item.IdZamowienia"
-                                           class="btn btn-outline-secondary">
-                                            Szczegóły
-                                        </a>
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.IdZamowienia"
+                                   class="btn btn-outline-primary">
+                                    Edytuj
+                                </a>
 
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.IdZamowienia"
-                                           class="btn btn-outline-danger">
-                                            Usuń
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.IdZamowienia"
+                                   class="btn btn-outline-danger">
+                                    Usuń
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </form>
         }
         else
         {
@@ -123,3 +327,19 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const zaznaczWszystkieZamowienia = document.getElementById('zaznaczWszystkieZamowienia');
+
+        if (zaznaczWszystkieZamowienia) {
+            zaznaczWszystkieZamowienia.addEventListener('change', function () {
+                const checkboxy = document.querySelectorAll('.checkbox-zamowienie');
+
+                checkboxy.forEach(function (checkbox) {
+                    checkbox.checked = zaznaczWszystkieZamowienia.checked;
+                });
+            });
+        }
+    </script>
+}

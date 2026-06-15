@@ -4,6 +4,7 @@ using Firma.Intranet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.IO.Compression;
 
 namespace Firma.Intranet.Controllers
 {
@@ -171,11 +172,7 @@ namespace Firma.Intranet.Controllers
         public async Task<IActionResult> PobierzFakturePdf(int id)
         {
             // Pobieram dane do faktury
-            var zamowienie = await _context.Zamowienie
-                .Include(z => z.Klient)
-                .Include(z => z.PozycjaZamowienia)
-                    .ThenInclude(p => p.Towar)
-                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+            var zamowienie = await PobierzZamowienieDoFaktury(id);
 
             if (zamowienie == null)
             {
@@ -188,6 +185,62 @@ namespace Firma.Intranet.Controllers
             return File(pdf, "application/pdf", nazwaPliku);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PobierzFakturyPdfZip(int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Pobieram zamówienia do paczki faktur
+            var zamowienia = await _context.Zamowienie
+                .Include(z => z.Klient)
+                .Include(z => z.PozycjaZamowienia)
+                    .ThenInclude(p => p.Towar)
+                .Where(z => ids.Contains(z.IdZamowienia))
+                .OrderByDescending(z => z.DataZamowienia)
+                .ToListAsync();
+
+            if (!zamowienia.Any())
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            using var memoryStream = new MemoryStream();
+            var uzyteNazwy = new HashSet<string>();
+
+            using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+            {
+                foreach (var zamowienie in zamowienia)
+                {
+                    // Generuję fakturę do ZIP
+                    var pdf = _fakturaPdfGenerator.Generuj(zamowienie);
+                    var nazwaPliku = PrzygotujUnikalnaNazwePdf(zamowienie, uzyteNazwy);
+
+                    var entry = archive.CreateEntry(nazwaPliku, CompressionLevel.Fastest);
+
+                    using var entryStream = entry.Open();
+                    await entryStream.WriteAsync(pdf);
+                }
+            }
+
+            var zip = memoryStream.ToArray();
+            var nazwaZip = $"Faktury_{DateTime.Now:yyyyMMdd_HHmm}.zip";
+
+            return File(zip, "application/zip", nazwaZip);
+        }
+
+        private async Task<Zamowienie?> PobierzZamowienieDoFaktury(int id)
+        {
+            return await _context.Zamowienie
+                .Include(z => z.Klient)
+                .Include(z => z.PozycjaZamowienia)
+                    .ThenInclude(p => p.Towar)
+                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+        }
+
         private void PrzygotujKlientow(int? idKlienta = null)
         {
             ViewData["IdKlienta"] = new SelectList(
@@ -195,6 +248,23 @@ namespace Firma.Intranet.Controllers
                 "IdKlienta",
                 "Email",
                 idKlienta);
+        }
+
+        private static string PrzygotujUnikalnaNazwePdf(Zamowienie zamowienie, HashSet<string> uzyteNazwy)
+        {
+            var bazaNazwy = $"Faktura_{CzyscNazwePliku(zamowienie.NumerZamowienia)}";
+            var nazwaPliku = $"{bazaNazwy}.pdf";
+            var licznik = 1;
+
+            while (uzyteNazwy.Contains(nazwaPliku))
+            {
+                nazwaPliku = $"{bazaNazwy}_{licznik}.pdf";
+                licznik++;
+            }
+
+            uzyteNazwy.Add(nazwaPliku);
+
+            return nazwaPliku;
         }
 
         private static string CzyscNazwePliku(string tekst)
