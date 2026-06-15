@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Firma.Intranet.Models.UzytkownikListaItemViewModel>
+
+@{
+    ViewData["Title"] = "Użytkownicy i role";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Użytkownicy i role</h1>
+        <p class="crud-podtytul">Zarządzanie kontami panelu Intranet.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj użytkownika
+    </a>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-0">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
+                        <tr>
+                            <th>E-mail</th>
+                            <th>Nazwa użytkownika</th>
+                            <th>Role</th>
+                            <th>Aktualny</th>
+                            <th class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.Email</strong>
+                                </td>
+
+                                <td>
+                                    @item.NazwaUzytkownika
+                                </td>
+
+                                <td>
+                                    @if (item.Role.Any())
+                                    {
+                                        foreach (var rola in item.Role)
+                                        {
+                                            <span class="badge bg-secondary me-1">
+                                                @rola
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak roli</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktualnieZalogowany)
+                                    {
+                                        <span class="badge bg-primary">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">nie</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-action="ResetHasla"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-outline-secondary">
+                                            Hasło
+                                        </a>
+
+                                        @if (item.CzyAktualnieZalogowany)
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-outline-danger"
+                                                    disabled>
+                                                Usuń
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.Id"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak użytkowników do wyświetlenia.
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model Firma.Intranet.Models.ResetHaslaUzytkownikaViewModel
+
+@{
+    ViewData["Title"] = "Reset hasła";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Reset hasła</h1>
+        <p class="crud-podtytul">Ustawienie nowego hasła użytkownika.</p>
+    </div>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">Użytkownik</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.Email</dd>
+        </dl>
+
+        <form asp-action="ResetHasla" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Email" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-4">
+                <label asp-for="NoweHaslo" class="form-label"></label>
+                <input asp-for="NoweHaslo"
+                       class="form-control"
+                       autocomplete="new-password" />
+                <span asp-validation-for="NoweHaslo" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">
+                    Zapisz nowe hasło
+                </button>
+
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Powrót do listy
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

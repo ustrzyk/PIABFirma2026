@@ -187,6 +187,31 @@
                                     </li>
                                 </ul>
                             </li>
+
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle"
+                                       href="#"
+                                       id="administracjaDropdown"
+                                       role="button"
+                                       data-bs-toggle="dropdown"
+                                       aria-expanded="false">
+                                        Administracja
+                                    </a>
+
+                                    <ul class="dropdown-menu" aria-labelledby="administracjaDropdown">
+                                        <li>
+                                            <a class="dropdown-item"
+                                               asp-area=""
+                                               asp-controller="Uzytkownik"
+                                               asp-action="Index">
+                                                Użytkownicy i role
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
                         </ul>
 
                         <div class="d-flex align-items-center gap-2 flex-wrap">
