@@ -10,8 +10,9 @@ namespace Firma.PortalWWW.Controllers
         public PromocjaController(
             IPromocjaService promocjaService,
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
             _promocjaService = promocjaService;
         }

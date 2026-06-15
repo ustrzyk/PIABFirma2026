@@ -11,8 +11,9 @@ namespace Firma.PortalWWW.Controllers
         public StanMagazynowyController(
             IStanMagazynowyService stanMagazynowyService,
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
             _stanMagazynowyService = stanMagazynowyService;
         }

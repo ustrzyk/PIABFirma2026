@@ -11,7 +11,7 @@ namespace Firma.PortalWWW.Controllers
             IUstawieniePortaluService ustawieniePortaluService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
             _ustawieniePortaluService = ustawieniePortaluService;
         }

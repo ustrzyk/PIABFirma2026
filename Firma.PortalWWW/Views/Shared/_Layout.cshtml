@@ -1,12 +1,28 @@
+@using Firma.Services.Data.Dto.CMS
+
+@{
+    var wyglad = ViewBag.WygladPortalu as PortalWygladDto ?? new PortalWygladDto();
+}
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - Sklep z drukarkami 3D</title>
+    <title>@ViewData["Title"] - @wyglad.NazwaPortalu</title>
 
     <script type="importmap"></script>
+
+    <style>
+        :root {
+        --portal-bg: @wyglad.KolorTlaPortalu;
+        --portal-navbar-bg: @wyglad.KolorNawigacji;
+        --portal-footer-bg: @wyglad.KolorStopki;
+        --portal-button-color: @wyglad.KolorPrzyciskow;
+        --portal-focus-color: @wyglad.KolorAkcentu;
+        }
+    </style>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -15,10 +31,10 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm portal-navbar">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom shadow-sm portal-navbar">
             <div class="container">
                 <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                    Sklep 3D
+                    @wyglad.NazwaPortalu
                 </a>
 
                 <button class="navbar-toggler"
@@ -52,10 +68,43 @@
             (IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>)ViewBag.ModelAktualnosci)
     </section>
 
-    <footer class="border-top footer text-muted bg-light">
+    <footer class="border-top footer text-muted portal-footer">
         <div class="container py-3">
-            &copy; 2026 - Sklep z drukarkami 3D - projekt studencki
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
+            <div class="row g-3 align-items-center">
+                <div class="col-12 col-md-6">
+                    <strong>@wyglad.StopkaTekst</strong>
+
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaAdres))
+                    {
+                        <div class="small">@wyglad.StopkaAdres</div>
+                    }
+                </div>
+
+                <div class="col-12 col-md-6 text-md-end">
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
+                    {
+                        <a href="mailto:@wyglad.StopkaEmail" class="me-2">
+                            @wyglad.StopkaEmail
+                        </a>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
+                    {
+                        <span class="me-2">@wyglad.StopkaTelefon</span>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaFacebook))
+                    {
+                        <a href="@wyglad.StopkaFacebook" target="_blank">
+                            Facebook
+                        </a>
+                    }
+
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ms-2">
+                        Prywatność
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 

@@ -1,4 +1,5 @@
-﻿using Firma.Services.Data.Dto.UstawieniaPortalu;
+﻿using Firma.Services.Data.Dto.CMS;
+using Firma.Services.Data.Dto.UstawieniaPortalu;
 
 namespace Firma.Interfaces.CMS
 {
@@ -9,5 +10,8 @@ namespace Firma.Interfaces.CMS
 
         // Pobieram ustawienie portalu do szczegółów
         Task<UstawieniePortaluSzczegolyDto?> GetUstawieniePortalu(int idUstawieniaPortalu);
+
+        // Pobieram wygląd i stopkę portalu
+        Task<PortalWygladDto> GetWygladPortalu();
     }
 }

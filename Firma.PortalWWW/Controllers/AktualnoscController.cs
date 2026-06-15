@@ -7,8 +7,9 @@ namespace Firma.PortalWWW.Controllers
     {
         public AktualnoscController(
             IAktualnoscService aktualnoscService,
-            IStronaService stronaService)
-            : base(stronaService, aktualnoscService)
+            IStronaService stronaService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
         }
 

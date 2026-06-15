@@ -16,6 +16,10 @@ html {
     --portal-soft: #f8f9fa;
     --portal-text: #212529;
     --portal-muted: #6c757d;
+    --portal-navbar-bg: #ffffff;
+    --portal-footer-bg: #f8f9fa;
+    --portal-button-color: #0d6efd;
+    --portal-focus-color: #258cfb;
 }
 
 .btn:focus,
@@ -24,7 +28,7 @@ html {
 .form-control:focus,
 .form-check-input:focus,
 .form-select:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--portal-focus-color);
 }
 
 body {
@@ -42,6 +46,11 @@ body {
     position: sticky;
     top: 0;
     z-index: 1020;
+    background-color: var(--portal-navbar-bg);
+}
+
+.portal-footer {
+    background-color: var(--portal-footer-bg);
 }
 
 .navbar-brand {
@@ -165,7 +174,7 @@ body {
 }
 
 .price-text {
-    color: #0d6efd;
+    color: var(--portal-button-color);
 }
 
 .news-card,
@@ -181,12 +190,21 @@ body {
 
 .promo-badge {
     display: inline-block;
-    background-color: #0d6efd;
+    background-color: var(--portal-button-color);
     color: white;
     font-weight: 700;
     border-radius: 50rem;
     padding: 0.4rem 0.9rem;
 }
+
+.btn-primary {
+    background-color: var(--portal-button-color);
+    border-color: var(--portal-button-color);
+}
+
+    .btn-primary:hover {
+        filter: brightness(0.92);
+    }
 
 .btn-primary,
 .btn-outline-primary,
@@ -220,11 +238,28 @@ footer {
         }
 
 @media (max-width: 767.98px) {
+    body {
+        margin-bottom: 0;
+    }
+
     .portal-header {
         display: block;
     }
 
+        .portal-header .btn {
+            width: 100%;
+            margin-top: 0.75rem;
+        }
+
     .sklep-table {
         min-width: 820px;
+    }
+
+    .navbar-brand {
+        font-size: 1.05rem;
+    }
+
+    footer .text-md-end {
+        text-align: left !important;
     }
 }

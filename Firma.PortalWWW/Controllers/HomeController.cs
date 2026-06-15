@@ -9,8 +9,9 @@ namespace Firma.PortalWWW.Controllers
     {
         public HomeController(
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
         }
 
@@ -32,8 +33,10 @@ namespace Firma.PortalWWW.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public async Task<IActionResult> Error()
         {
+            await PrzygotujDaneDoLayoutu();
+
             return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier

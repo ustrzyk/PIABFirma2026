@@ -11,8 +11,9 @@ namespace Firma.PortalWWW.Controllers
         public SklepController(
             ITowarService towarService,
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
             _towarService = towarService;
         }

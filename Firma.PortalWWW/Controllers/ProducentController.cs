@@ -11,8 +11,9 @@ namespace Firma.PortalWWW.Controllers
         public ProducentController(
             IProducentService producentService,
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
-            : base(stronaService, aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
+            : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
             _producentService = producentService;
         }

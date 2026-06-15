@@ -7,13 +7,16 @@ namespace Firma.PortalWWW.Controllers
     {
         protected readonly IStronaService _stronaService;
         protected readonly IAktualnoscService _aktualnoscService;
+        protected readonly IUstawieniePortaluService _ustawieniePortaluService;
 
         protected PortalControllerBase(
             IStronaService stronaService,
-            IAktualnoscService aktualnoscService)
+            IAktualnoscService aktualnoscService,
+            IUstawieniePortaluService ustawieniePortaluService)
         {
             _stronaService = stronaService;
             _aktualnoscService = aktualnoscService;
+            _ustawieniePortaluService = ustawieniePortaluService;
         }
 
         protected async Task PrzygotujDaneDoLayoutu()
@@ -23,6 +26,9 @@ namespace Firma.PortalWWW.Controllers
 
             // Pobieram aktualności do stopki
             ViewBag.ModelAktualnosci = await _aktualnoscService.GetAktualnoscByPozycjaTake(3);
+
+            // Pobieram wygląd portalu
+            ViewBag.WygladPortalu = await _ustawieniePortaluService.GetWygladPortalu();
         }
     }
 }
