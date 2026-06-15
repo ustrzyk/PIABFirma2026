@@ -122,5 +122,23 @@ namespace Firma.Intranet.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
+        {
+            await _producentIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _producentIntranetService.Dezaktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

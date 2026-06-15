@@ -17,5 +17,9 @@ namespace Firma.Intranet.Interfaces.Intranet
         Task<Producent?> PobierzDoUsuniecia(int id);
 
         Task UsunAlboDezaktywuj(int id);
+
+        Task Aktywuj(int id);
+
+        Task Dezaktywuj(int id);
     }
 }

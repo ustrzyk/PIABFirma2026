@@ -115,6 +115,36 @@ namespace Firma.Intranet.Services.Intranet
             await _context.SaveChangesAsync();
         }
 
+        public async Task Aktywuj(int id)
+        {
+            var producent = await _context.Producent
+                .FirstOrDefaultAsync(p => p.IdProducenta == id);
+
+            if (producent == null)
+            {
+                return;
+            }
+
+            producent.CzyAktywny = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Dezaktywuj(int id)
+        {
+            var producent = await _context.Producent
+                .FirstOrDefaultAsync(p => p.IdProducenta == id);
+
+            if (producent == null)
+            {
+                return;
+            }
+
+            producent.CzyAktywny = false;
+
+            await _context.SaveChangesAsync();
+        }
+
         private static void PrzygotujDaneProducenta(Producent producent)
         {
             producent.Nazwa = producent.Nazwa.Trim();
