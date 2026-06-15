@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Stany magazynowe";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <div class="crud-naglowek">
@@ -10,62 +11,101 @@
         <p class="crud-podtytul">Lista rekordów w module: stany magazynowe.</p>
     </div>
 
-    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj nowy rekord
+    </a>
 </div>
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.IloscSztuk)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.MinimalnaIlosc)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Lokalizacja)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Towar)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.CzyAktywny)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.IloscSztuk)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.MinimalnaIlosc)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Lokalizacja)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Towar.Nazwa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CzyAktywny)
-                            </td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdStanuMagazynowego" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdStanuMagazynowego" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdStanuMagazynowego" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
+                            <th>Ilość sztuk</th>
+                            <th>Minimalna ilość</th>
+                            <th>Lokalizacja</th>
+                            <th>Towar</th>
+                            <th>Aktywny</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.IloscSztuk
+                                </td>
+
+                                <td>
+                                    @item.MinimalnaIlosc
+                                </td>
+
+                                <td>
+                                    @item.Lokalizacja
+                                </td>
+
+                                <td>
+                                    @if (item.Towar != null)
+                                    {
+                                        @item.Towar.Nazwa
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak towaru</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </td>
+
+                                <td class="crud-akcje">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.IdStanuMagazynowego"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Edytuj
+                                    </a>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.IdStanuMagazynowego"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        Szczegóły
+                                    </a>
+
+                                    @if (czyAdministrator)
+                                    {
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.IdStanuMagazynowego"
+                                           class="btn btn-sm btn-outline-danger">
+                                            Usuń
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak stanów magazynowych do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>

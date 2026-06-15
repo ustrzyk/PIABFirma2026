@@ -1,4 +1,4 @@
-﻿@model Towar
+﻿@model Firma.Data.Data.Sklep.Towar
 
 @{
     ViewData["Title"] = "Usuń - Towar";
@@ -24,50 +24,75 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Kod)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Nazwa)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Nazwa)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Cena)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Cena)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.FotoUrl)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.FotoUrl)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Opis)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Opis)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Rodzaj)
+                Rodzaj
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Rodzaj.Nazwa)
+                @if (Model.Rodzaj != null)
+                {
+                    @Model.Rodzaj.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak rodzaju</span>
+                }
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Producent)
+                Producent
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Producent.Nazwa)
+                @if (Model.Producent != null)
+                {
+                    @Model.Producent.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak producenta</span>
+                }
             </dd>
         </dl>
 
         <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
-
             <input type="hidden" asp-for="IdTowaru" />
-            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
-    
+
+            <input type="submit"
+                   value="Usuń rekord"
+                   class="btn btn-danger" />
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Anuluj
+            </a>
         </form>
     </div>
 </div>

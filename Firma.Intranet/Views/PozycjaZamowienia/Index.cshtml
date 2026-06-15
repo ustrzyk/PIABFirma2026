@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Pozycje zamówień";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <div class="crud-naglowek">
@@ -9,55 +10,97 @@
         <h1 class="h2 mb-1">Pozycje zamówień</h1>
         <p class="crud-podtytul">Lista rekordów w module: pozycje zamówień.</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj nowy rekord
+    </a>
 </div>
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Ilosc)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.CenaJednostkowa)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Zamowienie)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Towar)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Ilosc)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CenaJednostkowa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Zamowienie.NumerZamowienia)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Towar.Nazwa)
-                            </td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdPozycjiZamowienia" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdPozycjiZamowienia" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdPozycjiZamowienia" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
+                            <th>Ilość</th>
+                            <th>Cena jednostkowa</th>
+                            <th>Zamówienie</th>
+                            <th>Towar</th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Ilosc
+                                </td>
+
+                                <td>
+                                    @item.CenaJednostkowa.ToString("N2")
+                                </td>
+
+                                <td>
+                                    @if (item.Zamowienie != null)
+                                    {
+                                        @item.Zamowienie.NumerZamowienia
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak zamówienia</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.Towar != null)
+                                    {
+                                        @item.Towar.Nazwa
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak towaru</span>
+                                    }
+                                </td>
+
+                                <td class="crud-akcje">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.IdPozycjiZamowienia"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Edytuj
+                                    </a>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.IdPozycjiZamowienia"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        Szczegóły
+                                    </a>
+
+                                    @if (czyAdministrator)
+                                    {
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.IdPozycjiZamowienia"
+                                           class="btn btn-sm btn-outline-danger">
+                                            Usuń
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak pozycji zamówień do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>

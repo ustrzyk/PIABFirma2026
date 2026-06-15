@@ -1,4 +1,4 @@
-﻿@model StanMagazynowy
+﻿@model Firma.Data.Data.Sklep.StanMagazynowy
 
 @{
     ViewData["Title"] = "Usuń - Stan magazynowy";
@@ -24,32 +24,47 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.IloscSztuk)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.MinimalnaIlosc)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.MinimalnaIlosc)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Lokalizacja)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Lokalizacja)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Towar)
+                Towar
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Towar.Nazwa)
+                @if (Model.Towar != null)
+                {
+                    @Model.Towar.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak towaru</span>
+                }
             </dd>
         </dl>
 
         <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
-
             <input type="hidden" asp-for="IdStanuMagazynowego" />
-            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
-    
+
+            <input type="submit"
+                   value="Usuń rekord"
+                   class="btn btn-danger" />
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Anuluj
+            </a>
         </form>
     </div>
 </div>

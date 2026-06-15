@@ -5,15 +5,12 @@ namespace Firma.PortalWWW.Controllers
 {
     public class UstawieniePortaluController : PortalControllerBase
     {
-        private readonly IUstawieniePortaluService _ustawieniePortaluService;
-
         public UstawieniePortaluController(
             IUstawieniePortaluService ustawieniePortaluService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService)
             : base(stronaService, aktualnoscService, ustawieniePortaluService)
         {
-            _ustawieniePortaluService = ustawieniePortaluService;
         }
 
         public async Task<IActionResult> Index()

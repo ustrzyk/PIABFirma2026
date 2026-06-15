@@ -1,7 +1,8 @@
-﻿@model Towar
+﻿@model Firma.Data.Data.Sklep.Towar
 
 @{
     ViewData["Title"] = "Szczegóły - Towar";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <div class="crud-naglowek">
@@ -50,24 +51,52 @@
             </dd>
 
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Rodzaj)
+                Rodzaj
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Rodzaj.Nazwa)
+                @if (Model.Rodzaj != null)
+                {
+                    @Model.Rodzaj.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak rodzaju</span>
+                }
             </dd>
 
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Producent)
+                Producent
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Producent.Nazwa)
+                @if (Model.Producent != null)
+                {
+                    @Model.Producent.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak producenta</span>
+                }
             </dd>
         </dl>
 
         <div class="d-flex gap-2 flex-wrap">
-            <a asp-action="Edit" asp-route-id="@Model?.IdTowaru" class="btn btn-primary">Edytuj</a>
-            <a asp-controller="ZalacznikTowaru" asp-action="Create" asp-route-idTowaru="@Model?.IdTowaru" class="btn btn-outline-dark">Dodaj załącznik</a>
-            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+            <a asp-action="Edit"
+               asp-route-id="@Model.IdTowaru"
+               class="btn btn-primary">
+                Edytuj
+            </a>
+
+            <a asp-controller="ZalacznikTowaru"
+               asp-action="Create"
+               asp-route-idTowaru="@Model.IdTowaru"
+               class="btn btn-outline-dark">
+                Dodaj załącznik
+            </a>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Powrót do listy
+            </a>
         </div>
     </div>
 </div>
@@ -82,7 +111,7 @@
 
             <a asp-controller="ZalacznikTowaru"
                asp-action="Create"
-               asp-route-idTowaru="@Model?.IdTowaru"
+               asp-route-idTowaru="@Model.IdTowaru"
                class="btn btn-primary">
                 Dodaj załącznik
             </a>
@@ -155,12 +184,15 @@
                                             Edytuj
                                         </a>
 
-                                        <a asp-controller="ZalacznikTowaru"
-                                           asp-action="Delete"
-                                           asp-route-id="@item.IdZalacznikaTowaru"
-                                           class="btn btn-outline-danger">
-                                            Usuń
-                                        </a>
+                                        @if (czyAdministrator)
+                                        {
+                                            <a asp-controller="ZalacznikTowaru"
+                                               asp-action="Delete"
+                                               asp-route-id="@item.IdZalacznikaTowaru"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        }
                                     </div>
                                 </td>
                             </tr>

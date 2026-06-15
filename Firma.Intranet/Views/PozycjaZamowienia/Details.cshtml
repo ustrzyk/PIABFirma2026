@@ -20,29 +20,54 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Ilosc)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.CenaJednostkowa)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.CenaJednostkowa)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Zamowienie)
+                Zamówienie
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Zamowienie.NumerZamowienia)
+                @if (Model.Zamowienie != null)
+                {
+                    @Model.Zamowienie.NumerZamowienia
+                }
+                else
+                {
+                    <span class="text-muted">brak zamówienia</span>
+                }
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Towar)
+                Towar
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Towar.Nazwa)
+                @if (Model.Towar != null)
+                {
+                    @Model.Towar.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak towaru</span>
+                }
             </dd>
         </dl>
 
         <div class="d-flex gap-2 flex-wrap">
-            <a asp-action="Edit" asp-route-id="@Model?.IdPozycjiZamowienia" class="btn btn-primary">Edytuj</a>
-            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+            <a asp-action="Edit"
+               asp-route-id="@Model.IdPozycjiZamowienia"
+               class="btn btn-primary">
+                Edytuj
+            </a>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Powrót do listy
+            </a>
         </div>
     </div>
 </div>
