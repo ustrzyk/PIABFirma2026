@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.CMS;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 
 namespace Firma.Intranet.Controllers
 {
     public class PromocjaController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IPromocjaIntranetService _promocjaIntranetService;
 
-        public PromocjaController(FirmaContext context)
+        public PromocjaController(IPromocjaIntranetService promocjaIntranetService)
         {
-            _context = context;
+            _promocjaIntranetService = promocjaIntranetService;
         }
 
-        // GET: Promocja
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Promocja
-                .OrderByDescending(p => p.DataOd)
-                .ToListAsync());
+            var promocje = await _promocjaIntranetService.PobierzListe();
+
+            return View(promocje);
         }
 
-        // GET: Promocja/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var promocja = await _context.Promocja
-                .FirstOrDefaultAsync(m => m.IdPromocji == id);
+            var promocja = await _promocjaIntranetService.PobierzSzczegoly(id.Value);
 
             if (promocja == null)
             {
@@ -46,28 +37,27 @@ namespace Firma.Intranet.Controllers
             return View(promocja);
         }
 
-        // GET: Promocja/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Promocja/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdPromocji,Tytul,Opis,RabatProcentowy,DataOd,DataDo,CzyAktywny")] Promocja promocja)
         {
+            WalidujDaty(promocja);
+
             if (ModelState.IsValid)
             {
-                _context.Add(promocja);
-                await _context.SaveChangesAsync();
+                await _promocjaIntranetService.Dodaj(promocja);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(promocja);
         }
 
-        // GET: Promocja/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +65,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var promocja = await _context.Promocja.FindAsync(id);
+            var promocja = await _promocjaIntranetService.PobierzDoEdycji(id.Value);
 
             if (promocja == null)
             {
@@ -85,7 +75,6 @@ namespace Firma.Intranet.Controllers
             return View(promocja);
         }
 
-        // POST: Promocja/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdPromocji,Tytul,Opis,RabatProcentowy,DataOd,DataDo,CzyAktywny")] Promocja promocja)
@@ -95,23 +84,15 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
+            WalidujDaty(promocja);
+
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _promocjaIntranetService.Aktualizuj(id, promocja);
+
+                if (!zapisano)
                 {
-                    _context.Update(promocja);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PromocjaExists(promocja.IdPromocji))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -120,7 +101,6 @@ namespace Firma.Intranet.Controllers
             return View(promocja);
         }
 
-        // GET: Promocja/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,8 +108,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var promocja = await _context.Promocja
-                .FirstOrDefaultAsync(m => m.IdPromocji == id);
+            var promocja = await _promocjaIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (promocja == null)
             {
@@ -139,25 +118,43 @@ namespace Firma.Intranet.Controllers
             return View(promocja);
         }
 
-        // POST: Promocja/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var promocja = await _context.Promocja.FindAsync(id);
+            await _promocjaIntranetService.Usun(id);
 
-            if (promocja != null)
-            {
-                _context.Promocja.Remove(promocja);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PromocjaExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
         {
-            return _context.Promocja.Any(e => e.IdPromocji == id);
+            await _promocjaIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _promocjaIntranetService.Dezaktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private void WalidujDaty(Promocja promocja)
+        {
+            if (promocja.DataOd.HasValue
+                && promocja.DataDo.HasValue
+                && promocja.DataOd.Value.Date > promocja.DataDo.Value.Date)
+            {
+                ModelState.AddModelError(
+                    nameof(Promocja.DataDo),
+                    "Data zakończenia promocji nie może być wcześniejsza niż data rozpoczęcia.");
+            }
         }
     }
 }
