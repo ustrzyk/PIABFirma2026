@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Producenci";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <div class="crud-naglowek">
@@ -10,62 +11,109 @@
         <p class="crud-podtytul">Lista rekordów w module: producenci.</p>
     </div>
 
-    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj nowy rekord
+    </a>
 </div>
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Nazwa)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Kraj)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.StronaWWW)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Opis)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.CzyAktywny)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Nazwa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Kraj)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.StronaWWW)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Opis)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CzyAktywny)
-                            </td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdProducenta" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdProducenta" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdProducenta" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
+                            <th>Nazwa producenta</th>
+                            <th>Kraj</th>
+                            <th>Strona WWW</th>
+                            <th>Aktywny</th>
+                            <th class="text-end">Akcje</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.Nazwa</strong>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Kraj))
+                                    {
+                                        @item.Kraj
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
+                                    {
+                                        <a href="@item.StronaWWW"
+                                           target="_blank"
+                                           rel="noopener noreferrer">
+                                            @item.StronaWWW
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.IdProducenta"
+                                           class="btn btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdProducenta"
+                                           class="btn btn-outline-secondary">
+                                            Szczegóły
+                                        </a>
+
+                                        @if (czyAdministrator)
+                                        {
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdProducenta"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak producentów do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>

@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 
 namespace Firma.Intranet.Controllers
 {
     public class ProducentController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IProducentIntranetService _producentIntranetService;
 
-        public ProducentController(FirmaContext context)
+        public ProducentController(IProducentIntranetService producentIntranetService)
         {
-            _context = context;
+            _producentIntranetService = producentIntranetService;
         }
 
-        // GET: Producent
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Producent
-                .OrderBy(p => p.Nazwa)
-                .ToListAsync());
+            var producenci = await _producentIntranetService.PobierzListe();
+
+            return View(producenci);
         }
 
-        // GET: Producent/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var producent = await _context.Producent
-                .FirstOrDefaultAsync(m => m.IdProducenta == id);
+            var producent = await _producentIntranetService.PobierzSzczegoly(id.Value);
 
             if (producent == null)
             {
@@ -46,28 +37,25 @@ namespace Firma.Intranet.Controllers
             return View(producent);
         }
 
-        // GET: Producent/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Producent/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdProducenta,Nazwa,Kraj,StronaWWW,Opis,CzyAktywny")] Producent producent)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(producent);
-                await _context.SaveChangesAsync();
+                await _producentIntranetService.Dodaj(producent);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(producent);
         }
 
-        // GET: Producent/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +63,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var producent = await _context.Producent.FindAsync(id);
+            var producent = await _producentIntranetService.PobierzDoEdycji(id.Value);
 
             if (producent == null)
             {
@@ -85,7 +73,6 @@ namespace Firma.Intranet.Controllers
             return View(producent);
         }
 
-        // POST: Producent/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdProducenta,Nazwa,Kraj,StronaWWW,Opis,CzyAktywny")] Producent producent)
@@ -97,21 +84,11 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _producentIntranetService.Aktualizuj(id, producent);
+
+                if (!zapisano)
                 {
-                    _context.Update(producent);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProducentExists(producent.IdProducenta))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -120,7 +97,6 @@ namespace Firma.Intranet.Controllers
             return View(producent);
         }
 
-        // GET: Producent/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,8 +104,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var producent = await _context.Producent
-                .FirstOrDefaultAsync(m => m.IdProducenta == id);
+            var producent = await _producentIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (producent == null)
             {
@@ -139,25 +114,13 @@ namespace Firma.Intranet.Controllers
             return View(producent);
         }
 
-        // POST: Producent/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var producent = await _context.Producent.FindAsync(id);
+            await _producentIntranetService.UsunAlboDezaktywuj(id);
 
-            if (producent != null)
-            {
-                _context.Producent.Remove(producent);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProducentExists(int id)
-        {
-            return _context.Producent.Any(e => e.IdProducenta == id);
         }
     }
 }
