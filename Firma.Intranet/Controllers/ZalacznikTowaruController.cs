@@ -230,6 +230,31 @@ namespace Firma.Intranet.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UsunZaznaczone(int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var zalaczniki = await _context.ZalacznikTowaru
+                .Where(z => ids.Contains(z.IdZalacznikaTowaru))
+                .ToListAsync();
+
+            foreach (var zalacznik in zalaczniki)
+            {
+                // Usuwam plik z dysku
+                UsunPlik(zalacznik.Sciezka);
+            }
+
+            _context.ZalacznikTowaru.RemoveRange(zalaczniki);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<IActionResult> Pobierz(int id)
         {
             var zalacznik = await _context.ZalacznikTowaru.FindAsync(id);

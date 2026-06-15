@@ -1,8 +1,78 @@
-﻿@model IEnumerable<ZalacznikTowaru>
+﻿@model IEnumerable<Firma.Data.Data.Sklep.ZalacznikTowaru>
 
 @{
     ViewData["Title"] = "Załączniki towarów";
 }
+
+<style>
+    .zalacznik-mobile-list {
+        display: none;
+    }
+
+    .zalacznik-mobile-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.06);
+    }
+
+    .zalacznik-mobile-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+        .zalacznik-mobile-actions .btn {
+            width: 100%;
+        }
+
+    .zalacznik-mobile-info {
+        display: grid;
+        grid-template-columns: 40% 60%;
+        gap: 0.35rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+        .zalacznik-mobile-info dt {
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .zalacznik-mobile-info dd {
+            margin-bottom: 0;
+            word-break: break-word;
+        }
+
+    @@media (max-width: 767.98px) {
+        .zalacznik-desktop-table {
+            display: none;
+        }
+
+        .zalacznik-mobile-list {
+            display: block;
+        }
+
+        .zalacznik-toolbar {
+            align-items: stretch !important;
+        }
+
+            .zalacznik-toolbar .btn {
+                width: 100%;
+            }
+
+        .crud-naglowek {
+            display: block;
+        }
+
+            .crud-naglowek .btn {
+                width: 100%;
+                margin-top: 0.75rem;
+            }
+    }
+</style>
 
 <div class="crud-naglowek">
     <div>
@@ -17,58 +87,203 @@
     <div class="card-body p-0">
         @if (Model != null && Model.Any())
         {
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Towar</th>
-                            <th>Plik</th>
-                            <th>Typ</th>
-                            <th>Rozmiar</th>
-                            <th>Data dodania</th>
-                            <th>Aktywny</th>
-                            <th class="text-end">Akcje</th>
-                        </tr>
-                    </thead>
+            <form asp-action="UsunZaznaczone" method="post">
+                @Html.AntiForgeryToken()
 
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap zalacznik-toolbar">
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="zaznaczWszystkie" />
+
+                        <label for="zaznaczWszystkie" class="form-check-label">
+                            Zaznacz wszystko
+                        </label>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirm('Czy na pewno chcesz usunąć zaznaczone załączniki?');">
+                        Usuń zaznaczone
+                    </button>
+                </div>
+
+                <div class="table-responsive zalacznik-desktop-table">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
                             <tr>
-                                <td>
+                                <th style="width: 45px;"></th>
+                                <th>Towar</th>
+                                <th>Plik</th>
+                                <th>Typ</th>
+                                <th>Rozmiar</th>
+                                <th>Data dodania</th>
+                                <th>Aktywny</th>
+                                <th class="text-end">Akcje</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input checkbox-zalacznik"
+                                               name="ids"
+                                               value="@item.IdZalacznikaTowaru" />
+                                    </td>
+
+                                    <td>
+                                        @if (item.Towar != null)
+                                        {
+                                            <strong>@item.Towar.Nazwa</strong>
+                                            <div class="small text-muted">@item.Towar.Kod</div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">brak towaru</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <strong>@item.NazwaOryginalna</strong>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.Opis))
+                                        {
+                                            <div class="small text-muted">@item.Opis</div>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <span class="badge bg-secondary">@item.TypPliku</span>
+                                    </td>
+
+                                    <td>
+                                        @((item.Rozmiar / 1024.0).ToString("N1")) KB
+                                    </td>
+
+                                    <td>
+                                        @item.DataDodania.ToString("dd.MM.yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @if (item.CzyAktywny)
+                                        {
+                                            <span class="badge bg-success">tak</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">nie</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Pobierz"
+                                               asp-route-id="@item.IdZalacznikaTowaru"
+                                               class="btn btn-outline-dark">
+                                                Pobierz
+                                            </a>
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.IdZalacznikaTowaru"
+                                               class="btn btn-outline-secondary">
+                                                Szczegóły
+                                            </a>
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.IdZalacznikaTowaru"
+                                               class="btn btn-outline-primary">
+                                                Edytuj
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdZalacznikaTowaru"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="zalacznik-mobile-list p-3">
+                    @foreach (var item in Model)
+                    {
+                        <div class="zalacznik-mobile-card">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                                <div>
+                                    <h2 class="h6 mb-1">@item.NazwaOryginalna</h2>
+
                                     @if (item.Towar != null)
                                     {
-                                        <strong>@item.Towar.Nazwa</strong>
-                                        <div class="small text-muted">@item.Towar.Kod</div>
+                                        <div class="small text-muted">
+                                            @item.Towar.Nazwa
+                                        </div>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">brak towaru</span>
+                                        <div class="small text-muted">
+                                            brak towaru
+                                        </div>
                                     }
-                                </td>
+                                </div>
 
-                                <td>
-                                    <strong>@item.NazwaOryginalna</strong>
+                                <input type="checkbox"
+                                       class="form-check-input checkbox-zalacznik"
+                                       name="ids"
+                                       value="@item.IdZalacznikaTowaru" />
+                            </div>
 
-                                    @if (!string.IsNullOrWhiteSpace(item.Opis))
+                            @if (!string.IsNullOrWhiteSpace(item.Opis))
+                            {
+                                <div class="small text-muted mb-3">
+                                    @item.Opis
+                                </div>
+                            }
+
+                            <dl class="zalacznik-mobile-info">
+                                <dt>Towar</dt>
+                                <dd>
+                                    @if (item.Towar != null)
                                     {
-                                        <div class="small text-muted">@item.Opis</div>
+                                        @item.Towar.Nazwa
                                     }
-                                </td>
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </dd>
 
-                                <td>
+                                <dt>Kod</dt>
+                                <dd>
+                                    @if (item.Towar != null)
+                                    {
+                                        @item.Towar.Kod
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </dd>
+
+                                <dt>Typ</dt>
+                                <dd>
                                     <span class="badge bg-secondary">@item.TypPliku</span>
-                                </td>
+                                </dd>
 
-                                <td>
-                                    @((item.Rozmiar / 1024.0).ToString("N1")) KB
-                                </td>
+                                <dt>Rozmiar</dt>
+                                <dd>@((item.Rozmiar / 1024.0).ToString("N1")) KB</dd>
 
-                                <td>
-                                    @item.DataDodania.ToString("dd.MM.yyyy HH:mm")
-                                </td>
+                                <dt>Data</dt>
+                                <dd>@item.DataDodania.ToString("dd.MM.yyyy HH:mm")</dd>
 
-                                <td>
+                                <dt>Aktywny</dt>
+                                <dd>
                                     @if (item.CzyAktywny)
                                     {
                                         <span class="badge bg-success">tak</span>
@@ -77,40 +292,38 @@
                                     {
                                         <span class="badge bg-secondary">nie</span>
                                     }
-                                </td>
+                                </dd>
+                            </dl>
 
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        <a asp-action="Pobierz"
-                                           asp-route-id="@item.IdZalacznikaTowaru"
-                                           class="btn btn-outline-dark">
-                                            Pobierz
-                                        </a>
+                            <div class="zalacznik-mobile-actions">
+                                <a asp-action="Pobierz"
+                                   asp-route-id="@item.IdZalacznikaTowaru"
+                                   class="btn btn-outline-dark">
+                                    Pobierz
+                                </a>
 
-                                        <a asp-action="Details"
-                                           asp-route-id="@item.IdZalacznikaTowaru"
-                                           class="btn btn-outline-secondary">
-                                            Szczegóły
-                                        </a>
+                                <a asp-action="Details"
+                                   asp-route-id="@item.IdZalacznikaTowaru"
+                                   class="btn btn-outline-secondary">
+                                    Szczegóły
+                                </a>
 
-                                        <a asp-action="Edit"
-                                           asp-route-id="@item.IdZalacznikaTowaru"
-                                           class="btn btn-outline-primary">
-                                            Edytuj
-                                        </a>
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.IdZalacznikaTowaru"
+                                   class="btn btn-outline-primary">
+                                    Edytuj
+                                </a>
 
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.IdZalacznikaTowaru"
-                                           class="btn btn-outline-danger">
-                                            Usuń
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.IdZalacznikaTowaru"
+                                   class="btn btn-outline-danger">
+                                    Usuń
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </form>
         }
         else
         {
@@ -122,3 +335,19 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const zaznaczWszystkie = document.getElementById('zaznaczWszystkie');
+
+        if (zaznaczWszystkie) {
+            zaznaczWszystkie.addEventListener('change', function () {
+                const checkboxy = document.querySelectorAll('.checkbox-zalacznik');
+
+                checkboxy.forEach(function (checkbox) {
+                    checkbox.checked = zaznaczWszystkie.checked;
+                });
+            });
+        }
+    </script>
+}
