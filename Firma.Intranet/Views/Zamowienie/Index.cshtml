@@ -9,51 +9,117 @@
         <h1 class="h2 mb-1">Zamówienia</h1>
         <p class="crud-podtytul">Lista rekordów w module: zamówienia.</p>
     </div>
+
     <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
 </div>
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>Numer zamówienia</th>
-                        <th>Data</th>
-                        <th>Status</th>
-                        <th>Wartość razem</th>
-                        <th>Adres</th>
-                        <th>Klient</th>
-                        <th>Akcje</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
                         <tr>
-                            <td>@item.NumerZamowienia</td>
-                            <td>@Html.DisplayFor(modelItem => item.DataZamowienia)</td>
-                            <td>@item.Status</td>
-                            <td>@item.WartoscRazem</td>
-                            <td>
-                                @item.Ulica @item.NumerDomu
-                                @if (!string.IsNullOrWhiteSpace(item.NumerLokalu))
-                                {
-                                    <span>/@item.NumerLokalu</span>
-                                }
-                                <br />
-                                <small class="text-muted">@item.KodPocztowy @item.Miasto</small>
-                            </td>
-                            <td>@item.Klient?.Email</td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdZamowienia" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdZamowienia" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdZamowienia" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
+                            <th>Numer zamówienia</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Wartość razem</th>
+                            <th>Adres</th>
+                            <th>Klient</th>
+                            <th class="text-end">Akcje</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.NumerZamowienia</strong>
+                                </td>
+
+                                <td>
+                                    @if (item.DataZamowienia != null)
+                                    {
+                                        @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-secondary">@item.Status</span>
+                                </td>
+
+                                <td>
+                                    <strong>@item.WartoscRazem.ToString("N2")</strong>
+                                </td>
+
+                                <td>
+                                    @item.Ulica @item.NumerDomu
+                                    @if (!string.IsNullOrWhiteSpace(item.NumerLokalu))
+                                    {
+                                        <span>/@item.NumerLokalu</span>
+                                    }
+                                    <br />
+                                    <small class="text-muted">@item.KodPocztowy @item.Miasto</small>
+                                </td>
+
+                                <td>
+                                    @if (item.Klient != null)
+                                    {
+                                        <div>@item.Klient.Email</div>
+                                        <small class="text-muted">@item.Klient.Imie @item.Klient.Nazwisko</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak klienta</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="PobierzFakturePdf"
+                                           asp-route-id="@item.IdZamowienia"
+                                           class="btn btn-outline-dark">
+                                            PDF
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.IdZamowienia"
+                                           class="btn btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdZamowienia"
+                                           class="btn btn-outline-secondary">
+                                            Szczegóły
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.IdZamowienia"
+                                           class="btn btn-outline-danger">
+                                            Usuń
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak zamówień do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>

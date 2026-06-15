@@ -6,15 +6,15 @@
 
 <div class="crud-naglowek">
     <div>
-        <h1 class="h2 mb-1">Usuń rekord</h1>
-        <p class="crud-podtytul">Przed usunięciem sprawdź, czy wybrany rekord jest poprawny.</p>
+        <h1 class="h2 mb-1">Usuń zamówienie</h1>
+        <p class="crud-podtytul">Potwierdzenie usunięcia rekordu: zamówienie.</p>
     </div>
 </div>
 
-<div class="card crud-karta border-danger-subtle">
+<div class="card crud-karta">
     <div class="card-body p-4">
-        <div class="alert alert-warning" role="alert">
-            Czy na pewno chcesz usunąć ten rekord?
+        <div class="alert alert-warning">
+            Czy na pewno chcesz usunąć to zamówienie?
         </div>
 
         <dl class="row crud-opis mb-4">
@@ -24,68 +24,88 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.NumerZamowienia)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.DataZamowienia)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.DataZamowienia)
+                @if (Model.DataZamowienia != null)
+                {
+                    @Model.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                }
+                else
+                {
+                    <span class="text-muted">brak</span>
+                }
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Status)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Status)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.WartoscRazem)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.WartoscRazem)
+                @Model.WartoscRazem.ToString("N2")
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Ulica)
+                Adres dostawy
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Ulica)
+                @Model.Ulica @Model.NumerDomu
+                @if (!string.IsNullOrWhiteSpace(Model.NumerLokalu))
+                {
+                    <span>/@Model.NumerLokalu</span>
+                }
+                <br />
+                @Model.KodPocztowy @Model.Miasto
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.NumerDomu)
+                Klient
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.NumerDomu)
-            </dd>
-            <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.NumerLokalu)
-            </dt>
-            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.NumerLokalu)
-            </dd>
-            <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.KodPocztowy)
-            </dt>
-            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.KodPocztowy)
-            </dd>
-            <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Miasto)
-            </dt>
-            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Miasto)
-            </dd>
-            <dt class="col-sm-4 col-lg-3">
-                @Html.DisplayNameFor(model => model.Klient)
-            </dt>
-            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Klient.Email)
+                @if (Model.Klient != null)
+                {
+                    <div>@Model.Klient.Imie @Model.Klient.Nazwisko</div>
+                    <div class="text-muted">@Model.Klient.Email</div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.Klient.Telefon))
+                    {
+                        <div class="text-muted">@Model.Klient.Telefon</div>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted">brak klienta</span>
+                }
             </dd>
         </dl>
 
-        <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
-
+        <form asp-action="Delete">
             <input type="hidden" asp-for="IdZamowienia" />
-            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
-    
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-danger">
+                    Usuń
+                </button>
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.IdZamowienia"
+                   class="btn btn-outline-secondary">
+                    Szczegóły
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Powrót do listy
+                </a>
+            </div>
         </form>
     </div>
 </div>

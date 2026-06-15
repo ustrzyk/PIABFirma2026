@@ -1,34 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Firma.Data.Data;
+using Firma.Data.Data.Sklep;
+using Firma.Intranet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 
 namespace Firma.Intranet.Controllers
 {
     public class ZamowienieController : Controller
     {
         private readonly FirmaContext _context;
+        private readonly FakturaPdfGenerator _fakturaPdfGenerator;
 
         public ZamowienieController(FirmaContext context)
         {
             _context = context;
+            _fakturaPdfGenerator = new FakturaPdfGenerator();
         }
 
-        // GET: Zamowienie
         public async Task<IActionResult> Index()
         {
+            // Pobieram zamówienia do listy
             var firmaContext = _context.Zamowienie
-                .Include(z => z.Klient);
+                .Include(z => z.Klient)
+                .OrderByDescending(z => z.DataZamowienia);
 
             return View(await firmaContext.ToListAsync());
         }
 
-        // GET: Zamowienie/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -36,8 +35,11 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
+            // Pobieram zamówienie do szczegółów
             var zamowienie = await _context.Zamowienie
                 .Include(z => z.Klient)
+                .Include(z => z.PozycjaZamowienia)
+                    .ThenInclude(p => p.Towar)
                 .FirstOrDefaultAsync(m => m.IdZamowienia == id);
 
             if (zamowienie == null)
@@ -48,42 +50,33 @@ namespace Firma.Intranet.Controllers
             return View(zamowienie);
         }
 
-        // GET: Zamowienie/Create
         public IActionResult Create()
         {
-            ViewData["IdKlienta"] = new SelectList(
-                _context.Klient.OrderBy(k => k.Email),
-                "IdKlienta",
-                "Email"
-            );
+            PrzygotujKlientow();
 
             return View();
         }
 
-        // POST: Zamowienie/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdZamowienia,NumerZamowienia,DataZamowienia,Status,WartoscRazem,Ulica,NumerDomu,NumerLokalu,KodPocztowy,Miasto,IdKlienta")] Zamowienie zamowienie)
         {
             if (ModelState.IsValid)
             {
+                // Zaokrąglam wartość
                 zamowienie.WartoscRazem = decimal.Round(zamowienie.WartoscRazem, 2, MidpointRounding.AwayFromZero);
+
                 _context.Add(zamowienie);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdKlienta"] = new SelectList(
-                _context.Klient.OrderBy(k => k.Email),
-                "IdKlienta",
-                "Email",
-                zamowienie.IdKlienta
-            );
+            PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
 
-        // GET: Zamowienie/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -98,17 +91,11 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            ViewData["IdKlienta"] = new SelectList(
-                _context.Klient.OrderBy(k => k.Email),
-                "IdKlienta",
-                "Email",
-                zamowienie.IdKlienta
-            );
+            PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
 
-        // POST: Zamowienie/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdZamowienia,NumerZamowienia,DataZamowienia,Status,WartoscRazem,Ulica,NumerDomu,NumerLokalu,KodPocztowy,Miasto,IdKlienta")] Zamowienie zamowienie)
@@ -122,7 +109,9 @@ namespace Firma.Intranet.Controllers
             {
                 try
                 {
+                    // Zaokrąglam wartość
                     zamowienie.WartoscRazem = decimal.Round(zamowienie.WartoscRazem, 2, MidpointRounding.AwayFromZero);
+
                     _context.Update(zamowienie);
                     await _context.SaveChangesAsync();
                 }
@@ -132,26 +121,18 @@ namespace Firma.Intranet.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdKlienta"] = new SelectList(
-                _context.Klient.OrderBy(k => k.Email),
-                "IdKlienta",
-                "Email",
-                zamowienie.IdKlienta
-            );
+            PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
 
-        // GET: Zamowienie/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -171,7 +152,6 @@ namespace Firma.Intranet.Controllers
             return View(zamowienie);
         }
 
-        // POST: Zamowienie/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -184,7 +164,47 @@ namespace Firma.Intranet.Controllers
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> PobierzFakturePdf(int id)
+        {
+            // Pobieram dane do faktury
+            var zamowienie = await _context.Zamowienie
+                .Include(z => z.Klient)
+                .Include(z => z.PozycjaZamowienia)
+                    .ThenInclude(p => p.Towar)
+                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+
+            if (zamowienie == null)
+            {
+                return NotFound();
+            }
+
+            var pdf = _fakturaPdfGenerator.Generuj(zamowienie);
+            var nazwaPliku = $"Faktura_{CzyscNazwePliku(zamowienie.NumerZamowienia)}.pdf";
+
+            return File(pdf, "application/pdf", nazwaPliku);
+        }
+
+        private void PrzygotujKlientow(int? idKlienta = null)
+        {
+            ViewData["IdKlienta"] = new SelectList(
+                _context.Klient.OrderBy(k => k.Email),
+                "IdKlienta",
+                "Email",
+                idKlienta);
+        }
+
+        private static string CzyscNazwePliku(string tekst)
+        {
+            foreach (var znak in Path.GetInvalidFileNameChars())
+            {
+                tekst = tekst.Replace(znak, '_');
+            }
+
+            return tekst;
         }
 
         private bool ZamowienieExists(int id)
