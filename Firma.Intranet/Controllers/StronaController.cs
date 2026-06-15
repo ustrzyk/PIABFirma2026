@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.CMS;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 
 namespace Firma.Intranet.Controllers
 {
     public class StronaController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IStronaIntranetService _stronaIntranetService;
 
-        public StronaController(FirmaContext context)
+        public StronaController(IStronaIntranetService stronaIntranetService)
         {
-            _context = context;
+            _stronaIntranetService = stronaIntranetService;
         }
 
-        // GET: Strona
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Strona
-                .OrderBy(s => s.Pozycja)
-                .ToListAsync());
+            var strony = await _stronaIntranetService.PobierzListe();
+
+            return View(strony);
         }
 
-        // GET: Strona/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var strona = await _context.Strona
-                .FirstOrDefaultAsync(m => m.IdStrony == id);
+            var strona = await _stronaIntranetService.PobierzSzczegoly(id.Value);
 
             if (strona == null)
             {
@@ -46,28 +37,25 @@ namespace Firma.Intranet.Controllers
             return View(strona);
         }
 
-        // GET: Strona/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Strona/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdStrony,LinkTytul,Tytul,Tresc,Pozycja,CzyAktywny")] Strona strona)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(strona);
-                await _context.SaveChangesAsync();
+                await _stronaIntranetService.Dodaj(strona);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(strona);
         }
 
-        // GET: Strona/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +63,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var strona = await _context.Strona.FindAsync(id);
+            var strona = await _stronaIntranetService.PobierzDoEdycji(id.Value);
 
             if (strona == null)
             {
@@ -85,7 +73,6 @@ namespace Firma.Intranet.Controllers
             return View(strona);
         }
 
-        // POST: Strona/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdStrony,LinkTytul,Tytul,Tresc,Pozycja,CzyAktywny")] Strona strona)
@@ -97,21 +84,11 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _stronaIntranetService.Aktualizuj(id, strona);
+
+                if (!zapisano)
                 {
-                    _context.Update(strona);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StronaExists(strona.IdStrony))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -120,7 +97,6 @@ namespace Firma.Intranet.Controllers
             return View(strona);
         }
 
-        // GET: Strona/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,8 +104,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var strona = await _context.Strona
-                .FirstOrDefaultAsync(m => m.IdStrony == id);
+            var strona = await _stronaIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (strona == null)
             {
@@ -139,25 +114,31 @@ namespace Firma.Intranet.Controllers
             return View(strona);
         }
 
-        // POST: Strona/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var strona = await _context.Strona.FindAsync(id);
+            await _stronaIntranetService.Usun(id);
 
-            if (strona != null)
-            {
-                _context.Strona.Remove(strona);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StronaExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
         {
-            return _context.Strona.Any(e => e.IdStrony == id);
+            await _stronaIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _stronaIntranetService.Dezaktywuj(id);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Strony";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <div class="crud-naglowek">
@@ -10,62 +11,139 @@
         <p class="crud-podtytul">Lista rekordów w module: strony.</p>
     </div>
 
-    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj nowy rekord
+    </a>
 </div>
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.LinkTytul)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tytul)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tresc)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Pozycja)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.CzyAktywny)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    @foreach (var item in Model)
-                    {
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 crud-tabela">
+                    <thead class="table-light">
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.LinkTytul)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Tytul)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Tresc)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Pozycja)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CzyAktywny)
-                            </td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdStrony" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdStrony" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdStrony" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
+                            <th>Tytuł odnośnika</th>
+                            <th>Tytuł strony</th>
+                            <th>Treść</th>
+                            <th>Pozycja</th>
+                            <th>Aktywna</th>
+                            <th class="text-end">Akcje</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var trescSkrocona = item.Tresc;
+
+                            if (!string.IsNullOrWhiteSpace(trescSkrocona) && trescSkrocona.Length > 120)
+                            {
+                                trescSkrocona = trescSkrocona[..120] + "...";
+                            }
+
+                            <tr>
+                                <td>
+                                    @item.LinkTytul
+                                </td>
+
+                                <td>
+                                    <strong>@item.Tytul</strong>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(trescSkrocona))
+                                    {
+                                        @trescSkrocona
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.Pozycja
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-1 flex-wrap">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.IdStrony"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdStrony"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Szczegóły
+                                        </a>
+
+                                        @if (czyAdministrator)
+                                        {
+                                            @if (item.CzyAktywny)
+                                            {
+                                                <form asp-action="Dezaktywuj"
+                                                      asp-route-id="@item.IdStrony"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-warning">
+                                                        Dezaktywuj
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Aktywuj"
+                                                      asp-route-id="@item.IdStrony"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-success">
+                                                        Aktywuj
+                                                    </button>
+                                                </form>
+                                            }
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdStrony"
+                                               class="btn btn-sm btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak stron do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>
