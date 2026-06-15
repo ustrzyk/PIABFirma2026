@@ -1,31 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 
 namespace Firma.Intranet.Controllers
 {
     public class KlientController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IKlientIntranetService _klientIntranetService;
 
-        public KlientController(FirmaContext context)
+        public KlientController(IKlientIntranetService klientIntranetService)
         {
-            _context = context;
+            _klientIntranetService = klientIntranetService;
         }
 
-        // GET: Klient
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Klient.ToListAsync());
+            var klienci = await _klientIntranetService.PobierzListe();
+
+            return View(klienci);
         }
 
-        // GET: Klient/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var klient = await _context.Klient
-                .FirstOrDefaultAsync(m => m.IdKlienta == id);
+            var klient = await _klientIntranetService.PobierzSzczegoly(id.Value);
 
             if (klient == null)
             {
@@ -44,28 +37,25 @@ namespace Firma.Intranet.Controllers
             return View(klient);
         }
 
-        // GET: Klient/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Klient/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdKlienta,Imie,Nazwisko,Email,Telefon")] Klient klient)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(klient);
-                await _context.SaveChangesAsync();
+                await _klientIntranetService.Dodaj(klient);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(klient);
         }
 
-        // GET: Klient/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,7 +63,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var klient = await _context.Klient.FindAsync(id);
+            var klient = await _klientIntranetService.PobierzDoEdycji(id.Value);
 
             if (klient == null)
             {
@@ -83,7 +73,6 @@ namespace Firma.Intranet.Controllers
             return View(klient);
         }
 
-        // POST: Klient/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdKlienta,Imie,Nazwisko,Email,Telefon")] Klient klient)
@@ -95,21 +84,11 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _klientIntranetService.Aktualizuj(id, klient);
+
+                if (!zapisano)
                 {
-                    _context.Update(klient);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!KlientExists(klient.IdKlienta))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -118,7 +97,6 @@ namespace Firma.Intranet.Controllers
             return View(klient);
         }
 
-        // GET: Klient/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -126,8 +104,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var klient = await _context.Klient
-                .FirstOrDefaultAsync(m => m.IdKlienta == id);
+            var klient = await _klientIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (klient == null)
             {
@@ -137,25 +114,29 @@ namespace Firma.Intranet.Controllers
             return View(klient);
         }
 
-        // POST: Klient/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var klient = await _context.Klient.FindAsync(id);
+            var usunieto = await _klientIntranetService.Usun(id);
 
-            if (klient != null)
+            if (!usunieto)
             {
-                _context.Klient.Remove(klient);
+                var klient = await _klientIntranetService.PobierzDoUsuniecia(id);
+
+                if (klient == null)
+                {
+                    return NotFound();
+                }
+
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Nie można usunąć klienta, który ma przypisane zamówienia.");
+
+                return View("Delete", klient);
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool KlientExists(int id)
-        {
-            return _context.Klient.Any(e => e.IdKlienta == id);
         }
     }
 }

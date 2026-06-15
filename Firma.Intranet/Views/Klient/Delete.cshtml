@@ -13,9 +13,18 @@
 
 <div class="card crud-karta border-danger-subtle">
     <div class="card-body p-4">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
         <div class="alert alert-warning" role="alert">
-            Czy na pewno chcesz usunąć ten rekord?
+            Czy na pewno chcesz usunąć tego klienta?
         </div>
+
+        @if (Model.Zamowienie != null && Model.Zamowienie.Any())
+        {
+            <div class="alert alert-info">
+                Ten klient ma przypisane zamówienia, dlatego nie powinien być usuwany z historii sprzedaży.
+            </div>
+        }
 
         <dl class="row crud-opis mb-4">
             <dt class="col-sm-4 col-lg-3">
@@ -24,32 +33,49 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Imie)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Nazwisko)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Nazwisko)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Email)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Email)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Telefon)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Telefon)
+                @if (!string.IsNullOrWhiteSpace(Model.Telefon))
+                {
+                    @Model.Telefon
+                }
+                else
+                {
+                    <span class="text-muted">brak</span>
+                }
             </dd>
         </dl>
 
         <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
+            @Html.AntiForgeryToken()
 
             <input type="hidden" asp-for="IdKlienta" />
-            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
-    
+
+            <input type="submit"
+                   value="Usuń rekord"
+                   class="btn btn-danger" />
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Anuluj
+            </a>
         </form>
     </div>
 </div>
