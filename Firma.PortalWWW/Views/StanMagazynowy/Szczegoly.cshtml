@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header mb-4">
+<div class="portal-header portal-header-responsive mb-4">
     <div>
         <h1 class="h3 mb-1">Stan magazynowy</h1>
         <p class="text-muted mb-0">
@@ -13,11 +13,13 @@
         </p>
     </div>
 
-    <a asp-controller="StanMagazynowy"
-       asp-action="Index"
-       class="btn btn-outline-secondary">
-        Powrót do stanów
-    </a>
+    <div class="portal-actions">
+        <a asp-controller="StanMagazynowy"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Powrót do stanów
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -43,9 +45,18 @@
     <div class="col-12 col-lg-7">
         <div class="card page-card shadow-sm h-100">
             <div class="card-body">
-                <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-3">
                     <span class="badge bg-secondary">@Model.Rodzaj</span>
                     <span class="badge bg-light text-dark border">@Model.Producent</span>
+
+                    @if (Model.CzyMaloTowaru)
+                    {
+                        <span class="badge bg-warning text-dark">niski stan</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">stan OK</span>
+                    }
                 </div>
 
                 <h2 class="h4 mb-3">@Model.NazwaTowaru</h2>
@@ -106,7 +117,7 @@
 
                 @if (Model.IdTowaru > 0)
                 {
-                    <a class="btn btn-primary"
+                    <a class="btn btn-primary details-main-button"
                        asp-controller="Sklep"
                        asp-action="Szczegoly"
                        asp-route-id="@Model.IdTowaru">

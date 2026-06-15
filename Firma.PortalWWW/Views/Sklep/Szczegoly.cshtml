@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header mb-4">
+<div class="portal-header portal-header-responsive mb-4">
     <div>
         <h1 class="h3 mb-1">@Model.Nazwa</h1>
         <p class="text-muted mb-0">
@@ -13,11 +13,13 @@
         </p>
     </div>
 
-    <a asp-controller="Sklep"
-       asp-action="Index"
-       class="btn btn-outline-secondary">
-        Powrót do sklepu
-    </a>
+    <div class="portal-actions">
+        <a asp-controller="Sklep"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Powrót do sklepu
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -43,7 +45,7 @@
     <div class="col-12 col-lg-7">
         <div class="card page-card shadow-sm h-100">
             <div class="card-body">
-                <div class="mb-3">
+                <div class="d-flex flex-wrap gap-2 mb-3">
                     <span class="badge bg-secondary">@Model.Rodzaj</span>
                     <span class="badge bg-light text-dark border">@Model.Producent</span>
                 </div>
@@ -55,7 +57,7 @@
                 </p>
 
                 <div class="mb-4">
-                    <span class="fs-3 fw-bold">
+                    <span class="fs-3 fw-bold price-text">
                         @Model.Cena.ToString("C")
                     </span>
                 </div>

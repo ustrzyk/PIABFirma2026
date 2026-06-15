@@ -6,7 +6,7 @@
 
 @if (Model != null)
 {
-    <div class="portal-header mb-4">
+    <div class="portal-header portal-header-responsive mb-4">
         <div>
             <span class="portal-badge">Portal klienta</span>
             <h1 class="h3 mt-2 mb-1">@Model.Tytul</h1>
@@ -15,7 +15,7 @@
             </p>
         </div>
 
-        <div class="d-flex gap-2">
+        <div class="portal-actions">
             <a asp-controller="Sklep"
                asp-action="Index"
                class="btn btn-primary">
