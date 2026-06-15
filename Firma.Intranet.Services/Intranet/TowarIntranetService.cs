@@ -128,6 +128,36 @@ namespace Firma.Intranet.Services.Intranet
             await _context.SaveChangesAsync();
         }
 
+        public async Task Dezaktywuj(int id)
+        {
+            var towar = await _context.Towar
+                .FirstOrDefaultAsync(t => t.IdTowaru == id);
+
+            if (towar == null)
+            {
+                return;
+            }
+
+            towar.CzyAktywny = false;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Aktywuj(int id)
+        {
+            var towar = await _context.Towar
+                .FirstOrDefaultAsync(t => t.IdTowaru == id);
+
+            if (towar == null)
+            {
+                return;
+            }
+
+            towar.CzyAktywny = true;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DezaktywujZaznaczone(int[] ids)
         {
             if (ids == null || ids.Length == 0)

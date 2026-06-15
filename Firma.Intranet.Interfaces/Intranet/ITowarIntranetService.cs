@@ -21,6 +21,10 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task UsunZaznaczone(int[] ids, string folderUploadu);
 
+        Task Dezaktywuj(int id);
+
+        Task Aktywuj(int id);
+
         Task DezaktywujZaznaczone(int[] ids);
 
         Task AktywujZaznaczone(int[] ids);

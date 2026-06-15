@@ -227,24 +227,43 @@
                                     </td>
 
                                     <td class="text-end">
-                                        <div class="btn-group btn-group-sm">
+                                        <div class="d-flex justify-content-end gap-1 flex-wrap">
                                             <a asp-action="Edit"
                                                asp-route-id="@item.IdTowaru"
-                                               class="btn btn-outline-primary">
+                                               class="btn btn-sm btn-outline-primary">
                                                 Edytuj
                                             </a>
 
                                             <a asp-action="Details"
                                                asp-route-id="@item.IdTowaru"
-                                               class="btn btn-outline-secondary">
+                                               class="btn btn-sm btn-outline-secondary">
                                                 Szczegóły
                                             </a>
 
                                             @if (czyAdministrator)
                                             {
+                                                @if (item.CzyAktywny)
+                                                {
+                                                    <button type="submit"
+                                                            asp-action="Dezaktywuj"
+                                                            asp-route-id="@item.IdTowaru"
+                                                            class="btn btn-sm btn-outline-warning">
+                                                        Dezaktywuj
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit"
+                                                            asp-action="Aktywuj"
+                                                            asp-route-id="@item.IdTowaru"
+                                                            class="btn btn-sm btn-outline-success">
+                                                        Aktywuj
+                                                    </button>
+                                                }
+
                                                 <a asp-action="Delete"
                                                    asp-route-id="@item.IdTowaru"
-                                                   class="btn btn-outline-danger">
+                                                   class="btn btn-sm btn-outline-danger">
                                                     Usuń
                                                 </a>
                                             }
@@ -350,6 +369,25 @@
 
                                 @if (czyAdministrator)
                                 {
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <button type="submit"
+                                                asp-action="Dezaktywuj"
+                                                asp-route-id="@item.IdTowaru"
+                                                class="btn btn-outline-warning">
+                                            Dezaktywuj
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit"
+                                                asp-action="Aktywuj"
+                                                asp-route-id="@item.IdTowaru"
+                                                class="btn btn-outline-success">
+                                            Aktywuj
+                                        </button>
+                                    }
+
                                     <a asp-action="Delete"
                                        asp-route-id="@item.IdTowaru"
                                        class="btn btn-outline-danger">
