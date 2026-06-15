@@ -1,4 +1,4 @@
-﻿namespace Firma.Services.Data.Intranet
+﻿namespace Firma.Intranet.Services.Data.Intranet
 {
     public class KlientSelectItemDto
     {

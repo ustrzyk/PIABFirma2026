@@ -1,5 +1,6 @@
 using System.Globalization;
 using Firma.Data.Data;
+using Firma.Intranet;
 using Firma.Intranet.ModelBinders;
 using Firma.Intranet.Security;
 using Firma.Intranet.Services;
@@ -16,6 +17,8 @@ var connectionString = builder.Configuration.GetConnectionString("FirmaContext")
     ?? throw new InvalidOperationException("Connection string 'FirmaContext' not found.");
 
 builder.Services.AddDbContext<FirmaContext>(options => options.UseSqlServer(connectionString));
+
+DependencyInjectionFactory.Resolve(builder.Services, builder.Configuration);
 
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>(options =>

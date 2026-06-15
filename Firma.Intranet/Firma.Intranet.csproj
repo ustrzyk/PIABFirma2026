@@ -31,9 +31,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Firma.Data\Firma.Data.csproj" />
-		<ProjectReference Include="..\Firma.Interfaces\Firma.Interfaces.csproj" />
-		<ProjectReference Include="..\Firma.Services\Firma.Services.csproj" />
-		<ProjectReference Include="..\Firma.Services.Data\Firma.Services.Data.csproj" />
+		<ProjectReference Include="..\Firma.Intranet.Interfaces\Firma.Intranet.Interfaces.csproj" />
+		<ProjectReference Include="..\Firma.Intranet.Services\Firma.Intranet.Services.csproj" />
+		<ProjectReference Include="..\Firma.Intranet.Services.Data\Firma.Intranet.Services.Data.csproj" />
 	</ItemGroup>
 
 </Project>

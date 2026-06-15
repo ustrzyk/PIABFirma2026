@@ -1,39 +1,40 @@
-using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Firma.Intranet.Models;
 using Firma.Intranet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.IO.Compression;
 
 namespace Firma.Intranet.Controllers
 {
     public class ZamowienieController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IZamowienieIntranetService _zamowienieIntranetService;
         private readonly FakturaPdfGenerator _fakturaPdfGenerator;
         private readonly ZamowienieExcelGenerator _zamowienieExcelGenerator;
         private readonly ZamowienieExcelSzablonGenerator _zamowienieExcelSzablonGenerator;
         private readonly ZamowienieExcelImporter _zamowienieExcelImporter;
 
-        public ZamowienieController(FirmaContext context)
+        public ZamowienieController(
+            IZamowienieIntranetService zamowienieIntranetService,
+            FakturaPdfGenerator fakturaPdfGenerator,
+            ZamowienieExcelGenerator zamowienieExcelGenerator,
+            ZamowienieExcelSzablonGenerator zamowienieExcelSzablonGenerator,
+            ZamowienieExcelImporter zamowienieExcelImporter)
         {
-            _context = context;
-            _fakturaPdfGenerator = new FakturaPdfGenerator();
-            _zamowienieExcelGenerator = new ZamowienieExcelGenerator();
-            _zamowienieExcelSzablonGenerator = new ZamowienieExcelSzablonGenerator();
-            _zamowienieExcelImporter = new ZamowienieExcelImporter(context);
+            _zamowienieIntranetService = zamowienieIntranetService;
+            _fakturaPdfGenerator = fakturaPdfGenerator;
+            _zamowienieExcelGenerator = zamowienieExcelGenerator;
+            _zamowienieExcelSzablonGenerator = zamowienieExcelSzablonGenerator;
+            _zamowienieExcelImporter = zamowienieExcelImporter;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Pobieram zamówienia do listy
-            var firmaContext = _context.Zamowienie
-                .Include(z => z.Klient)
-                .OrderByDescending(z => z.DataZamowienia);
+            var zamowienia = await _zamowienieIntranetService.PobierzListe();
 
-            return View(await firmaContext.ToListAsync());
+            return View(zamowienia);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -43,12 +44,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            // Pobieram zamówienie do szczegółów
-            var zamowienie = await _context.Zamowienie
-                .Include(z => z.Klient)
-                .Include(z => z.PozycjaZamowienia)
-                    .ThenInclude(p => p.Towar)
-                .FirstOrDefaultAsync(m => m.IdZamowienia == id);
+            var zamowienie = await _zamowienieIntranetService.PobierzSzczegoly(id.Value);
 
             if (zamowienie == null)
             {
@@ -58,9 +54,9 @@ namespace Firma.Intranet.Controllers
             return View(zamowienie);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            PrzygotujKlientow();
+            await PrzygotujKlientow();
 
             return View();
         }
@@ -71,16 +67,12 @@ namespace Firma.Intranet.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Zaokrąglam wartość
-                zamowienie.WartoscRazem = decimal.Round(zamowienie.WartoscRazem, 2, MidpointRounding.AwayFromZero);
-
-                _context.Add(zamowienie);
-                await _context.SaveChangesAsync();
+                await _zamowienieIntranetService.Dodaj(zamowienie);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            PrzygotujKlientow(zamowienie.IdKlienta);
+            await PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
@@ -92,14 +84,14 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var zamowienie = await _context.Zamowienie.FindAsync(id);
+            var zamowienie = await _zamowienieIntranetService.PobierzDoEdycji(id.Value);
 
             if (zamowienie == null)
             {
                 return NotFound();
             }
 
-            PrzygotujKlientow(zamowienie.IdKlienta);
+            await PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
@@ -115,28 +107,17 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    // Zaokrąglam wartość
-                    zamowienie.WartoscRazem = decimal.Round(zamowienie.WartoscRazem, 2, MidpointRounding.AwayFromZero);
+                var zapisano = await _zamowienieIntranetService.Aktualizuj(id, zamowienie);
 
-                    _context.Update(zamowienie);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                if (!zapisano)
                 {
-                    if (!ZamowienieExists(zamowienie.IdZamowienia))
-                    {
-                        return NotFound();
-                    }
-
-                    throw;
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            PrzygotujKlientow(zamowienie.IdKlienta);
+            await PrzygotujKlientow(zamowienie.IdKlienta);
 
             return View(zamowienie);
         }
@@ -148,9 +129,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var zamowienie = await _context.Zamowienie
-                .Include(z => z.Klient)
-                .FirstOrDefaultAsync(m => m.IdZamowienia == id);
+            var zamowienie = await _zamowienieIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (zamowienie == null)
             {
@@ -164,22 +143,14 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var zamowienie = await _context.Zamowienie.FindAsync(id);
-
-            if (zamowienie != null)
-            {
-                _context.Zamowienie.Remove(zamowienie);
-            }
-
-            await _context.SaveChangesAsync();
+            await _zamowienieIntranetService.Usun(id);
 
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> PobierzFakturePdf(int id)
         {
-            // Pobieram dane do faktury
-            var zamowienie = await PobierzZamowienieDoDokumentow(id);
+            var zamowienie = await _zamowienieIntranetService.PobierzDoDokumentow(id);
 
             if (zamowienie == null)
             {
@@ -201,11 +172,7 @@ namespace Firma.Intranet.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Pobieram zamówienia do paczki faktur
-            var zamowienia = await ZapytanieZamowienDoDokumentow()
-                .Where(z => ids.Contains(z.IdZamowienia))
-                .OrderByDescending(z => z.DataZamowienia)
-                .ToListAsync();
+            var zamowienia = await _zamowienieIntranetService.PobierzZaznaczoneDoDokumentow(ids);
 
             if (!zamowienia.Any())
             {
@@ -219,7 +186,6 @@ namespace Firma.Intranet.Controllers
             {
                 foreach (var zamowienie in zamowienia)
                 {
-                    // Generuję fakturę do ZIP
                     var pdf = _fakturaPdfGenerator.Generuj(zamowienie);
                     var nazwaPliku = PrzygotujUnikalnaNazwePdf(zamowienie, uzyteNazwy);
 
@@ -238,10 +204,7 @@ namespace Firma.Intranet.Controllers
 
         public async Task<IActionResult> PobierzZamowieniaExcel()
         {
-            // Pobieram wszystkie zamówienia do Excela
-            var zamowienia = await ZapytanieZamowienDoDokumentow()
-                .OrderByDescending(z => z.DataZamowienia)
-                .ToListAsync();
+            var zamowienia = await _zamowienieIntranetService.PobierzWszystkieDoDokumentow();
 
             var excel = _zamowienieExcelGenerator.Generuj(zamowienia);
             var nazwaPliku = $"Zamowienia_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
@@ -261,11 +224,7 @@ namespace Firma.Intranet.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // Pobieram zaznaczone zamówienia do Excela
-            var zamowienia = await ZapytanieZamowienDoDokumentow()
-                .Where(z => ids.Contains(z.IdZamowienia))
-                .OrderByDescending(z => z.DataZamowienia)
-                .ToListAsync();
+            var zamowienia = await _zamowienieIntranetService.PobierzZaznaczoneDoDokumentow(ids);
 
             if (!zamowienia.Any())
             {
@@ -283,7 +242,6 @@ namespace Firma.Intranet.Controllers
 
         public IActionResult PobierzSzablonImportuExcel()
         {
-            // Generuję szablon importu zamówień
             var excel = _zamowienieExcelSzablonGenerator.Generuj();
 
             return File(
@@ -301,30 +259,17 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportExcel(ImportZamowienExcelViewModel model)
         {
-            // Importuję zamówienia z Excela
             var wynik = await _zamowienieExcelImporter.Importuj(model.Plik);
 
             return View(wynik);
         }
 
-        private async Task<Zamowienie?> PobierzZamowienieDoDokumentow(int id)
+        private async Task PrzygotujKlientow(int? idKlienta = null)
         {
-            return await ZapytanieZamowienDoDokumentow()
-                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
-        }
+            var klienci = await _zamowienieIntranetService.PobierzKlientowDoSelectList();
 
-        private IQueryable<Zamowienie> ZapytanieZamowienDoDokumentow()
-        {
-            return _context.Zamowienie
-                .Include(z => z.Klient)
-                .Include(z => z.PozycjaZamowienia)
-                    .ThenInclude(p => p.Towar);
-        }
-
-        private void PrzygotujKlientow(int? idKlienta = null)
-        {
             ViewData["IdKlienta"] = new SelectList(
-                _context.Klient.OrderBy(k => k.Email),
+                klienci,
                 "IdKlienta",
                 "Email",
                 idKlienta);
@@ -355,11 +300,6 @@ namespace Firma.Intranet.Controllers
             }
 
             return tekst;
-        }
-
-        private bool ZamowienieExists(int id)
-        {
-            return _context.Zamowienie.Any(e => e.IdZamowienia == id);
         }
     }
 }

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Firma.Data\Firma.Data.csproj" />
+		<ProjectReference Include="..\Firma.Intranet.Interfaces\Firma.Intranet.Interfaces.csproj" />
+		<ProjectReference Include="..\Firma.Intranet.Services.Data\Firma.Intranet.Services.Data.csproj" />
+	</ItemGroup>
+
+</Project>
