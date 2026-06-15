@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.CMS;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 
 namespace Firma.Intranet.Controllers
 {
     public class AktualnoscController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IAktualnoscIntranetService _aktualnoscIntranetService;
 
-        public AktualnoscController(FirmaContext context)
+        public AktualnoscController(IAktualnoscIntranetService aktualnoscIntranetService)
         {
-            _context = context;
+            _aktualnoscIntranetService = aktualnoscIntranetService;
         }
 
-        // GET: Aktualnosc
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Aktualnosc
-                .OrderBy(a => a.Pozycja)
-                .ToListAsync());
+            var aktualnosci = await _aktualnoscIntranetService.PobierzListe();
+
+            return View(aktualnosci);
         }
 
-        // GET: Aktualnosc/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var aktualnosc = await _context.Aktualnosc
-                .FirstOrDefaultAsync(m => m.IdAktualnosci == id);
+            var aktualnosc = await _aktualnoscIntranetService.PobierzSzczegoly(id.Value);
 
             if (aktualnosc == null)
             {
@@ -46,28 +37,25 @@ namespace Firma.Intranet.Controllers
             return View(aktualnosc);
         }
 
-        // GET: Aktualnosc/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Aktualnosc/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdAktualnosci,LinkTytul,Tytul,Tresc,Pozycja,CzyAktywny")] Aktualnosc aktualnosc)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(aktualnosc);
-                await _context.SaveChangesAsync();
+                await _aktualnoscIntranetService.Dodaj(aktualnosc);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(aktualnosc);
         }
 
-        // GET: Aktualnosc/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +63,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var aktualnosc = await _context.Aktualnosc.FindAsync(id);
+            var aktualnosc = await _aktualnoscIntranetService.PobierzDoEdycji(id.Value);
 
             if (aktualnosc == null)
             {
@@ -85,7 +73,6 @@ namespace Firma.Intranet.Controllers
             return View(aktualnosc);
         }
 
-        // POST: Aktualnosc/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdAktualnosci,LinkTytul,Tytul,Tresc,Pozycja,CzyAktywny")] Aktualnosc aktualnosc)
@@ -97,21 +84,11 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _aktualnoscIntranetService.Aktualizuj(id, aktualnosc);
+
+                if (!zapisano)
                 {
-                    _context.Update(aktualnosc);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AktualnoscExists(aktualnosc.IdAktualnosci))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -120,7 +97,6 @@ namespace Firma.Intranet.Controllers
             return View(aktualnosc);
         }
 
-        // GET: Aktualnosc/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,8 +104,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var aktualnosc = await _context.Aktualnosc
-                .FirstOrDefaultAsync(m => m.IdAktualnosci == id);
+            var aktualnosc = await _aktualnoscIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (aktualnosc == null)
             {
@@ -139,25 +114,31 @@ namespace Firma.Intranet.Controllers
             return View(aktualnosc);
         }
 
-        // POST: Aktualnosc/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var aktualnosc = await _context.Aktualnosc.FindAsync(id);
+            await _aktualnoscIntranetService.Usun(id);
 
-            if (aktualnosc != null)
-            {
-                _context.Aktualnosc.Remove(aktualnosc);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool AktualnoscExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
         {
-            return _context.Aktualnosc.Any(e => e.IdAktualnosci == id);
+            await _aktualnoscIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _aktualnoscIntranetService.Dezaktywuj(id);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
