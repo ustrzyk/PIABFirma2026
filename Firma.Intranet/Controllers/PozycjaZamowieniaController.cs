@@ -1,35 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 
 namespace Firma.Intranet.Controllers
 {
     public class PozycjaZamowieniaController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IPozycjaZamowieniaIntranetService _pozycjaZamowieniaIntranetService;
 
-        public PozycjaZamowieniaController(FirmaContext context)
+        public PozycjaZamowieniaController(IPozycjaZamowieniaIntranetService pozycjaZamowieniaIntranetService)
         {
-            _context = context;
+            _pozycjaZamowieniaIntranetService = pozycjaZamowieniaIntranetService;
         }
 
-        // GET: PozycjaZamowienia
         public async Task<IActionResult> Index()
         {
-            var firmaContext = _context.PozycjaZamowienia
-                .Include(p => p.Towar)
-                .Include(p => p.Zamowienie);
+            var pozycjeZamowien = await _pozycjaZamowieniaIntranetService.PobierzListe();
 
-            return View(await firmaContext.ToListAsync());
+            return View(pozycjeZamowien);
         }
 
-        // GET: PozycjaZamowienia/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,10 +28,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var pozycjaZamowienia = await _context.PozycjaZamowienia
-                .Include(p => p.Towar)
-                .Include(p => p.Zamowienie)
-                .FirstOrDefaultAsync(m => m.IdPozycjiZamowienia == id);
+            var pozycjaZamowienia = await _pozycjaZamowieniaIntranetService.PobierzSzczegoly(id.Value);
 
             if (pozycjaZamowienia == null)
             {
@@ -50,55 +38,31 @@ namespace Firma.Intranet.Controllers
             return View(pozycjaZamowienia);
         }
 
-        // GET: PozycjaZamowienia/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["IdTowaru"] = new SelectList(
-                _context.Towar.OrderBy(t => t.Nazwa),
-                "IdTowaru",
-                "Nazwa"
-            );
-
-            ViewData["IdZamowienia"] = new SelectList(
-                _context.Zamowienie.OrderBy(z => z.NumerZamowienia),
-                "IdZamowienia",
-                "NumerZamowienia"
-            );
+            await PrzygotujListy();
 
             return View();
         }
 
-        // POST: PozycjaZamowienia/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdPozycjiZamowienia,Ilosc,CenaJednostkowa,IdZamowienia,IdTowaru")] PozycjaZamowienia pozycjaZamowienia)
         {
             if (ModelState.IsValid)
             {
-                pozycjaZamowienia.CenaJednostkowa = decimal.Round(pozycjaZamowienia.CenaJednostkowa, 2, MidpointRounding.AwayFromZero);
-                _context.Add(pozycjaZamowienia);
-                await _context.SaveChangesAsync();
+                await _pozycjaZamowieniaIntranetService.Dodaj(pozycjaZamowienia);
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdTowaru"] = new SelectList(
-                _context.Towar.OrderBy(t => t.Nazwa),
-                "IdTowaru",
-                "Nazwa",
-                pozycjaZamowienia.IdTowaru
-            );
-
-            ViewData["IdZamowienia"] = new SelectList(
-                _context.Zamowienie.OrderBy(z => z.NumerZamowienia),
-                "IdZamowienia",
-                "NumerZamowienia",
-                pozycjaZamowienia.IdZamowienia
-            );
+            await PrzygotujListy(
+                pozycjaZamowienia.IdZamowienia,
+                pozycjaZamowienia.IdTowaru);
 
             return View(pozycjaZamowienia);
         }
 
-        // GET: PozycjaZamowienia/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -106,31 +70,20 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var pozycjaZamowienia = await _context.PozycjaZamowienia.FindAsync(id);
+            var pozycjaZamowienia = await _pozycjaZamowieniaIntranetService.PobierzDoEdycji(id.Value);
 
             if (pozycjaZamowienia == null)
             {
                 return NotFound();
             }
 
-            ViewData["IdTowaru"] = new SelectList(
-                _context.Towar.OrderBy(t => t.Nazwa),
-                "IdTowaru",
-                "Nazwa",
-                pozycjaZamowienia.IdTowaru
-            );
-
-            ViewData["IdZamowienia"] = new SelectList(
-                _context.Zamowienie.OrderBy(z => z.NumerZamowienia),
-                "IdZamowienia",
-                "NumerZamowienia",
-                pozycjaZamowienia.IdZamowienia
-            );
+            await PrzygotujListy(
+                pozycjaZamowienia.IdZamowienia,
+                pozycjaZamowienia.IdTowaru);
 
             return View(pozycjaZamowienia);
         }
 
-        // POST: PozycjaZamowienia/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdPozycjiZamowienia,Ilosc,CenaJednostkowa,IdZamowienia,IdTowaru")] PozycjaZamowienia pozycjaZamowienia)
@@ -142,45 +95,23 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _pozycjaZamowieniaIntranetService.Aktualizuj(id, pozycjaZamowienia);
+
+                if (!zapisano)
                 {
-                    pozycjaZamowienia.CenaJednostkowa = decimal.Round(pozycjaZamowienia.CenaJednostkowa, 2, MidpointRounding.AwayFromZero);
-                    _context.Update(pozycjaZamowienia);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PozycjaZamowieniaExists(pozycjaZamowienia.IdPozycjiZamowienia))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdTowaru"] = new SelectList(
-                _context.Towar.OrderBy(t => t.Nazwa),
-                "IdTowaru",
-                "Nazwa",
-                pozycjaZamowienia.IdTowaru
-            );
-
-            ViewData["IdZamowienia"] = new SelectList(
-                _context.Zamowienie.OrderBy(z => z.NumerZamowienia),
-                "IdZamowienia",
-                "NumerZamowienia",
-                pozycjaZamowienia.IdZamowienia
-            );
+            await PrzygotujListy(
+                pozycjaZamowienia.IdZamowienia,
+                pozycjaZamowienia.IdTowaru);
 
             return View(pozycjaZamowienia);
         }
 
-        // GET: PozycjaZamowienia/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -188,10 +119,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var pozycjaZamowienia = await _context.PozycjaZamowienia
-                .Include(p => p.Towar)
-                .Include(p => p.Zamowienie)
-                .FirstOrDefaultAsync(m => m.IdPozycjiZamowienia == id);
+            var pozycjaZamowienia = await _pozycjaZamowieniaIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (pozycjaZamowienia == null)
             {
@@ -201,25 +129,31 @@ namespace Firma.Intranet.Controllers
             return View(pozycjaZamowienia);
         }
 
-        // POST: PozycjaZamowienia/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var pozycjaZamowienia = await _context.PozycjaZamowienia.FindAsync(id);
+            await _pozycjaZamowieniaIntranetService.Usun(id);
 
-            if (pozycjaZamowienia != null)
-            {
-                _context.PozycjaZamowienia.Remove(pozycjaZamowienia);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PozycjaZamowieniaExists(int id)
+        private async Task PrzygotujListy(int? idZamowienia = null, int? idTowaru = null)
         {
-            return _context.PozycjaZamowienia.Any(e => e.IdPozycjiZamowienia == id);
+            var zamowienia = await _pozycjaZamowieniaIntranetService.PobierzZamowieniaDoSelectList();
+            var towary = await _pozycjaZamowieniaIntranetService.PobierzTowaryDoSelectList();
+
+            ViewData["IdZamowienia"] = new SelectList(
+                zamowienia,
+                "IdZamowienia",
+                "NumerZamowienia",
+                idZamowienia);
+
+            ViewData["IdTowaru"] = new SelectList(
+                towary,
+                "IdTowaru",
+                "Nazwa",
+                idTowaru);
         }
     }
 }
