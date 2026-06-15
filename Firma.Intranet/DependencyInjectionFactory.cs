@@ -19,6 +19,7 @@ namespace Firma.Intranet
             services.AddScoped<IAktualnoscIntranetService, AktualnoscIntranetService>();
             services.AddScoped<IPromocjaIntranetService, PromocjaIntranetService>();
             services.AddScoped<IStronaIntranetService, StronaIntranetService>();
+            services.AddScoped<IUstawieniePortaluIntranetService, UstawieniePortaluIntranetService>();
 
             services.AddScoped<FakturaPdfGenerator>();
             services.AddScoped<ZamowienieExcelGenerator>();

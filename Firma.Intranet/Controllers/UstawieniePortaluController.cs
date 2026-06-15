@@ -1,33 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.CMS;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.CMS;
 
 namespace Firma.Intranet.Controllers
 {
     public class UstawieniePortaluController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IUstawieniePortaluIntranetService _ustawieniePortaluIntranetService;
 
-        public UstawieniePortaluController(FirmaContext context)
+        public UstawieniePortaluController(IUstawieniePortaluIntranetService ustawieniePortaluIntranetService)
         {
-            _context = context;
+            _ustawieniePortaluIntranetService = ustawieniePortaluIntranetService;
         }
 
-        // GET: UstawieniePortalu
         public async Task<IActionResult> Index()
         {
-            return View(await _context.UstawieniePortalu
-                .OrderBy(u => u.Klucz)
-                .ToListAsync());
+            var ustawieniaPortalu = await _ustawieniePortaluIntranetService.PobierzListe();
+
+            return View(ustawieniaPortalu);
         }
 
-        // GET: UstawieniePortalu/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -35,8 +27,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var ustawieniePortalu = await _context.UstawieniePortalu
-                .FirstOrDefaultAsync(m => m.IdUstawieniaPortalu == id);
+            var ustawieniePortalu = await _ustawieniePortaluIntranetService.PobierzSzczegoly(id.Value);
 
             if (ustawieniePortalu == null)
             {
@@ -46,28 +37,32 @@ namespace Firma.Intranet.Controllers
             return View(ustawieniePortalu);
         }
 
-        // GET: UstawieniePortalu/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: UstawieniePortalu/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdUstawieniaPortalu,Klucz,Wartosc,Opis,CzyAktywny")] UstawieniePortalu ustawieniePortalu)
         {
+            if (ModelState.IsValid && await _ustawieniePortaluIntranetService.CzyKluczIstnieje(ustawieniePortalu.Klucz))
+            {
+                ModelState.AddModelError(
+                    nameof(UstawieniePortalu.Klucz),
+                    "Ustawienie z takim kluczem już istnieje.");
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(ustawieniePortalu);
-                await _context.SaveChangesAsync();
+                await _ustawieniePortaluIntranetService.Dodaj(ustawieniePortalu);
+
                 return RedirectToAction(nameof(Index));
             }
 
             return View(ustawieniePortalu);
         }
 
-        // GET: UstawieniePortalu/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,7 +70,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var ustawieniePortalu = await _context.UstawieniePortalu.FindAsync(id);
+            var ustawieniePortalu = await _ustawieniePortaluIntranetService.PobierzDoEdycji(id.Value);
 
             if (ustawieniePortalu == null)
             {
@@ -85,7 +80,6 @@ namespace Firma.Intranet.Controllers
             return View(ustawieniePortalu);
         }
 
-        // POST: UstawieniePortalu/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdUstawieniaPortalu,Klucz,Wartosc,Opis,CzyAktywny")] UstawieniePortalu ustawieniePortalu)
@@ -95,23 +89,22 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
+            if (ModelState.IsValid && await _ustawieniePortaluIntranetService.CzyKluczIstnieje(
+                    ustawieniePortalu.Klucz,
+                    ustawieniePortalu.IdUstawieniaPortalu))
+            {
+                ModelState.AddModelError(
+                    nameof(UstawieniePortalu.Klucz),
+                    "Ustawienie z takim kluczem już istnieje.");
+            }
+
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _ustawieniePortaluIntranetService.Aktualizuj(id, ustawieniePortalu);
+
+                if (!zapisano)
                 {
-                    _context.Update(ustawieniePortalu);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UstawieniePortaluExists(ustawieniePortalu.IdUstawieniaPortalu))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -120,7 +113,6 @@ namespace Firma.Intranet.Controllers
             return View(ustawieniePortalu);
         }
 
-        // GET: UstawieniePortalu/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,8 +120,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var ustawieniePortalu = await _context.UstawieniePortalu
-                .FirstOrDefaultAsync(m => m.IdUstawieniaPortalu == id);
+            var ustawieniePortalu = await _ustawieniePortaluIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (ustawieniePortalu == null)
             {
@@ -139,25 +130,31 @@ namespace Firma.Intranet.Controllers
             return View(ustawieniePortalu);
         }
 
-        // POST: UstawieniePortalu/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var ustawieniePortalu = await _context.UstawieniePortalu.FindAsync(id);
+            await _ustawieniePortaluIntranetService.Usun(id);
 
-            if (ustawieniePortalu != null)
-            {
-                _context.UstawieniePortalu.Remove(ustawieniePortalu);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UstawieniePortaluExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
         {
-            return _context.UstawieniePortalu.Any(e => e.IdUstawieniaPortalu == id);
+            await _ustawieniePortaluIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _ustawieniePortaluIntranetService.Dezaktywuj(id);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
