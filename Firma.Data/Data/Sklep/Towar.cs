@@ -39,7 +39,6 @@ namespace Firma.Data.Data.Sklep
         [Display(Name = "Czy aktywny")]
         public bool CzyAktywny { get; set; } = true;
 
-
         // Klucze obce i powiązania
 
         // Powiązanie N:1 - wiele towarów należy do jednego rodzaju
@@ -59,5 +58,8 @@ namespace Firma.Data.Data.Sklep
 
         // Powiązanie 1:N - jeden towar może występować w wielu pozycjach zamówienia
         public ICollection<PozycjaZamowienia> PozycjaZamowienia { get; } = new List<PozycjaZamowienia>();
+
+        // Powiązanie 1:N - jeden towar może mieć wiele załączników
+        public ICollection<ZalacznikTowaru> ZalacznikiTowaru { get; } = new List<ZalacznikTowaru>();
     }
 }

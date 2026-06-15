@@ -42,6 +42,27 @@ namespace Firma.Services.Sklep
                 })
                 .FirstOrDefaultAsync();
 
+            if (towar != null)
+            {
+                // Pobieram załączniki towaru
+                towar.Zalaczniki = await _context.ZalacznikTowaru
+                    .Where(z =>
+                        z.IdTowaru == idTowaru &&
+                        z.CzyAktywny)
+                    .OrderByDescending(z => z.DataDodania)
+                    .Select(z => new ZalacznikTowaruDto
+                    {
+                        IdZalacznikaTowaru = z.IdZalacznikaTowaru,
+                        NazwaOryginalna = z.NazwaOryginalna,
+                        Sciezka = z.Sciezka,
+                        TypPliku = z.TypPliku,
+                        Rozmiar = z.Rozmiar,
+                        Opis = z.Opis,
+                        DataDodania = z.DataDodania
+                    })
+                    .ToListAsync();
+            }
+
             return towar;
         }
 

@@ -1,0 +1,124 @@
+﻿@model IEnumerable<ZalacznikTowaru>
+
+@{
+    ViewData["Title"] = "Załączniki towarów";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Załączniki towarów</h1>
+        <p class="crud-podtytul">Lista plików przypisanych do towarów.</p>
+    </div>
+
+    <a asp-action="Create" class="btn btn-primary">Dodaj załącznik</a>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-0">
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Towar</th>
+                            <th>Plik</th>
+                            <th>Typ</th>
+                            <th>Rozmiar</th>
+                            <th>Data dodania</th>
+                            <th>Aktywny</th>
+                            <th class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (item.Towar != null)
+                                    {
+                                        <strong>@item.Towar.Nazwa</strong>
+                                        <div class="small text-muted">@item.Towar.Kod</div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak towaru</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <strong>@item.NazwaOryginalna</strong>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Opis))
+                                    {
+                                        <div class="small text-muted">@item.Opis</div>
+                                    }
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-secondary">@item.TypPliku</span>
+                                </td>
+
+                                <td>
+                                    @((item.Rozmiar / 1024.0).ToString("N1")) KB
+                                </td>
+
+                                <td>
+                                    @item.DataDodania.ToString("dd.MM.yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Pobierz"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-dark">
+                                            Pobierz
+                                        </a>
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-secondary">
+                                            Szczegóły
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-danger">
+                                            Usuń
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak załączników do wyświetlenia.
+                </div>
+            </div>
+        }
+    </div>
+</div>

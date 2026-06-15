@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-4 mb-4">
     <div class="col-12 col-lg-5">
         <div class="card page-card shadow-sm">
             <div class="card-body">
@@ -137,5 +137,67 @@
                 }
             </div>
         </div>
+    </div>
+</div>
+
+<div class="card page-card shadow-sm">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Załączniki</h2>
+
+        @if (Model.Zalaczniki != null && Model.Zalaczniki.Any())
+        {
+            <div class="row g-3">
+                @foreach (var item in Model.Zalaczniki)
+                {
+                    <div class="col-12 col-md-6">
+                        <div class="card border h-100 shadow-sm">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between gap-2 mb-2">
+                                    <div>
+                                        <h3 class="h6 mb-1">@item.NazwaOryginalna</h3>
+
+                                        @if (!string.IsNullOrWhiteSpace(item.Opis))
+                                        {
+                                            <div class="small text-muted">@item.Opis</div>
+                                        }
+                                    </div>
+
+                                    <div>
+                                        @if (item.CzyObraz)
+                                        {
+                                            <span class="badge bg-success">obraz</span>
+                                        }
+                                        else if (item.CzyPdf)
+                                        {
+                                            <span class="badge bg-danger">PDF</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">plik</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="small text-muted mb-3">
+                                    @item.RozmiarTekst · @item.DataDodania.ToString("dd.MM.yyyy")
+                                </div>
+
+                                <a href="@item.Sciezka"
+                                   target="_blank"
+                                   class="btn btn-primary w-100">
+                                    Otwórz załącznik
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0">
+                Ten produkt nie ma załączników.
+            </div>
+        }
     </div>
 </div>

@@ -1,0 +1,56 @@
+﻿@model Firma.Intranet.Models.ZalacznikTowaruFormModel
+
+@{
+    ViewData["Title"] = "Dodaj załącznik";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Dodaj załącznik</h1>
+        <p class="crud-podtytul">Dodawanie pliku do wybranego towaru.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="IdTowaru" class="form-label"></label>
+                <select asp-for="IdTowaru" class="form-select" asp-items="ViewBag.IdTowaru">
+                    <option value="">-- wybierz towar --</option>
+                </select>
+                <span asp-validation-for="IdTowaru" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Plik" class="form-label"></label>
+                <input asp-for="Plik" type="file" class="form-control" />
+                <span asp-validation-for="Plik" class="text-danger"></span>
+                <div class="form-text">
+                    Dozwolone: PDF, DOC, DOCX, XLS, XLSX, TXT, PNG, JPG, JPEG, WEBP. Maksymalnie 10 MB.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Opis" class="form-label"></label>
+                <textarea asp-for="Opis" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Opis" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

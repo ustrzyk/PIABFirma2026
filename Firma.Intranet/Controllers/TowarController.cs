@@ -41,6 +41,7 @@ namespace Firma.Intranet.Controllers
             var towar = await _context.Towar
                 .Include(t => t.Producent)
                 .Include(t => t.Rodzaj)
+                .Include(t => t.ZalacznikiTowaru)
                 .FirstOrDefaultAsync(m => m.IdTowaru == id);
 
             if (towar == null)
@@ -56,7 +57,6 @@ namespace Firma.Intranet.Controllers
         {
             ViewData["IdProducenta"] = new SelectList(_context.Producent.OrderBy(p => p.Nazwa), "IdProducenta", "Nazwa");
             ViewData["IdRodzaju"] = new SelectList(_context.Rodzaj.OrderBy(r => r.Nazwa), "IdRodzaju", "Nazwa");
-
             return View();
         }
 
@@ -68,8 +68,10 @@ namespace Firma.Intranet.Controllers
             if (ModelState.IsValid)
             {
                 towar.Cena = decimal.Round(towar.Cena, 2, MidpointRounding.AwayFromZero);
+
                 _context.Add(towar);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -115,6 +117,7 @@ namespace Firma.Intranet.Controllers
                 try
                 {
                     towar.Cena = decimal.Round(towar.Cena, 2, MidpointRounding.AwayFromZero);
+
                     _context.Update(towar);
                     await _context.SaveChangesAsync();
                 }
@@ -173,6 +176,7 @@ namespace Firma.Intranet.Controllers
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

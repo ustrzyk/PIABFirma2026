@@ -1,0 +1,58 @@
+﻿@model Firma.Intranet.Models.ZalacznikTowaruFormModel
+
+@{
+    ViewData["Title"] = "Edytuj załącznik";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Edytuj załącznik</h1>
+        <p class="crud-podtytul">Edycja przypisania, opisu albo podmiana pliku.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <form asp-action="Edit" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input type="hidden" asp-for="IdZalacznikaTowaru" />
+
+            <div class="mb-3">
+                <label asp-for="IdTowaru" class="form-label"></label>
+                <select asp-for="IdTowaru" class="form-select" asp-items="ViewBag.IdTowaru">
+                    <option value="">-- wybierz towar --</option>
+                </select>
+                <span asp-validation-for="IdTowaru" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Plik" class="form-label"></label>
+                <input asp-for="Plik" type="file" class="form-control" />
+                <span asp-validation-for="Plik" class="text-danger"></span>
+                <div class="form-text">
+                    Zostaw puste, jeśli nie chcesz podmieniać pliku.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Opis" class="form-label"></label>
+                <textarea asp-for="Opis" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Opis" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -32,6 +32,8 @@ namespace Firma.Services.Data.Dto.Towary
 
         public string Lokalizacja { get; set; } = string.Empty;
 
+        public IList<ZalacznikTowaruDto> Zalaczniki { get; set; } = new List<ZalacznikTowaruDto>();
+
         public bool CzyDostepny
         {
             get

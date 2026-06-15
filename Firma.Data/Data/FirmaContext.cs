@@ -25,5 +25,6 @@ namespace Firma.Data.Data
         public DbSet<Klient> Klient { get; set; } = default!;
         public DbSet<Zamowienie> Zamowienie { get; set; } = default!;
         public DbSet<PozycjaZamowienia> PozycjaZamowienia { get; set; } = default!;
+        public DbSet<ZalacznikTowaru> ZalacznikTowaru { get; set; } = default!;
     }
 }

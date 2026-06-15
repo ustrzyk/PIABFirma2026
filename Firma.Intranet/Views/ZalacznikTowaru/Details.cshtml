@@ -1,0 +1,63 @@
+﻿@model ZalacznikTowaru
+
+@{
+    ViewData["Title"] = "Szczegóły załącznika";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Szczegóły załącznika</h1>
+        <p class="crud-podtytul">Podgląd danych pliku przypisanego do towaru.</p>
+    </div>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">Towar</dt>
+            <dd class="col-sm-8 col-lg-9">
+                @if (Model.Towar != null)
+                {
+                    @Model.Towar.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak towaru</span>
+                }
+            </dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.NazwaOryginalna)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.NazwaOryginalna</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.TypPliku)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.TypPliku</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.Rozmiar)</dt>
+            <dd class="col-sm-8 col-lg-9">@((Model.Rozmiar / 1024.0).ToString("N1")) KB</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.Opis)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.Opis</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.DataDodania)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.DataDodania.ToString("dd.MM.yyyy HH:mm")</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.CzyAktywny)</dt>
+            <dd class="col-sm-8 col-lg-9">
+                @if (Model.CzyAktywny)
+                {
+                    <span class="badge bg-success">tak</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">nie</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="Pobierz" asp-route-id="@Model.IdZalacznikaTowaru" class="btn btn-dark">Pobierz</a>
+            <a asp-action="Edit" asp-route-id="@Model.IdZalacznikaTowaru" class="btn btn-primary">Edytuj</a>
+            <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
+        </div>
+    </div>
+</div>

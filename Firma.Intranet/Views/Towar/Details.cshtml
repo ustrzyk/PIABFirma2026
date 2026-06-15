@@ -11,7 +11,7 @@
     </div>
 </div>
 
-<div class="card crud-karta">
+<div class="card crud-karta mb-4">
     <div class="card-body p-4">
         <dl class="row crud-opis mb-4">
             <dt class="col-sm-4 col-lg-3">
@@ -20,36 +20,42 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Kod)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Nazwa)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Nazwa)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Cena)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Cena)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.FotoUrl)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.FotoUrl)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Opis)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Opis)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Rodzaj)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Rodzaj.Nazwa)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Producent)
             </dt>
@@ -60,7 +66,114 @@
 
         <div class="d-flex gap-2 flex-wrap">
             <a asp-action="Edit" asp-route-id="@Model?.IdTowaru" class="btn btn-primary">Edytuj</a>
+            <a asp-controller="ZalacznikTowaru" asp-action="Create" asp-route-idTowaru="@Model?.IdTowaru" class="btn btn-outline-dark">Dodaj załącznik</a>
             <a asp-action="Index" class="btn btn-outline-secondary">Powrót do listy</a>
         </div>
+    </div>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+            <div>
+                <h2 class="h5 mb-1">Załączniki</h2>
+                <p class="crud-podtytul mb-0">Pliki przypisane do tego towaru.</p>
+            </div>
+
+            <a asp-controller="ZalacznikTowaru"
+               asp-action="Create"
+               asp-route-idTowaru="@Model?.IdTowaru"
+               class="btn btn-primary">
+                Dodaj załącznik
+            </a>
+        </div>
+
+        @if (Model.ZalacznikiTowaru != null && Model.ZalacznikiTowaru.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Plik</th>
+                            <th>Typ</th>
+                            <th>Rozmiar</th>
+                            <th>Data</th>
+                            <th>Aktywny</th>
+                            <th class="text-end">Akcje</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.ZalacznikiTowaru.OrderByDescending(z => z.DataDodania))
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.NazwaOryginalna</strong>
+
+                                    @if (!string.IsNullOrWhiteSpace(item.Opis))
+                                    {
+                                        <div class="small text-muted">@item.Opis</div>
+                                    }
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-secondary">@item.TypPliku</span>
+                                </td>
+
+                                <td>
+                                    @((item.Rozmiar / 1024.0).ToString("N1")) KB
+                                </td>
+
+                                <td>
+                                    @item.DataDodania.ToString("dd.MM.yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-controller="ZalacznikTowaru"
+                                           asp-action="Pobierz"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-dark">
+                                            Pobierz
+                                        </a>
+
+                                        <a asp-controller="ZalacznikTowaru"
+                                           asp-action="Edit"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-primary">
+                                            Edytuj
+                                        </a>
+
+                                        <a asp-controller="ZalacznikTowaru"
+                                           asp-action="Delete"
+                                           asp-route-id="@item.IdZalacznikaTowaru"
+                                           class="btn btn-outline-danger">
+                                            Usuń
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info mb-0">
+                Ten towar nie ma jeszcze załączników.
+            </div>
+        }
     </div>
 </div>

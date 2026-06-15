@@ -1,0 +1,52 @@
+﻿@model ZalacznikTowaru
+
+@{
+    ViewData["Title"] = "Usuń załącznik";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Usuń załącznik</h1>
+        <p class="crud-podtytul">Potwierdzenie usunięcia pliku.</p>
+    </div>
+</div>
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <div class="alert alert-warning">
+            Czy na pewno chcesz usunąć ten załącznik?
+        </div>
+
+        <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">Towar</dt>
+            <dd class="col-sm-8 col-lg-9">
+                @if (Model.Towar != null)
+                {
+                    @Model.Towar.Nazwa
+                }
+                else
+                {
+                    <span class="text-muted">brak towaru</span>
+                }
+            </dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.NazwaOryginalna)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.NazwaOryginalna</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.TypPliku)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.TypPliku</dd>
+
+            <dt class="col-sm-4 col-lg-3">@Html.DisplayNameFor(model => model.Opis)</dt>
+            <dd class="col-sm-8 col-lg-9">@Model.Opis</dd>
+        </dl>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="IdZalacznikaTowaru" />
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-danger">Usuń</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
