@@ -18,7 +18,7 @@
     <div class="card-body p-0">
         @if (Model != null && Model.Any())
         {
-            <div class="table-responsive">
+            <div class="table-responsive desktop-table-wrap">
                 <table class="table table-hover align-middle mb-0 sklep-table">
                     <thead>
                         <tr>
@@ -94,6 +94,66 @@
                         }
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mobile-card-list p-3">
+                @foreach (var item in Model)
+                {
+                    <div class="mobile-product-card">
+                        <div class="mobile-product-img-wrap">
+                            @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                            {
+                                <img src="@item.FotoUrl"
+                                     alt="@item.Nazwa"
+                                     class="mobile-product-img" />
+                            }
+                            else
+                            {
+                                <img src="~/content/CA.png"
+                                     alt="@item.Nazwa"
+                                     class="mobile-product-img" />
+                            }
+                        </div>
+
+                        <div class="mobile-product-body">
+                            <div class="d-flex justify-content-between gap-2 mb-2">
+                                <div>
+                                    <h2 class="h6 mb-1">@item.Nazwa</h2>
+                                    <div class="small text-muted">@item.Kod</div>
+                                </div>
+
+                                <div class="text-end">
+                                    <strong>@item.Cena.ToString("C")</strong>
+                                </div>
+                            </div>
+
+                            <div class="small text-muted mb-2 tekst-skrot">
+                                @item.Opis
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-light text-dark border">@item.Rodzaj</span>
+                                <span class="badge bg-light text-dark border">@item.Producent</span>
+
+                                @if (item.CzyDostepny)
+                                {
+                                    <span class="badge bg-success">@item.IloscSztuk szt.</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">brak danych</span>
+                                }
+                            </div>
+
+                            <a class="btn btn-primary w-100"
+                               asp-controller="Sklep"
+                               asp-action="Szczegoly"
+                               asp-route-id="@item.IdTowaru">
+                                Szczegóły
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
         }
         else

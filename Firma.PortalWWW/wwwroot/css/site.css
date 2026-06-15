@@ -223,6 +223,36 @@ body {
         color: #000000;
     }
 
+.mobile-card-list {
+    display: none;
+}
+
+.mobile-product-card {
+    background-color: #ffffff;
+    border: 1px solid var(--portal-border);
+    border-radius: 0.85rem;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.06);
+}
+
+.mobile-product-img-wrap {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--portal-border);
+    padding: 1rem;
+    text-align: center;
+}
+
+.mobile-product-img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.mobile-product-body {
+    padding: 1rem;
+}
+
 footer {
     margin-top: 0;
 }
@@ -238,12 +268,21 @@ footer {
         }
 
 @media (max-width: 767.98px) {
+    html {
+        font-size: 15px;
+    }
+
     body {
         margin-bottom: 0;
     }
 
+    .container {
+        max-width: 100%;
+    }
+
     .portal-header {
         display: block;
+        padding: 1rem;
     }
 
         .portal-header .btn {
@@ -251,15 +290,56 @@ footer {
             margin-top: 0.75rem;
         }
 
-    .sklep-table {
-        min-width: 820px;
+        .portal-header .d-flex {
+            display: block !important;
+        }
+
+    .category-bar .container {
+        overflow-x: auto;
+    }
+
+    .category-bar .d-flex {
+        flex-wrap: nowrap !important;
+        white-space: nowrap;
+        padding-bottom: 0.25rem;
+    }
+
+    .category-link {
+        flex: 0 0 auto;
+    }
+
+    .desktop-table-wrap {
+        display: none;
+    }
+
+    .mobile-card-list {
+        display: block;
     }
 
     .navbar-brand {
         font-size: 1.05rem;
     }
 
+    .page-bg main {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .product-details-img {
+        max-height: 280px;
+    }
+
     footer .text-md-end {
         text-align: left !important;
+    }
+
+    footer a,
+    footer span {
+        display: inline-block;
+        margin-bottom: 0.25rem;
     }
 }
