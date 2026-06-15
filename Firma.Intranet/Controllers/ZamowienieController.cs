@@ -1,5 +1,6 @@
 using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
+using Firma.Intranet.Models;
 using Firma.Intranet.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,12 +14,16 @@ namespace Firma.Intranet.Controllers
         private readonly FirmaContext _context;
         private readonly FakturaPdfGenerator _fakturaPdfGenerator;
         private readonly ZamowienieExcelGenerator _zamowienieExcelGenerator;
+        private readonly ZamowienieExcelSzablonGenerator _zamowienieExcelSzablonGenerator;
+        private readonly ZamowienieExcelImporter _zamowienieExcelImporter;
 
         public ZamowienieController(FirmaContext context)
         {
             _context = context;
             _fakturaPdfGenerator = new FakturaPdfGenerator();
             _zamowienieExcelGenerator = new ZamowienieExcelGenerator();
+            _zamowienieExcelSzablonGenerator = new ZamowienieExcelSzablonGenerator();
+            _zamowienieExcelImporter = new ZamowienieExcelImporter(context);
         }
 
         public async Task<IActionResult> Index()
@@ -274,6 +279,32 @@ namespace Firma.Intranet.Controllers
                 excel,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 nazwaPliku);
+        }
+
+        public IActionResult PobierzSzablonImportuExcel()
+        {
+            // Generuję szablon importu zamówień
+            var excel = _zamowienieExcelSzablonGenerator.Generuj();
+
+            return File(
+                excel,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "Szablon_importu_zamowien.xlsx");
+        }
+
+        public IActionResult ImportExcel()
+        {
+            return View(new ImportZamowienExcelViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportExcel(ImportZamowienExcelViewModel model)
+        {
+            // Importuję zamówienia z Excela
+            var wynik = await _zamowienieExcelImporter.Importuj(model.Plik);
+
+            return View(wynik);
         }
 
         private async Task<Zamowienie?> PobierzZamowienieDoDokumentow(int id)

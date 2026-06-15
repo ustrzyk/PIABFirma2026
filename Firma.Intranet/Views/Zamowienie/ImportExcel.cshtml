@@ -1,0 +1,195 @@
+﻿@model Firma.Intranet.Models.ImportZamowienExcelViewModel
+
+@{
+    ViewData["Title"] = "Import zamówień z Excela";
+}
+
+<div class="crud-naglowek">
+    <div>
+        <h1 class="h2 mb-1">Import zamówień z Excela</h1>
+        <p class="crud-podtytul">Dodawanie zamówień na podstawie pliku XLSX.</p>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap">
+        <a asp-action="PobierzSzablonImportuExcel"
+           class="btn btn-outline-success">
+            Pobierz szablon
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            Powrót do listy
+        </a>
+    </div>
+</div>
+
+<div class="card crud-karta mb-4">
+    <div class="card-body p-4">
+        <form asp-action="ImportExcel"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Plik" class="form-label">Plik Excel</label>
+                <input asp-for="Plik"
+                       type="file"
+                       accept=".xlsx"
+                       class="form-control" />
+                <span asp-validation-for="Plik" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary">
+                    Importuj zamówienia
+                </button>
+
+                <a asp-action="PobierzSzablonImportuExcel"
+                   class="btn btn-outline-success">
+                    Pobierz szablon
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model != null && Model.CzyWykonanoImport)
+{
+    if (Model.Bledy.Any())
+    {
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3">Błędy importu</h2>
+
+                <div class="alert alert-danger">
+                    Import nie został wykonany. Popraw plik i spróbuj ponownie.
+                </div>
+
+                <ul class="mb-0">
+                    @foreach (var blad in Model.Bledy)
+                    {
+                        <li>@blad</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card crud-karta">
+            <div class="card-body p-4">
+                <h2 class="h5 mb-3">Import zakończony</h2>
+
+                <div class="alert alert-success">
+                    Dane zostały zaimportowane poprawnie.
+                </div>
+
+                <dl class="row crud-opis mb-4">
+                    <dt class="col-sm-4 col-lg-3">Dodane zamówienia</dt>
+                    <dd class="col-sm-8 col-lg-9">@Model.LiczbaDodanychZamowien</dd>
+
+                    <dt class="col-sm-4 col-lg-3">Dodani klienci</dt>
+                    <dd class="col-sm-8 col-lg-9">@Model.LiczbaDodanychKlientow</dd>
+                </dl>
+
+                <a asp-action="Index"
+                   class="btn btn-primary">
+                    Przejdź do zamówień
+                </a>
+            </div>
+        </div>
+    }
+}
+
+<div class="card crud-karta mt-4">
+    <div class="card-body p-4">
+        <h2 class="h5 mb-3">Wymagane kolumny</h2>
+
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>Kolumna</th>
+                        <th>Opis</th>
+                        <th>Wymagana</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <td>NumerZamowienia</td>
+                        <td>Unikalny numer zamówienia</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>DataZamowienia</td>
+                        <td>Data zamówienia</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>Status zamówienia</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>WartoscRazem</td>
+                        <td>Wartość całego zamówienia</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>EmailKlienta</td>
+                        <td>E-mail klienta</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>ImieKlienta</td>
+                        <td>Imię klienta</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>NazwiskoKlienta</td>
+                        <td>Nazwisko klienta</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>TelefonKlienta</td>
+                        <td>Telefon klienta</td>
+                        <td>nie</td>
+                    </tr>
+                    <tr>
+                        <td>Ulica</td>
+                        <td>Ulica dostawy</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>NumerDomu</td>
+                        <td>Numer domu</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>NumerLokalu</td>
+                        <td>Numer lokalu</td>
+                        <td>nie</td>
+                    </tr>
+                    <tr>
+                        <td>KodPocztowy</td>
+                        <td>Kod pocztowy</td>
+                        <td>tak</td>
+                    </tr>
+                    <tr>
+                        <td>Miasto</td>
+                        <td>Miasto</td>
+                        <td>tak</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
