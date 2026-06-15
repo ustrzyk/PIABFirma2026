@@ -49,6 +49,11 @@
                    class="btn btn-outline-success">
                     Pobierz szablon
                 </a>
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Powrót do listy
+                </a>
             </div>
         </form>
     </div>
@@ -104,7 +109,7 @@
 
 <div class="card crud-karta mt-4">
     <div class="card-body p-4">
-        <h2 class="h5 mb-3">Wymagane kolumny</h2>
+        <h2 class="h5 mb-3">Kolumny pliku</h2>
 
         <div class="table-responsive">
             <table class="table table-sm table-bordered mb-0">
@@ -122,61 +127,73 @@
                         <td>Unikalny numer zamówienia</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>DataZamowienia</td>
                         <td>Data zamówienia</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>Status</td>
                         <td>Status zamówienia</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>WartoscRazem</td>
                         <td>Wartość całego zamówienia</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>EmailKlienta</td>
                         <td>E-mail klienta</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>ImieKlienta</td>
                         <td>Imię klienta</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>NazwiskoKlienta</td>
                         <td>Nazwisko klienta</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>TelefonKlienta</td>
                         <td>Telefon klienta</td>
                         <td>nie</td>
                     </tr>
+
                     <tr>
                         <td>Ulica</td>
                         <td>Ulica dostawy</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>NumerDomu</td>
                         <td>Numer domu</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>NumerLokalu</td>
                         <td>Numer lokalu</td>
                         <td>nie</td>
                     </tr>
+
                     <tr>
                         <td>KodPocztowy</td>
                         <td>Kod pocztowy</td>
                         <td>tak</td>
                     </tr>
+
                     <tr>
                         <td>Miasto</td>
                         <td>Miasto</td>

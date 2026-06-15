@@ -10,7 +10,7 @@
 </div>
 
 <div class="row g-4">
-    <div class="col-12 col-md-6 col-xl-4">
+    <div class="col-12 col-md-6 col-xl-3">
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">CMS</h2>
@@ -25,7 +25,7 @@
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-xl-4">
+    <div class="col-12 col-md-6 col-xl-3">
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">Asortyment</h2>
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="col-12 col-md-6 col-xl-4">
+    <div class="col-12 col-md-6 col-xl-3">
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">Sprzedaż</h2>
@@ -54,4 +54,19 @@
             </div>
         </div>
     </div>
+
+    @if (User.IsInRole("Administrator"))
+    {
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <h2 class="h5">Administracja</h2>
+                    <p class="text-muted">Zarządzanie użytkownikami i rolami.</p>
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-outline-danger" asp-controller="Uzytkownik" asp-action="Index">Użytkownicy i role</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>

@@ -1,6 +1,7 @@
 using System.Globalization;
 using Firma.Data.Data;
 using Firma.Intranet.ModelBinders;
+using Firma.Intranet.Security;
 using Firma.Intranet.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +40,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("AdministratorOnly", policy =>
+    {
+        policy.RequireRole("Administrator");
+    });
+
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
@@ -48,6 +54,9 @@ builder.Services.AddControllersWithViews(options =>
 {
     // Pozwalam wpisywać kwoty z przecinkiem i kropką
     options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+
+    // Ograniczam akcje usuwania, importu i masowych zmian do Administratora
+    options.Conventions.Add(new AdministratorActionConvention());
 });
 
 var app = builder.Build();

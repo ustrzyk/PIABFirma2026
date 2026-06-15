@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Zamówienia";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <style>
@@ -91,10 +92,13 @@
             Eksport Excel
         </a>
 
-        <a asp-action="ImportExcel"
-           class="btn btn-outline-primary">
-            Import Excel
-        </a>
+        @if (czyAdministrator)
+        {
+            <a asp-action="ImportExcel"
+               class="btn btn-outline-primary">
+                Import Excel
+            </a>
+        }
 
         <a asp-action="Create" class="btn btn-primary">
             Dodaj nowy rekord
@@ -226,11 +230,14 @@
                                                 Szczegóły
                                             </a>
 
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.IdZamowienia"
-                                               class="btn btn-outline-danger">
-                                                Usuń
-                                            </a>
+                                            @if (czyAdministrator)
+                                            {
+                                                <a asp-action="Delete"
+                                                   asp-route-id="@item.IdZamowienia"
+                                                   class="btn btn-outline-danger">
+                                                    Usuń
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -333,11 +340,14 @@
                                     Edytuj
                                 </a>
 
-                                <a asp-action="Delete"
-                                   asp-route-id="@item.IdZamowienia"
-                                   class="btn btn-outline-danger">
-                                    Usuń
-                                </a>
+                                @if (czyAdministrator)
+                                {
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.IdZamowienia"
+                                       class="btn btn-outline-danger">
+                                        Usuń
+                                    </a>
+                                }
                             </div>
                         </div>
                     }

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Załączniki towarów";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <style>
@@ -90,29 +91,36 @@
             <form asp-action="UsunZaznaczone" method="post">
                 @Html.AntiForgeryToken()
 
-                <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap zalacznik-toolbar">
-                    <div class="d-flex align-items-center gap-2">
-                        <input type="checkbox"
-                               class="form-check-input"
-                               id="zaznaczWszystkie" />
+                @if (czyAdministrator)
+                {
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap zalacznik-toolbar">
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="zaznaczWszystkie" />
 
-                        <label for="zaznaczWszystkie" class="form-check-label">
-                            Zaznacz wszystko
-                        </label>
+                            <label for="zaznaczWszystkie" class="form-check-label">
+                                Zaznacz wszystko
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-danger"
+                                onclick="return confirm('Czy na pewno chcesz usunąć zaznaczone załączniki?');">
+                            Usuń zaznaczone
+                        </button>
                     </div>
-
-                    <button type="submit"
-                            class="btn btn-danger"
-                            onclick="return confirm('Czy na pewno chcesz usunąć zaznaczone załączniki?');">
-                        Usuń zaznaczone
-                    </button>
-                </div>
+                }
 
                 <div class="table-responsive zalacznik-desktop-table">
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th style="width: 45px;"></th>
+                                @if (czyAdministrator)
+                                {
+                                    <th style="width: 45px;"></th>
+                                }
+
                                 <th>Towar</th>
                                 <th>Plik</th>
                                 <th>Typ</th>
@@ -127,12 +135,15 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>
-                                        <input type="checkbox"
-                                               class="form-check-input checkbox-zalacznik"
-                                               name="ids"
-                                               value="@item.IdZalacznikaTowaru" />
-                                    </td>
+                                    @if (czyAdministrator)
+                                    {
+                                        <td>
+                                            <input type="checkbox"
+                                                   class="form-check-input checkbox-zalacznik"
+                                                   name="ids"
+                                                   value="@item.IdZalacznikaTowaru" />
+                                        </td>
+                                    }
 
                                     <td>
                                         @if (item.Towar != null)
@@ -198,11 +209,14 @@
                                                 Edytuj
                                             </a>
 
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.IdZalacznikaTowaru"
-                                               class="btn btn-outline-danger">
-                                                Usuń
-                                            </a>
+                                            @if (czyAdministrator)
+                                            {
+                                                <a asp-action="Delete"
+                                                   asp-route-id="@item.IdZalacznikaTowaru"
+                                                   class="btn btn-outline-danger">
+                                                    Usuń
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -233,10 +247,13 @@
                                     }
                                 </div>
 
-                                <input type="checkbox"
-                                       class="form-check-input checkbox-zalacznik"
-                                       name="ids"
-                                       value="@item.IdZalacznikaTowaru" />
+                                @if (czyAdministrator)
+                                {
+                                    <input type="checkbox"
+                                           class="form-check-input checkbox-zalacznik"
+                                           name="ids"
+                                           value="@item.IdZalacznikaTowaru" />
+                                }
                             </div>
 
                             @if (!string.IsNullOrWhiteSpace(item.Opis))
@@ -314,11 +331,14 @@
                                     Edytuj
                                 </a>
 
-                                <a asp-action="Delete"
-                                   asp-route-id="@item.IdZalacznikaTowaru"
-                                   class="btn btn-outline-danger">
-                                    Usuń
-                                </a>
+                                @if (czyAdministrator)
+                                {
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.IdZalacznikaTowaru"
+                                       class="btn btn-outline-danger">
+                                        Usuń
+                                    </a>
+                                }
                             </div>
                         </div>
                     }

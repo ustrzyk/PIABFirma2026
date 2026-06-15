@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Towary";
+    var czyAdministrator = User.IsInRole("Administrator");
 }
 
 <style>
@@ -99,44 +100,51 @@
             <form method="post">
                 @Html.AntiForgeryToken()
 
-                <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap towar-toolbar">
-                    <div class="d-flex align-items-center gap-2">
-                        <input type="checkbox"
-                               class="form-check-input"
-                               id="zaznaczWszystkieTowary" />
+                @if (czyAdministrator)
+                {
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap towar-toolbar">
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   id="zaznaczWszystkieTowary" />
 
-                        <label for="zaznaczWszystkieTowary" class="form-check-label">
-                            Zaznacz wszystko
-                        </label>
+                            <label for="zaznaczWszystkieTowary" class="form-check-label">
+                                Zaznacz wszystko
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit"
+                                    asp-action="AktywujZaznaczone"
+                                    class="btn btn-outline-success">
+                                Aktywuj zaznaczone
+                            </button>
+
+                            <button type="submit"
+                                    asp-action="DezaktywujZaznaczone"
+                                    class="btn btn-outline-secondary">
+                                Dezaktywuj zaznaczone
+                            </button>
+
+                            <button type="submit"
+                                    asp-action="UsunZaznaczone"
+                                    class="btn btn-danger"
+                                    onclick="return confirm('Usunąć zaznaczone towary? Towary użyte w zamówieniach zostaną tylko dezaktywowane.');">
+                                Usuń zaznaczone
+                            </button>
+                        </div>
                     </div>
-
-                    <div class="d-flex gap-2 flex-wrap">
-                        <button type="submit"
-                                asp-action="AktywujZaznaczone"
-                                class="btn btn-outline-success">
-                            Aktywuj zaznaczone
-                        </button>
-
-                        <button type="submit"
-                                asp-action="DezaktywujZaznaczone"
-                                class="btn btn-outline-secondary">
-                            Dezaktywuj zaznaczone
-                        </button>
-
-                        <button type="submit"
-                                asp-action="UsunZaznaczone"
-                                class="btn btn-danger"
-                                onclick="return confirm('Usunąć zaznaczone towary? Towary użyte w zamówieniach zostaną tylko dezaktywowane.');">
-                            Usuń zaznaczone
-                        </button>
-                    </div>
-                </div>
+                }
 
                 <div class="table-responsive towar-desktop-table">
                     <table class="table table-hover table-striped mb-0 crud-tabela">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 45px;"></th>
+                                @if (czyAdministrator)
+                                {
+                                    <th style="width: 45px;"></th>
+                                }
+
                                 <th>Kod</th>
                                 <th>Nazwa</th>
                                 <th>Cena</th>
@@ -153,12 +161,15 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>
-                                        <input type="checkbox"
-                                               class="form-check-input checkbox-towar"
-                                               name="ids"
-                                               value="@item.IdTowaru" />
-                                    </td>
+                                    @if (czyAdministrator)
+                                    {
+                                        <td>
+                                            <input type="checkbox"
+                                                   class="form-check-input checkbox-towar"
+                                                   name="ids"
+                                                   value="@item.IdTowaru" />
+                                        </td>
+                                    }
 
                                     <td>@item.Kod</td>
 
@@ -229,11 +240,14 @@
                                                 Szczegóły
                                             </a>
 
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.IdTowaru"
-                                               class="btn btn-outline-danger">
-                                                Usuń
-                                            </a>
+                                            @if (czyAdministrator)
+                                            {
+                                                <a asp-action="Delete"
+                                                   asp-route-id="@item.IdTowaru"
+                                                   class="btn btn-outline-danger">
+                                                    Usuń
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -252,10 +266,13 @@
                                     <div class="small text-muted">@item.Kod</div>
                                 </div>
 
-                                <input type="checkbox"
-                                       class="form-check-input checkbox-towar"
-                                       name="ids"
-                                       value="@item.IdTowaru" />
+                                @if (czyAdministrator)
+                                {
+                                    <input type="checkbox"
+                                           class="form-check-input checkbox-towar"
+                                           name="ids"
+                                           value="@item.IdTowaru" />
+                                }
                             </div>
 
                             <dl class="towar-mobile-info">
@@ -331,11 +348,14 @@
                                     Szczegóły
                                 </a>
 
-                                <a asp-action="Delete"
-                                   asp-route-id="@item.IdTowaru"
-                                   class="btn btn-outline-danger">
-                                    Usuń
-                                </a>
+                                @if (czyAdministrator)
+                                {
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.IdTowaru"
+                                       class="btn btn-outline-danger">
+                                        Usuń
+                                    </a>
+                                }
                             </div>
                         </div>
                     }
