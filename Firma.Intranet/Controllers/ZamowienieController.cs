@@ -12,11 +12,13 @@ namespace Firma.Intranet.Controllers
     {
         private readonly FirmaContext _context;
         private readonly FakturaPdfGenerator _fakturaPdfGenerator;
+        private readonly ZamowienieExcelGenerator _zamowienieExcelGenerator;
 
         public ZamowienieController(FirmaContext context)
         {
             _context = context;
             _fakturaPdfGenerator = new FakturaPdfGenerator();
+            _zamowienieExcelGenerator = new ZamowienieExcelGenerator();
         }
 
         public async Task<IActionResult> Index()
@@ -172,7 +174,7 @@ namespace Firma.Intranet.Controllers
         public async Task<IActionResult> PobierzFakturePdf(int id)
         {
             // Pobieram dane do faktury
-            var zamowienie = await PobierzZamowienieDoFaktury(id);
+            var zamowienie = await PobierzZamowienieDoDokumentow(id);
 
             if (zamowienie == null)
             {
@@ -195,10 +197,7 @@ namespace Firma.Intranet.Controllers
             }
 
             // Pobieram zamówienia do paczki faktur
-            var zamowienia = await _context.Zamowienie
-                .Include(z => z.Klient)
-                .Include(z => z.PozycjaZamowienia)
-                    .ThenInclude(p => p.Towar)
+            var zamowienia = await ZapytanieZamowienDoDokumentow()
                 .Where(z => ids.Contains(z.IdZamowienia))
                 .OrderByDescending(z => z.DataZamowienia)
                 .ToListAsync();
@@ -232,13 +231,63 @@ namespace Firma.Intranet.Controllers
             return File(zip, "application/zip", nazwaZip);
         }
 
-        private async Task<Zamowienie?> PobierzZamowienieDoFaktury(int id)
+        public async Task<IActionResult> PobierzZamowieniaExcel()
         {
-            return await _context.Zamowienie
+            // Pobieram wszystkie zamówienia do Excela
+            var zamowienia = await ZapytanieZamowienDoDokumentow()
+                .OrderByDescending(z => z.DataZamowienia)
+                .ToListAsync();
+
+            var excel = _zamowienieExcelGenerator.Generuj(zamowienia);
+            var nazwaPliku = $"Zamowienia_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+
+            return File(
+                excel,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                nazwaPliku);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PobierzZaznaczoneZamowieniaExcel(int[] ids)
+        {
+            if (ids == null || ids.Length == 0)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Pobieram zaznaczone zamówienia do Excela
+            var zamowienia = await ZapytanieZamowienDoDokumentow()
+                .Where(z => ids.Contains(z.IdZamowienia))
+                .OrderByDescending(z => z.DataZamowienia)
+                .ToListAsync();
+
+            if (!zamowienia.Any())
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var excel = _zamowienieExcelGenerator.Generuj(zamowienia);
+            var nazwaPliku = $"Zamowienia_zaznaczone_{DateTime.Now:yyyyMMdd_HHmm}.xlsx";
+
+            return File(
+                excel,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                nazwaPliku);
+        }
+
+        private async Task<Zamowienie?> PobierzZamowienieDoDokumentow(int id)
+        {
+            return await ZapytanieZamowienDoDokumentow()
+                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+        }
+
+        private IQueryable<Zamowienie> ZapytanieZamowienDoDokumentow()
+        {
+            return _context.Zamowienie
                 .Include(z => z.Klient)
                 .Include(z => z.PozycjaZamowienia)
-                    .ThenInclude(p => p.Towar)
-                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+                    .ThenInclude(p => p.Towar);
         }
 
         private void PrzygotujKlientow(int? idKlienta = null)

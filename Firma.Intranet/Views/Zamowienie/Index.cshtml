@@ -67,10 +67,15 @@
             display: block;
         }
 
-            .crud-naglowek .btn {
+            .crud-naglowek .btn,
+            .crud-naglowek .btn-group-responsive .btn {
                 width: 100%;
                 margin-top: 0.75rem;
             }
+
+        .btn-group-responsive {
+            width: 100%;
+        }
     }
 </style>
 
@@ -80,7 +85,16 @@
         <p class="crud-podtytul">Lista rekordów w module: zamówienia.</p>
     </div>
 
-    <a asp-action="Create" class="btn btn-primary">Dodaj nowy rekord</a>
+    <div class="d-flex gap-2 flex-wrap btn-group-responsive">
+        <a asp-action="PobierzZamowieniaExcel"
+           class="btn btn-outline-success">
+            Eksport Excel
+        </a>
+
+        <a asp-action="Create" class="btn btn-primary">
+            Dodaj nowy rekord
+        </a>
+    </div>
 </div>
 
 <div class="card crud-karta">
@@ -101,11 +115,19 @@
                         </label>
                     </div>
 
-                    <button type="submit"
-                            asp-action="PobierzFakturyPdfZip"
-                            class="btn btn-dark">
-                        Pobierz zaznaczone faktury ZIP
-                    </button>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit"
+                                asp-action="PobierzZaznaczoneZamowieniaExcel"
+                                class="btn btn-outline-success">
+                            Pobierz zaznaczone Excel
+                        </button>
+
+                        <button type="submit"
+                                asp-action="PobierzFakturyPdfZip"
+                                class="btn btn-dark">
+                            Pobierz zaznaczone faktury ZIP
+                        </button>
+                    </div>
                 </div>
 
                 <div class="table-responsive zamowienie-desktop-table">
