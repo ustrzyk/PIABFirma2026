@@ -96,7 +96,9 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid && await _stanMagazynowyIntranetService.CzyTowarMaStanMagazynowy(stanMagazynowy.IdTowaru, stanMagazynowy.IdStanuMagazynowego))
+            if (ModelState.IsValid && await _stanMagazynowyIntranetService.CzyTowarMaStanMagazynowy(
+                    stanMagazynowy.IdTowaru,
+                    stanMagazynowy.IdStanuMagazynowego))
             {
                 ModelState.AddModelError(
                     nameof(StanMagazynowy.IdTowaru),
@@ -142,6 +144,24 @@ namespace Firma.Intranet.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _stanMagazynowyIntranetService.Usun(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Aktywuj(int id)
+        {
+            await _stanMagazynowyIntranetService.Aktywuj(id);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dezaktywuj(int id)
+        {
+            await _stanMagazynowyIntranetService.Dezaktywuj(id);
 
             return RedirectToAction(nameof(Index));
         }

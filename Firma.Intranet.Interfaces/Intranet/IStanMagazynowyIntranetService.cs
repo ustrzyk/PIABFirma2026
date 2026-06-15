@@ -19,6 +19,10 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task Usun(int id);
 
+        Task Aktywuj(int id);
+
+        Task Dezaktywuj(int id);
+
         Task<bool> CzyTowarMaStanMagazynowy(int idTowaru, int? idStanuDoPominiecia = null);
 
         Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList();

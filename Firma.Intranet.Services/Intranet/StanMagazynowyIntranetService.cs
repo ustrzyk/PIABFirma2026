@@ -38,6 +38,8 @@ namespace Firma.Intranet.Services.Intranet
 
         public async Task Dodaj(StanMagazynowy stanMagazynowy)
         {
+            PrzygotujDaneStanu(stanMagazynowy);
+
             _context.StanMagazynowy.Add(stanMagazynowy);
 
             await _context.SaveChangesAsync();
@@ -63,6 +65,8 @@ namespace Firma.Intranet.Services.Intranet
             stanZBazy.Lokalizacja = stanMagazynowy.Lokalizacja;
             stanZBazy.CzyAktywny = stanMagazynowy.CzyAktywny;
             stanZBazy.IdTowaru = stanMagazynowy.IdTowaru;
+
+            PrzygotujDaneStanu(stanZBazy);
 
             try
             {
@@ -101,6 +105,36 @@ namespace Firma.Intranet.Services.Intranet
             }
         }
 
+        public async Task Aktywuj(int id)
+        {
+            var stanMagazynowy = await _context.StanMagazynowy
+                .FirstOrDefaultAsync(s => s.IdStanuMagazynowego == id);
+
+            if (stanMagazynowy == null)
+            {
+                return;
+            }
+
+            stanMagazynowy.CzyAktywny = true;
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task Dezaktywuj(int id)
+        {
+            var stanMagazynowy = await _context.StanMagazynowy
+                .FirstOrDefaultAsync(s => s.IdStanuMagazynowego == id);
+
+            if (stanMagazynowy == null)
+            {
+                return;
+            }
+
+            stanMagazynowy.CzyAktywny = false;
+
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> CzyTowarMaStanMagazynowy(int idTowaru, int? idStanuDoPominiecia = null)
         {
             var zapytanie = _context.StanMagazynowy
@@ -125,6 +159,11 @@ namespace Firma.Intranet.Services.Intranet
                     Nazwa = t.Nazwa
                 })
                 .ToListAsync();
+        }
+
+        private static void PrzygotujDaneStanu(StanMagazynowy stanMagazynowy)
+        {
+            stanMagazynowy.Lokalizacja = stanMagazynowy.Lokalizacja?.Trim() ?? string.Empty;
         }
 
         private async Task<bool> CzyIstnieje(int id)

@@ -29,7 +29,7 @@
                             <th>Lokalizacja</th>
                             <th>Towar</th>
                             <th>Aktywny</th>
-                            <th></th>
+                            <th class="text-end">Akcje</th>
                         </tr>
                     </thead>
 
@@ -46,7 +46,14 @@
                                 </td>
 
                                 <td>
-                                    @item.Lokalizacja
+                                    @if (!string.IsNullOrWhiteSpace(item.Lokalizacja))
+                                    {
+                                        @item.Lokalizacja
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
                                 </td>
 
                                 <td>
@@ -71,27 +78,58 @@
                                     }
                                 </td>
 
-                                <td class="crud-akcje">
-                                    <a asp-action="Edit"
-                                       asp-route-id="@item.IdStanuMagazynowego"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Edytuj
-                                    </a>
-
-                                    <a asp-action="Details"
-                                       asp-route-id="@item.IdStanuMagazynowego"
-                                       class="btn btn-sm btn-outline-secondary">
-                                        Szczegóły
-                                    </a>
-
-                                    @if (czyAdministrator)
-                                    {
-                                        <a asp-action="Delete"
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-1 flex-wrap">
+                                        <a asp-action="Edit"
                                            asp-route-id="@item.IdStanuMagazynowego"
-                                           class="btn btn-sm btn-outline-danger">
-                                            Usuń
+                                           class="btn btn-sm btn-outline-primary">
+                                            Edytuj
                                         </a>
-                                    }
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdStanuMagazynowego"
+                                           class="btn btn-sm btn-outline-secondary">
+                                            Szczegóły
+                                        </a>
+
+                                        @if (czyAdministrator)
+                                        {
+                                            @if (item.CzyAktywny)
+                                            {
+                                                <form asp-action="Dezaktywuj"
+                                                      asp-route-id="@item.IdStanuMagazynowego"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-warning">
+                                                        Dezaktywuj
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="Aktywuj"
+                                                      asp-route-id="@item.IdStanuMagazynowego"
+                                                      method="post"
+                                                      class="d-inline">
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-success">
+                                                        Aktywuj
+                                                    </button>
+                                                </form>
+                                            }
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdStanuMagazynowego"
+                                               class="btn btn-sm btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        }
+                                    </div>
                                 </td>
                             </tr>
                         }
