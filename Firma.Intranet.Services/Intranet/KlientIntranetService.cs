@@ -35,8 +35,31 @@ namespace Firma.Intranet.Services.Intranet
                 .FirstOrDefaultAsync(k => k.IdKlienta == id);
         }
 
+        public async Task<bool> CzyEmailIstnieje(string email, int? idKlientaDoPominiecia = null)
+        {
+            var przygotowanyEmail = PrzygotujEmail(email);
+
+            if (string.IsNullOrWhiteSpace(przygotowanyEmail))
+            {
+                return false;
+            }
+
+            var zapytanie = _context.Klient
+                .Where(k => k.Email.ToLower() == przygotowanyEmail);
+
+            if (idKlientaDoPominiecia.HasValue)
+            {
+                zapytanie = zapytanie
+                    .Where(k => k.IdKlienta != idKlientaDoPominiecia.Value);
+            }
+
+            return await zapytanie.AnyAsync();
+        }
+
         public async Task Dodaj(Klient klient)
         {
+            PrzygotujDaneKlienta(klient);
+
             _context.Klient.Add(klient);
 
             await _context.SaveChangesAsync();
@@ -48,6 +71,8 @@ namespace Firma.Intranet.Services.Intranet
             {
                 return false;
             }
+
+            PrzygotujDaneKlienta(klient);
 
             _context.Update(klient);
 
@@ -96,6 +121,19 @@ namespace Firma.Intranet.Services.Intranet
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        private static void PrzygotujDaneKlienta(Klient klient)
+        {
+            klient.Imie = klient.Imie.Trim();
+            klient.Nazwisko = klient.Nazwisko.Trim();
+            klient.Email = PrzygotujEmail(klient.Email);
+            klient.Telefon = klient.Telefon?.Trim() ?? string.Empty;
+        }
+
+        private static string PrzygotujEmail(string email)
+        {
+            return email.Trim().ToLowerInvariant();
         }
 
         private async Task<bool> CzyIstnieje(int id)

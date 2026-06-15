@@ -10,6 +10,8 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task<Klient?> PobierzDoEdycji(int id);
 
+        Task<bool> CzyEmailIstnieje(string email, int? idKlientaDoPominiecia = null);
+
         Task Dodaj(Klient klient);
 
         Task<bool> Aktualizuj(int id, Klient klient);

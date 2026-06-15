@@ -25,5 +25,14 @@ namespace Firma.Data.Data
         public DbSet<Zamowienie> Zamowienie { get; set; } = default!;
         public DbSet<PozycjaZamowienia> PozycjaZamowienia { get; set; } = default!;
         public DbSet<ZalacznikTowaru> ZalacznikTowaru { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Klient>()
+                .HasIndex(k => k.Email)
+                .IsUnique();
+        }
     }
 }

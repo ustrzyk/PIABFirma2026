@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Firma.Data.Data.Sklep
 {
@@ -22,13 +19,13 @@ namespace Firma.Data.Data.Sklep
 
         [Required(ErrorMessage = "Adres e-mail jest wymagany")]
         [EmailAddress(ErrorMessage = "Podaj poprawny adres e-mail")]
+        [MaxLength(256, ErrorMessage = "E-mail może zawierać maksymalnie 256 znaków")]
         [Display(Name = "E-mail")]
         public required string Email { get; set; }
 
         [MaxLength(15, ErrorMessage = "Telefon może zawierać maksymalnie 15 znaków")]
         [Display(Name = "Telefon")]
         public string Telefon { get; set; } = string.Empty;
-
 
         // Powiązanie 1:N - jeden klient może mieć wiele zamówień
         public ICollection<Zamowienie> Zamowienie { get; } = new List<Zamowienie>();

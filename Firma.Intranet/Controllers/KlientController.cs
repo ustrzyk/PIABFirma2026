@@ -46,6 +46,13 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdKlienta,Imie,Nazwisko,Email,Telefon")] Klient klient)
         {
+            if (ModelState.IsValid && await _klientIntranetService.CzyEmailIstnieje(klient.Email))
+            {
+                ModelState.AddModelError(
+                    nameof(Klient.Email),
+                    "Klient z takim adresem e-mail już istnieje.");
+            }
+
             if (ModelState.IsValid)
             {
                 await _klientIntranetService.Dodaj(klient);
@@ -80,6 +87,13 @@ namespace Firma.Intranet.Controllers
             if (id != klient.IdKlienta)
             {
                 return NotFound();
+            }
+
+            if (ModelState.IsValid && await _klientIntranetService.CzyEmailIstnieje(klient.Email, klient.IdKlienta))
+            {
+                ModelState.AddModelError(
+                    nameof(Klient.Email),
+                    "Klient z takim adresem e-mail już istnieje.");
             }
 
             if (ModelState.IsValid)
