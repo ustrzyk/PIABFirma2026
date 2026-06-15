@@ -1,13 +1,12 @@
 using Firma.Data.Data.CMS;
 using Firma.Data.Data.Sklep;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Firma.Data.Data
 {
-    public class FirmaContext : DbContext
+    public class FirmaContext : IdentityDbContext<IdentityUser>
     {
         public FirmaContext(DbContextOptions<FirmaContext> options) : base(options)
         {

@@ -1,0 +1,29 @@
+﻿@{
+    ViewData["Title"] = "Brak dostępu";
+}
+
+<div class="card crud-karta">
+    <div class="card-body p-4">
+        <h1 class="h3 mb-3">Brak dostępu</h1>
+
+        <div class="alert alert-warning">
+            Nie masz uprawnień do tej części panelu.
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="btn btn-primary">
+                Panel główny
+            </a>
+
+            <form asp-controller="Konto"
+                  asp-action="Wyloguj"
+                  method="post">
+                <button type="submit" class="btn btn-outline-secondary">
+                    Wyloguj
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

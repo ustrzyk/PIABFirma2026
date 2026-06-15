@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - Intranet pracownika</title>
-    <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Firma.Intranet.styles.css" asp-append-version="true" />
@@ -17,59 +18,216 @@
                     Druk 3D - Intranet
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuIntranet"
-                        aria-controls="menuIntranet" aria-expanded="false" aria-label="Przełącz nawigację">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <button class="navbar-toggler"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#menuIntranet"
+                            aria-controls="menuIntranet"
+                            aria-expanded="false"
+                            aria-label="Przełącz nawigację">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
 
-                <div class="collapse navbar-collapse" id="menuIntranet">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <div class="collapse navbar-collapse" id="menuIntranet">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area=""
+                                   asp-controller="Home"
+                                   asp-action="Index">
+                                    Start
+                                </a>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Start</a>
-                        </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="cmsDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    CMS
+                                </a>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="cmsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                CMS
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="cmsDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Aktualnosc" asp-action="Index">Aktualności</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Strona" asp-action="Index">Strony</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="UstawieniePortalu" asp-action="Index">Ustawienia portalu</a></li>
-                            </ul>
-                        </li>
+                                <ul class="dropdown-menu" aria-labelledby="cmsDropdown">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Aktualnosc"
+                                           asp-action="Index">
+                                            Aktualności
+                                        </a>
+                                    </li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="towaryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Asortyment
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="towaryDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Towar" asp-action="Index">Towary</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="ZalacznikTowaru" asp-action="Index">Załączniki towarów</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Producent" asp-action="Index">Producenci</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Rodzaj" asp-action="Index">Rodzaje</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="StanMagazynowy" asp-action="Index">Stany magazynowe</a></li>
-                            </ul>
-                        </li>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Promocja"
+                                           asp-action="Index">
+                                            Promocje
+                                        </a>
+                                    </li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="sprzedazDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Sprzedaż
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="sprzedazDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Zamowienie" asp-action="Index">Zamówienia</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="PozycjaZamowienia" asp-action="Index">Pozycje zamówień</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Klient" asp-action="Index">Klienci</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Strona"
+                                           asp-action="Index">
+                                            Strony
+                                        </a>
+                                    </li>
 
-                    <span class="navbar-text text-light">
-                        Panel pracownika
-                    </span>
-                </div>
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="UstawieniePortalu"
+                                           asp-action="Index">
+                                            Ustawienia portalu
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="towaryDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Asortyment
+                                </a>
+
+                                <ul class="dropdown-menu" aria-labelledby="towaryDropdown">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Towar"
+                                           asp-action="Index">
+                                            Towary
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="ZalacznikTowaru"
+                                           asp-action="Index">
+                                            Załączniki towarów
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Producent"
+                                           asp-action="Index">
+                                            Producenci
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Rodzaj"
+                                           asp-action="Index">
+                                            Rodzaje
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="StanMagazynowy"
+                                           asp-action="Index">
+                                            Stany magazynowe
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"
+                                   href="#"
+                                   id="sprzedazDropdown"
+                                   role="button"
+                                   data-bs-toggle="dropdown"
+                                   aria-expanded="false">
+                                    Sprzedaż
+                                </a>
+
+                                <ul class="dropdown-menu" aria-labelledby="sprzedazDropdown">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Zamowienie"
+                                           asp-action="Index">
+                                            Zamówienia
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="PozycjaZamowienia"
+                                           asp-action="Index">
+                                            Pozycje zamówień
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-area=""
+                                           asp-controller="Klient"
+                                           asp-action="Index">
+                                            Klienci
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                            <span class="navbar-text text-light">
+                                @User.Identity.Name
+
+                                @if (User.IsInRole("Administrator"))
+                                {
+                                    <span class="badge bg-primary ms-1">
+                                        Administrator
+                                    </span>
+                                }
+                                else if (User.IsInRole("Pracownik"))
+                                {
+                                    <span class="badge bg-secondary ms-1">
+                                        Pracownik
+                                    </span>
+                                }
+                            </span>
+
+                            <form asp-controller="Konto"
+                                  asp-action="Wyloguj"
+                                  method="post"
+                                  class="mb-0">
+                                <button type="submit" class="btn btn-outline-light btn-sm">
+                                    Wyloguj
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="ms-auto">
+                        <a class="btn btn-outline-light btn-sm"
+                           asp-controller="Konto"
+                           asp-action="Logowanie">
+                            Logowanie
+                        </a>
+                    </div>
+                }
             </div>
         </nav>
     </header>
@@ -79,10 +237,16 @@
     </main>
 
     <footer class="border-top bg-white text-muted mt-4">
-        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between">
+        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between gap-2">
             <div>© 2026 - Intranet pracownika firmy Druk 3D</div>
+
             <div>
-                <a class="text-decoration-none" asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
+                <a class="text-decoration-none"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Privacy">
+                    Prywatność
+                </a>
             </div>
         </div>
     </footer>
@@ -90,6 +254,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
