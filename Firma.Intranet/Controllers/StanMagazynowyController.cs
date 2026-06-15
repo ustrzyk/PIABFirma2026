@@ -1,35 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Firma.Data.Data;
-using Firma.Data.Data.Sklep;
 
 namespace Firma.Intranet.Controllers
 {
     public class StanMagazynowyController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly IStanMagazynowyIntranetService _stanMagazynowyIntranetService;
 
-        public StanMagazynowyController(FirmaContext context)
+        public StanMagazynowyController(IStanMagazynowyIntranetService stanMagazynowyIntranetService)
         {
-            _context = context;
+            _stanMagazynowyIntranetService = stanMagazynowyIntranetService;
         }
 
-        // GET: StanMagazynowy
         public async Task<IActionResult> Index()
         {
-            var firmaContext = _context.StanMagazynowy
-                .Include(s => s.Towar)
-                .OrderBy(s => s.Towar != null ? s.Towar.Nazwa : "");
+            var stanyMagazynowe = await _stanMagazynowyIntranetService.PobierzListe();
 
-            return View(await firmaContext.ToListAsync());
+            return View(stanyMagazynowe);
         }
 
-        // GET: StanMagazynowy/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,9 +28,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var stanMagazynowy = await _context.StanMagazynowy
-                .Include(s => s.Towar)
-                .FirstOrDefaultAsync(m => m.IdStanuMagazynowego == id);
+            var stanMagazynowy = await _stanMagazynowyIntranetService.PobierzSzczegoly(id.Value);
 
             if (stanMagazynowy == null)
             {
@@ -49,30 +38,36 @@ namespace Firma.Intranet.Controllers
             return View(stanMagazynowy);
         }
 
-        // GET: StanMagazynowy/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["IdTowaru"] = new SelectList(_context.Towar.OrderBy(t => t.Nazwa), "IdTowaru", "Nazwa");
+            await PrzygotujTowary();
+
             return View();
         }
 
-        // POST: StanMagazynowy/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IdStanuMagazynowego,IloscSztuk,MinimalnaIlosc,Lokalizacja,CzyAktywny,IdTowaru")] StanMagazynowy stanMagazynowy)
         {
+            if (ModelState.IsValid && await _stanMagazynowyIntranetService.CzyTowarMaStanMagazynowy(stanMagazynowy.IdTowaru))
+            {
+                ModelState.AddModelError(
+                    nameof(StanMagazynowy.IdTowaru),
+                    "Wybrany towar ma już przypisany stan magazynowy.");
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(stanMagazynowy);
-                await _context.SaveChangesAsync();
+                await _stanMagazynowyIntranetService.Dodaj(stanMagazynowy);
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdTowaru"] = new SelectList(_context.Towar.OrderBy(t => t.Nazwa), "IdTowaru", "Nazwa", stanMagazynowy.IdTowaru);
+            await PrzygotujTowary(stanMagazynowy.IdTowaru);
+
             return View(stanMagazynowy);
         }
 
-        // GET: StanMagazynowy/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,18 +75,18 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var stanMagazynowy = await _context.StanMagazynowy.FindAsync(id);
+            var stanMagazynowy = await _stanMagazynowyIntranetService.PobierzDoEdycji(id.Value);
 
             if (stanMagazynowy == null)
             {
                 return NotFound();
             }
 
-            ViewData["IdTowaru"] = new SelectList(_context.Towar.OrderBy(t => t.Nazwa), "IdTowaru", "Nazwa", stanMagazynowy.IdTowaru);
+            await PrzygotujTowary(stanMagazynowy.IdTowaru);
+
             return View(stanMagazynowy);
         }
 
-        // POST: StanMagazynowy/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("IdStanuMagazynowego,IloscSztuk,MinimalnaIlosc,Lokalizacja,CzyAktywny,IdTowaru")] StanMagazynowy stanMagazynowy)
@@ -101,33 +96,30 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
+            if (ModelState.IsValid && await _stanMagazynowyIntranetService.CzyTowarMaStanMagazynowy(stanMagazynowy.IdTowaru, stanMagazynowy.IdStanuMagazynowego))
+            {
+                ModelState.AddModelError(
+                    nameof(StanMagazynowy.IdTowaru),
+                    "Wybrany towar ma już przypisany stan magazynowy.");
+            }
+
             if (ModelState.IsValid)
             {
-                try
+                var zapisano = await _stanMagazynowyIntranetService.Aktualizuj(id, stanMagazynowy);
+
+                if (!zapisano)
                 {
-                    _context.Update(stanMagazynowy);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StanMagazynowyExists(stanMagazynowy.IdStanuMagazynowego))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["IdTowaru"] = new SelectList(_context.Towar.OrderBy(t => t.Nazwa), "IdTowaru", "Nazwa", stanMagazynowy.IdTowaru);
+            await PrzygotujTowary(stanMagazynowy.IdTowaru);
+
             return View(stanMagazynowy);
         }
 
-        // GET: StanMagazynowy/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -135,9 +127,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var stanMagazynowy = await _context.StanMagazynowy
-                .Include(s => s.Towar)
-                .FirstOrDefaultAsync(m => m.IdStanuMagazynowego == id);
+            var stanMagazynowy = await _stanMagazynowyIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (stanMagazynowy == null)
             {
@@ -147,25 +137,24 @@ namespace Firma.Intranet.Controllers
             return View(stanMagazynowy);
         }
 
-        // POST: StanMagazynowy/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var stanMagazynowy = await _context.StanMagazynowy.FindAsync(id);
+            await _stanMagazynowyIntranetService.Usun(id);
 
-            if (stanMagazynowy != null)
-            {
-                _context.StanMagazynowy.Remove(stanMagazynowy);
-            }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StanMagazynowyExists(int id)
+        private async Task PrzygotujTowary(int? idTowaru = null)
         {
-            return _context.StanMagazynowy.Any(e => e.IdStanuMagazynowego == id);
+            var towary = await _stanMagazynowyIntranetService.PobierzTowaryDoSelectList();
+
+            ViewData["IdTowaru"] = new SelectList(
+                towary,
+                "IdTowaru",
+                "Nazwa",
+                idTowaru);
         }
     }
 }
