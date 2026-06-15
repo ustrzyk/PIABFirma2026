@@ -1,31 +1,28 @@
-using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
+using Firma.Intranet.Interfaces.Intranet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Intranet.Controllers
 {
     public class TowarController : Controller
     {
-        private readonly FirmaContext _context;
+        private readonly ITowarIntranetService _towarIntranetService;
         private readonly IWebHostEnvironment _environment;
 
-        public TowarController(FirmaContext context, IWebHostEnvironment environment)
+        public TowarController(
+            ITowarIntranetService towarIntranetService,
+            IWebHostEnvironment environment)
         {
-            _context = context;
+            _towarIntranetService = towarIntranetService;
             _environment = environment;
         }
 
         public async Task<IActionResult> Index()
         {
-            // Pobieram towary do listy
-            var firmaContext = _context.Towar
-                .Include(t => t.Producent)
-                .Include(t => t.Rodzaj)
-                .OrderBy(t => t.Nazwa);
+            var towary = await _towarIntranetService.PobierzListe();
 
-            return View(await firmaContext.ToListAsync());
+            return View(towary);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -35,12 +32,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            // Pobieram towar do szczegółów
-            var towar = await _context.Towar
-                .Include(t => t.Producent)
-                .Include(t => t.Rodzaj)
-                .Include(t => t.ZalacznikiTowaru)
-                .FirstOrDefaultAsync(m => m.IdTowaru == id);
+            var towar = await _towarIntranetService.PobierzSzczegoly(id.Value);
 
             if (towar == null)
             {
@@ -50,9 +42,9 @@ namespace Firma.Intranet.Controllers
             return View(towar);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            PrzygotujListy();
+            await PrzygotujListy();
 
             return View();
         }
@@ -63,16 +55,12 @@ namespace Firma.Intranet.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Zaokrąglam cenę
-                towar.Cena = decimal.Round(towar.Cena, 2, MidpointRounding.AwayFromZero);
-
-                _context.Add(towar);
-                await _context.SaveChangesAsync();
+                await _towarIntranetService.Dodaj(towar);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
+            await PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
 
             return View(towar);
         }
@@ -84,14 +72,14 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var towar = await _context.Towar.FindAsync(id);
+            var towar = await _towarIntranetService.PobierzDoEdycji(id.Value);
 
             if (towar == null)
             {
                 return NotFound();
             }
 
-            PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
+            await PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
 
             return View(towar);
         }
@@ -107,28 +95,17 @@ namespace Firma.Intranet.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    // Zaokrąglam cenę
-                    towar.Cena = decimal.Round(towar.Cena, 2, MidpointRounding.AwayFromZero);
+                var zapisano = await _towarIntranetService.Aktualizuj(id, towar);
 
-                    _context.Update(towar);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
+                if (!zapisano)
                 {
-                    if (!TowarExists(towar.IdTowaru))
-                    {
-                        return NotFound();
-                    }
-
-                    throw;
+                    return NotFound();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
 
-            PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
+            await PrzygotujListy(towar.IdRodzaju, towar.IdProducenta);
 
             return View(towar);
         }
@@ -140,10 +117,7 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var towar = await _context.Towar
-                .Include(t => t.Producent)
-                .Include(t => t.Rodzaj)
-                .FirstOrDefaultAsync(m => m.IdTowaru == id);
+            var towar = await _towarIntranetService.PobierzDoUsuniecia(id.Value);
 
             if (towar == null)
             {
@@ -157,18 +131,7 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var towar = await _context.Towar
-                .Include(t => t.StanMagazynowy)
-                .Include(t => t.ZalacznikiTowaru)
-                .Include(t => t.PozycjaZamowienia)
-                .FirstOrDefaultAsync(t => t.IdTowaru == id);
-
-            if (towar != null)
-            {
-                // Usuwam albo dezaktywuję towar
-                UsunTowarAlboDezaktywuj(towar);
-                await _context.SaveChangesAsync();
-            }
+            await _towarIntranetService.Usun(id, PobierzFolderUploadu());
 
             return RedirectToAction(nameof(Index));
         }
@@ -182,20 +145,7 @@ namespace Firma.Intranet.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var towary = await _context.Towar
-                .Include(t => t.StanMagazynowy)
-                .Include(t => t.ZalacznikiTowaru)
-                .Include(t => t.PozycjaZamowienia)
-                .Where(t => ids.Contains(t.IdTowaru))
-                .ToListAsync();
-
-            foreach (var towar in towary)
-            {
-                // Usuwam albo dezaktywuję zaznaczony towar
-                UsunTowarAlboDezaktywuj(towar);
-            }
-
-            await _context.SaveChangesAsync();
+            await _towarIntranetService.UsunZaznaczone(ids, PobierzFolderUploadu());
 
             return RedirectToAction(nameof(Index));
         }
@@ -209,17 +159,7 @@ namespace Firma.Intranet.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var towary = await _context.Towar
-                .Where(t => ids.Contains(t.IdTowaru))
-                .ToListAsync();
-
-            foreach (var towar in towary)
-            {
-                // Dezaktywuję zaznaczony towar
-                towar.CzyAktywny = false;
-            }
-
-            await _context.SaveChangesAsync();
+            await _towarIntranetService.DezaktywujZaznaczone(ids);
 
             return RedirectToAction(nameof(Index));
         }
@@ -233,62 +173,24 @@ namespace Firma.Intranet.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var towary = await _context.Towar
-                .Where(t => ids.Contains(t.IdTowaru))
-                .ToListAsync();
-
-            foreach (var towar in towary)
-            {
-                // Aktywuję zaznaczony towar
-                towar.CzyAktywny = true;
-            }
-
-            await _context.SaveChangesAsync();
+            await _towarIntranetService.AktywujZaznaczone(ids);
 
             return RedirectToAction(nameof(Index));
         }
 
-        private void UsunTowarAlboDezaktywuj(Towar towar)
+        private async Task PrzygotujListy(int? idRodzaju = null, int? idProducenta = null)
         {
-            if (towar.PozycjaZamowienia != null && towar.PozycjaZamowienia.Any())
-            {
-                // Nie usuwam towaru użytego w zamówieniach
-                towar.CzyAktywny = false;
-                _context.Update(towar);
+            var producenci = await _towarIntranetService.PobierzProducentowDoSelectList();
+            var rodzaje = await _towarIntranetService.PobierzRodzajeDoSelectList();
 
-                return;
-            }
-
-            if (towar.ZalacznikiTowaru != null && towar.ZalacznikiTowaru.Any())
-            {
-                foreach (var zalacznik in towar.ZalacznikiTowaru)
-                {
-                    // Usuwam plik załącznika
-                    UsunPlik(zalacznik.Sciezka);
-                }
-
-                _context.ZalacznikTowaru.RemoveRange(towar.ZalacznikiTowaru);
-            }
-
-            if (towar.StanMagazynowy != null)
-            {
-                // Usuwam stan magazynowy towaru
-                _context.StanMagazynowy.Remove(towar.StanMagazynowy);
-            }
-
-            _context.Towar.Remove(towar);
-        }
-
-        private void PrzygotujListy(int? idRodzaju = null, int? idProducenta = null)
-        {
             ViewData["IdProducenta"] = new SelectList(
-                _context.Producent.OrderBy(p => p.Nazwa),
+                producenci,
                 "IdProducenta",
                 "Nazwa",
                 idProducenta);
 
             ViewData["IdRodzaju"] = new SelectList(
-                _context.Rodzaj.OrderBy(r => r.Nazwa),
+                rodzaje,
                 "IdRodzaju",
                 "Nazwa",
                 idRodzaju);
@@ -303,30 +205,6 @@ namespace Firma.Intranet.Controllers
                 "wwwroot",
                 "uploads",
                 "towary"));
-        }
-
-        private string PobierzSciezkeFizyczna(string sciezka)
-        {
-            var nazwaPliku = sciezka
-                .Split('/', StringSplitOptions.RemoveEmptyEntries)
-                .LastOrDefault() ?? "";
-
-            return Path.Combine(PobierzFolderUploadu(), nazwaPliku);
-        }
-
-        private void UsunPlik(string sciezka)
-        {
-            var sciezkaFizyczna = PobierzSciezkeFizyczna(sciezka);
-
-            if (System.IO.File.Exists(sciezkaFizyczna))
-            {
-                System.IO.File.Delete(sciezkaFizyczna);
-            }
-        }
-
-        private bool TowarExists(int id)
-        {
-            return _context.Towar.Any(e => e.IdTowaru == id);
         }
     }
 }
