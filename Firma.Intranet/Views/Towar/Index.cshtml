@@ -4,6 +4,85 @@
     ViewData["Title"] = "Towary";
 }
 
+<style>
+    .towar-mobile-list {
+        display: none;
+    }
+
+    .towar-mobile-card {
+        border: 1px solid #dee2e6;
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.06);
+    }
+
+    .towar-mobile-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+        .towar-mobile-actions .btn {
+            width: 100%;
+        }
+
+    .towar-mobile-info {
+        display: grid;
+        grid-template-columns: 40% 60%;
+        gap: 0.35rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+        .towar-mobile-info dt {
+            color: #6c757d;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .towar-mobile-info dd {
+            margin-bottom: 0;
+            word-break: break-word;
+        }
+
+    .towar-opis {
+        max-width: 260px;
+    }
+
+    .towar-foto-url {
+        max-width: 180px;
+        word-break: break-word;
+    }
+
+    @@media (max-width: 767.98px) {
+        .towar-desktop-table {
+            display: none;
+        }
+
+        .towar-mobile-list {
+            display: block;
+        }
+
+        .towar-toolbar {
+            align-items: stretch !important;
+        }
+
+            .towar-toolbar .btn {
+                width: 100%;
+            }
+
+        .crud-naglowek {
+            display: block;
+        }
+
+            .crud-naglowek .btn {
+                width: 100%;
+                margin-top: 0.75rem;
+            }
+    }
+</style>
+
 <div class="crud-naglowek">
     <div>
         <h1 class="h2 mb-1">Towary</h1>
@@ -15,75 +94,277 @@
 
 <div class="card crud-karta">
     <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0 crud-tabela">
-                <thead class="table-light">
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Kod)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Nazwa)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Cena)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.FotoUrl)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Opis)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Rodzaj)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Producent)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.CzyAktywny)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
+        @if (Model != null && Model.Any())
+        {
+            <form method="post">
+                @Html.AntiForgeryToken()
 
-                <tbody>
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center gap-2 flex-wrap towar-toolbar">
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="zaznaczWszystkieTowary" />
+
+                        <label for="zaznaczWszystkieTowary" class="form-check-label">
+                            Zaznacz wszystko
+                        </label>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="submit"
+                                asp-action="AktywujZaznaczone"
+                                class="btn btn-outline-success">
+                            Aktywuj zaznaczone
+                        </button>
+
+                        <button type="submit"
+                                asp-action="DezaktywujZaznaczone"
+                                class="btn btn-outline-secondary">
+                            Dezaktywuj zaznaczone
+                        </button>
+
+                        <button type="submit"
+                                asp-action="UsunZaznaczone"
+                                class="btn btn-danger"
+                                onclick="return confirm('Usunąć zaznaczone towary? Towary użyte w zamówieniach zostaną tylko dezaktywowane.');">
+                            Usuń zaznaczone
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive towar-desktop-table">
+                    <table class="table table-hover table-striped mb-0 crud-tabela">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 45px;"></th>
+                                <th>Kod</th>
+                                <th>Nazwa</th>
+                                <th>Cena</th>
+                                <th>Zdjęcie</th>
+                                <th>Opis</th>
+                                <th>Rodzaj</th>
+                                <th>Producent</th>
+                                <th>Aktywny</th>
+                                <th class="text-end">Akcje</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <input type="checkbox"
+                                               class="form-check-input checkbox-towar"
+                                               name="ids"
+                                               value="@item.IdTowaru" />
+                                    </td>
+
+                                    <td>@item.Kod</td>
+
+                                    <td>
+                                        <strong>@item.Nazwa</strong>
+                                    </td>
+
+                                    <td>
+                                        @item.Cena.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        <div class="small text-muted towar-foto-url">
+                                            @item.FotoUrl
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="small text-muted towar-opis">
+                                            @item.Opis
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        @if (item.Rodzaj != null)
+                                        {
+                                            @item.Rodzaj.Nazwa
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">brak</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (item.Producent != null)
+                                        {
+                                            @item.Producent.Nazwa
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">brak</span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (item.CzyAktywny)
+                                        {
+                                            <span class="badge bg-success">tak</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">nie</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.IdTowaru"
+                                               class="btn btn-outline-primary">
+                                                Edytuj
+                                            </a>
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.IdTowaru"
+                                               class="btn btn-outline-secondary">
+                                                Szczegóły
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.IdTowaru"
+                                               class="btn btn-outline-danger">
+                                                Usuń
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="towar-mobile-list p-3">
                     @foreach (var item in Model)
                     {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Kod)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Nazwa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Cena)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FotoUrl)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Opis)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Rodzaj.Nazwa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Producent.Nazwa)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CzyAktywny)
-                            </td>
-                            <td class="crud-akcje">
-                                <a asp-action="Edit" asp-route-id="@item.IdTowaru" class="btn btn-sm btn-outline-primary">Edytuj</a>
-                                <a asp-action="Details" asp-route-id="@item.IdTowaru" class="btn btn-sm btn-outline-secondary">Szczegóły</a>
-                                <a asp-action="Delete" asp-route-id="@item.IdTowaru" class="btn btn-sm btn-outline-danger">Usuń</a>
-                            </td>
-                        </tr>
+                        <div class="towar-mobile-card">
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+                                <div>
+                                    <h2 class="h6 mb-1">@item.Nazwa</h2>
+                                    <div class="small text-muted">@item.Kod</div>
+                                </div>
+
+                                <input type="checkbox"
+                                       class="form-check-input checkbox-towar"
+                                       name="ids"
+                                       value="@item.IdTowaru" />
+                            </div>
+
+                            <dl class="towar-mobile-info">
+                                <dt>Cena</dt>
+                                <dd>@item.Cena.ToString("N2")</dd>
+
+                                <dt>Rodzaj</dt>
+                                <dd>
+                                    @if (item.Rodzaj != null)
+                                    {
+                                        @item.Rodzaj.Nazwa
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </dd>
+
+                                <dt>Producent</dt>
+                                <dd>
+                                    @if (item.Producent != null)
+                                    {
+                                        @item.Producent.Nazwa
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </dd>
+
+                                <dt>Aktywny</dt>
+                                <dd>
+                                    @if (item.CzyAktywny)
+                                    {
+                                        <span class="badge bg-success">tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">nie</span>
+                                    }
+                                </dd>
+
+                                <dt>Zdjęcie</dt>
+                                <dd>
+                                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                                    {
+                                        <span class="small text-muted">@item.FotoUrl</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak</span>
+                                    }
+                                </dd>
+                            </dl>
+
+                            @if (!string.IsNullOrWhiteSpace(item.Opis))
+                            {
+                                <div class="small text-muted mb-3">
+                                    @item.Opis
+                                </div>
+                            }
+
+                            <div class="towar-mobile-actions">
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.IdTowaru"
+                                   class="btn btn-outline-primary">
+                                    Edytuj
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.IdTowaru"
+                                   class="btn btn-outline-secondary">
+                                    Szczegóły
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.IdTowaru"
+                                   class="btn btn-outline-danger">
+                                    Usuń
+                                </a>
+                            </div>
+                        </div>
                     }
-                </tbody>
-            </table>
-        </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="p-4">
+                <div class="alert alert-info mb-0">
+                    Brak towarów do wyświetlenia.
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        const zaznaczWszystkieTowary = document.getElementById('zaznaczWszystkieTowary');
+
+        if (zaznaczWszystkieTowary) {
+            zaznaczWszystkieTowary.addEventListener('change', function () {
+                const checkboxy = document.querySelectorAll('.checkbox-towar');
+
+                checkboxy.forEach(function (checkbox) {
+                    checkbox.checked = zaznaczWszystkieTowary.checked;
+                });
+            });
+        }
+    </script>
+}
