@@ -13,9 +13,18 @@
 
 <div class="card crud-karta border-danger-subtle">
     <div class="card-body p-4">
-        <div class="alert alert-warning" role="alert">
-            Czy na pewno chcesz usunąć ten rekord?
-        </div>
+        @if (Model.Towar != null && Model.Towar.Any())
+        {
+            <div class="alert alert-warning" role="alert">
+                Ten rodzaj ma przypisane towary. Po potwierdzeniu zostanie dezaktywowany.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="alert">
+                Czy na pewno chcesz usunąć ten rodzaj?
+            </div>
+        }
 
         <dl class="row crud-opis mb-4">
             <dt class="col-sm-4 col-lg-3">
@@ -24,20 +33,49 @@
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
                 @Html.DisplayFor(model => model.Nazwa)
             </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.Opis)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Opis)
+                @if (!string.IsNullOrWhiteSpace(Model.Opis))
+                {
+                    @Model.Opis
+                }
+                else
+                {
+                    <span class="text-muted">brak</span>
+                }
+            </dd>
+
+            <dt class="col-sm-4 col-lg-3">
+                @Html.DisplayNameFor(model => model.CzyAktywny)
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @if (Model.CzyAktywny)
+                {
+                    <span class="badge bg-success">tak</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">nie</span>
+                }
             </dd>
         </dl>
 
         <form asp-action="Delete" class="d-flex gap-2 flex-wrap">
+            @Html.AntiForgeryToken()
 
             <input type="hidden" asp-for="IdRodzaju" />
-            <input type="submit" value="Usuń rekord" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-outline-secondary">Anuluj</a>
-    
+
+            <input type="submit"
+                   value="Potwierdź"
+                   class="btn btn-danger" />
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Anuluj
+            </a>
         </form>
     </div>
 </div>

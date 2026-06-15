@@ -8,6 +8,8 @@ namespace Firma.Intranet.Security
         private static readonly HashSet<string> AkcjeAdministratora = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Delete",
+            "Aktywuj",
+            "Dezaktywuj",
             "UsunZaznaczone",
             "DezaktywujZaznaczone",
             "AktywujZaznaczone",
