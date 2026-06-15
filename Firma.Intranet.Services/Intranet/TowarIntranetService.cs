@@ -15,11 +15,25 @@ namespace Firma.Intranet.Services.Intranet
             _context = context;
         }
 
-        public async Task<List<Towar>> PobierzListe()
+        public async Task<List<Towar>> PobierzListe(string? statusAktywnosci = null)
         {
-            return await _context.Towar
+            var zapytanie = _context.Towar
                 .Include(t => t.Producent)
                 .Include(t => t.Rodzaj)
+                .AsQueryable();
+
+            var status = statusAktywnosci?.Trim().ToLowerInvariant();
+
+            if (status == "aktywne")
+            {
+                zapytanie = zapytanie.Where(t => t.CzyAktywny);
+            }
+            else if (status == "nieaktywne")
+            {
+                zapytanie = zapytanie.Where(t => !t.CzyAktywny);
+            }
+
+            return await zapytanie
                 .OrderBy(t => t.Nazwa)
                 .ToListAsync();
         }

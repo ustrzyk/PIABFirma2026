@@ -5,7 +5,7 @@ namespace Firma.Intranet.Interfaces.Intranet
 {
     public interface ITowarIntranetService
     {
-        Task<List<Towar>> PobierzListe();
+        Task<List<Towar>> PobierzListe(string? statusAktywnosci = null);
 
         Task<Towar?> PobierzSzczegoly(int id);
 

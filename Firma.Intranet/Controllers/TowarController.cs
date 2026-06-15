@@ -18,9 +18,12 @@ namespace Firma.Intranet.Controllers
             _environment = environment;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? statusAktywnosci)
         {
-            var towary = await _towarIntranetService.PobierzListe();
+            var status = PrzygotujStatusAktywnosci(statusAktywnosci);
+            var towary = await _towarIntranetService.PobierzListe(status);
+
+            ViewData["StatusAktywnosci"] = status;
 
             return View(towary);
         }
@@ -223,6 +226,18 @@ namespace Firma.Intranet.Controllers
                 "wwwroot",
                 "uploads",
                 "towary"));
+        }
+
+        private static string PrzygotujStatusAktywnosci(string? statusAktywnosci)
+        {
+            var status = statusAktywnosci?.Trim().ToLowerInvariant();
+
+            return status switch
+            {
+                "aktywne" => "aktywne",
+                "nieaktywne" => "nieaktywne",
+                _ => "wszystkie"
+            };
         }
     }
 }
