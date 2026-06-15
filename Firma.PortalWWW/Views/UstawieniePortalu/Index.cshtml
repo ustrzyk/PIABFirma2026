@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-4 desktop-grid-wrap">
     @if (Model != null && Model.Any())
     {
         foreach (var item in Model)
@@ -55,3 +55,39 @@
         </div>
     }
 </div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="mobile-card-list">
+        @foreach (var item in Model)
+        {
+            <div class="mobile-info-card">
+                <div class="mobile-info-body">
+                    <div class="mb-2">
+                        <span class="portal-badge">@item.Klucz</span>
+                    </div>
+
+                    <h2 class="h6 mb-2">@item.Klucz</h2>
+
+                    <div class="small text-muted tekst-skrot mb-3">
+                        @item.Wartosc
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(item.Opis))
+                    {
+                        <div class="small text-muted mb-3">
+                            @item.Opis
+                        </div>
+                    }
+
+                    <a class="btn btn-primary w-100"
+                       asp-controller="UstawieniePortalu"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdUstawieniaPortalu">
+                        Szczegóły
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}

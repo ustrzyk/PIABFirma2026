@@ -18,7 +18,7 @@
     <div class="card-body p-0">
         @if (Model != null && Model.Any())
         {
-            <div class="table-responsive">
+            <div class="table-responsive desktop-table-wrap">
                 <table class="table table-hover align-middle mb-0 sklep-table">
                     <thead>
                         <tr>
@@ -41,12 +41,14 @@
                                 <td>
                                     <strong>@item.NazwaTowaru</strong>
                                 </td>
+
                                 <td>@item.KodTowaru</td>
                                 <td>@item.Rodzaj</td>
                                 <td>@item.Producent</td>
                                 <td>@item.IloscSztuk</td>
                                 <td>@item.MinimalnaIlosc</td>
                                 <td>@item.Lokalizacja</td>
+
                                 <td>
                                     @if (item.CzyMaloTowaru)
                                     {
@@ -57,6 +59,7 @@
                                         <span class="badge bg-success">OK</span>
                                     }
                                 </td>
+
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-primary"
                                        asp-controller="StanMagazynowy"
@@ -69,6 +72,65 @@
                         }
                     </tbody>
                 </table>
+            </div>
+
+            <div class="mobile-card-list p-3">
+                @foreach (var item in Model)
+                {
+                    <div class="mobile-info-card">
+                        <div class="mobile-info-body">
+                            <div class="d-flex justify-content-between gap-2 mb-2">
+                                <div>
+                                    <h2 class="h6 mb-1">@item.NazwaTowaru</h2>
+                                    <div class="small text-muted">@item.KodTowaru</div>
+                                </div>
+
+                                <div class="text-end">
+                                    @if (item.CzyMaloTowaru)
+                                    {
+                                        <span class="badge bg-warning text-dark">mało</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">OK</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <span class="badge bg-light text-dark border">@item.Rodzaj</span>
+                                <span class="badge bg-light text-dark border">@item.Producent</span>
+                            </div>
+
+                            <dl class="mobile-details-list">
+                                <dt>Ilość</dt>
+                                <dd>@item.IloscSztuk szt.</dd>
+
+                                <dt>Minimum</dt>
+                                <dd>@item.MinimalnaIlosc szt.</dd>
+
+                                <dt>Lokalizacja</dt>
+                                <dd>
+                                    @if (!string.IsNullOrWhiteSpace(item.Lokalizacja))
+                                    {
+                                        @item.Lokalizacja
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak danych</span>
+                                    }
+                                </dd>
+                            </dl>
+
+                            <a class="btn btn-primary w-100"
+                               asp-controller="StanMagazynowy"
+                               asp-action="Szczegoly"
+                               asp-route-id="@item.IdStanuMagazynowego">
+                                Szczegóły
+                            </a>
+                        </div>
+                    </div>
+                }
             </div>
         }
         else
