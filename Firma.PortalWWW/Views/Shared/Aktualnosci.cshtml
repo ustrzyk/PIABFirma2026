@@ -1,43 +1,71 @@
 @model IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>
 
-@if (Model != null && Model.Any())
+@{
+    var aktualnosci = Model?.ToList() ?? new List<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>();
+}
+
+@if (aktualnosci.Any())
 {
-    <div class="container py-4">
-        <div class="section-heading mb-3">
-            <span class="portal-badge">Aktualności</span>
-            <h2 class="h4 mt-2 mb-1">Najnowsze informacje</h2>
-            <p class="text-muted mb-0">
-                Komunikaty publikowane z poziomu Intranetu.
-            </p>
+    <section>
+        <div class="section-heading mb-4">
+            <div>
+                <span class="portal-badge">Aktualności</span>
+                <h2 class="h3 mt-2 mb-2">Najnowsze informacje</h2>
+                <p class="text-muted mb-0">
+                    Nowości, komunikaty i informacje związane z ofertą sklepu.
+                </p>
+            </div>
+
+            <div class="section-summary">
+                <strong>@aktualnosci.Count</strong>
+                <span>wpisów</span>
+            </div>
         </div>
 
-        <div class="row g-4">
-            @foreach (var item in Model)
+        <div class="product-grid">
+            @foreach (var item in aktualnosci)
             {
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="card news-card h-100">
-                        <div class="card-body d-flex flex-column">
-                            <div class="mb-2">
-                                <span class="portal-badge">Aktualność</span>
+                var tresc = item.Tresc ?? string.Empty;
+
+                <article class="product-card">
+                    <div class="product-card-body">
+                        <div class="product-meta mb-3">
+                            <span>Aktualność</span>
+                            <span>Sklep 3D</span>
+                        </div>
+
+                        <h3 class="product-title">
+                            <a asp-area=""
+                               asp-controller="Aktualnosc"
+                               asp-action="Index"
+                               asp-route-id="@item.IdAktualnosci">
+                                @item.Tytul
+                            </a>
+                        </h3>
+
+                        <p class="product-description tekst-skrot">
+                            @tresc
+                        </p>
+
+                        <div class="product-card-footer">
+                            <div>
+                                <div class="small text-muted">Wpis</div>
+                                <div class="price-text product-price">
+                                    #@item.Pozycja
+                                </div>
                             </div>
 
-                            <h3 class="h5">@item.Tytul</h3>
-
-                            <p class="card-text text-muted tekst-skrot">
-                                @item.Tresc
-                            </p>
-
-                            <a class="btn btn-outline-primary mt-auto"
+                            <a class="btn btn-primary"
                                asp-area=""
                                asp-controller="Aktualnosc"
                                asp-action="Index"
                                asp-route-id="@item.IdAktualnosci">
-                                Szczegóły
+                                Czytaj
                             </a>
                         </div>
                     </div>
-                </div>
+                </article>
             }
         </div>
-    </div>
+    </section>
 }

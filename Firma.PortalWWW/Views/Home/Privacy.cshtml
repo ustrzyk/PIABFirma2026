@@ -1,43 +1,87 @@
 @{
     ViewData["Title"] = "Prywatność";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header mb-4">
-    <div>
-        <span class="portal-badge">Informacje</span>
-        <h1 class="h3 mt-2 mb-1">Prywatność</h1>
-        <p class="text-muted mb-0">
-            Informacja techniczna dla portalu klienta.
-        </p>
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Informacje</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Prywatność
+            </h1>
+
+            <p class="hero-text mb-0">
+                Informacje o sposobie prezentowania danych w publicznej części sklepu.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Strona główna
+                </a>
+
+                <a asp-controller="Sklep"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Przejdź do sklepu
+                </a>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Portal</div>
+
+                <div class="hero-feature">
+                    <strong>Oferta</strong>
+                    <span>Portal prezentuje aktywne produkty, promocje i informacje.</span>
+                </div>
+
+                <div class="hero-feature">
+                    <strong>Kontakt</strong>
+                    <span>Dane kontaktowe są widoczne w stopce portalu.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Zakres informacji</h2>
+
+            <p class="text-muted">
+                Portal publiczny pokazuje dane potrzebne do przeglądania oferty sklepu:
+                produkty, producentów, kategorie, promocje, aktualności oraz strony informacyjne.
+            </p>
+
+            <p class="text-muted mb-0">
+                Dane administracyjne i zarządzanie treścią są dostępne wyłącznie w panelu Intranet.
+            </p>
+        </div>
     </div>
 
-    <a asp-controller="Home"
-       asp-action="Index"
-       class="btn btn-outline-secondary">
-        Powrót na stronę główną
-    </a>
-</div>
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Najważniejsze sekcje</h2>
 
-<div class="card page-card shadow-sm">
-    <div class="card-body p-4">
-        <h2 class="h5 mb-3">Projekt studencki</h2>
+            <dl class="details-list-clean mb-0">
+                <dt>Sklep</dt>
+                <dd>Lista aktywnych produktów.</dd>
 
-        <p class="text-muted">
-            Ten portal jest częścią sklepu z drukarkami 3D oraz akcesoriami.
-            Dane widoczne w portalu są zarządzane z poziomu panelu Intranet.
-        </p>
+                <dt>Promocje</dt>
+                <dd>Aktywne oferty specjalne.</dd>
 
-        <hr />
+                <dt>Aktualności</dt>
+                <dd>Informacje publikowane w portalu.</dd>
 
-        <dl class="row details-list mb-0">
-            <dt class="col-sm-3">Portal</dt>
-            <dd class="col-sm-9">Firma.PortalWWW</dd>
-
-            <dt class="col-sm-3">Panel zarządzania</dt>
-            <dd class="col-sm-9">Firma.Intranet</dd>
-
-            <dt class="col-sm-3">Baza danych</dt>
-            <dd class="col-sm-9">Firma.Data</dd>
-        </dl>
+                <dt>Kontakt</dt>
+                <dd>Dane widoczne w stopce strony.</dd>
+            </dl>
+        </div>
     </div>
-</div>
+</section>

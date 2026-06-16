@@ -2,29 +2,89 @@
 
 @{
     ViewData["Title"] = Model.LinkTytul;
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header mb-4">
-    <div>
-        <span class="portal-badge">Aktualność</span>
-        <h1 class="h3 mt-2 mb-1">@Model.Tytul</h1>
-        <p class="text-muted mb-0">
-            Szczegóły informacji opublikowanej w portalu.
-        </p>
-    </div>
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Aktualność</span>
 
-    <a asp-controller="Home"
-       asp-action="Index"
-       class="btn btn-outline-secondary">
-        Powrót na stronę główną
-    </a>
-</div>
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                @Model.Tytul
+            </h1>
 
-<div class="card page-card shadow-sm">
-    <div class="card-body p-4">
-        <div class="tekst-strony">
-            @Model.Tresc
+            <p class="hero-text mb-0">
+                Informacje, nowości i komunikaty związane z ofertą sklepu.
+            </p>
+
+            <div class="hero-actions">
+                <a asp-controller="Sklep"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Przejdź do sklepu
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Strona główna
+                </a>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Informacja</div>
+
+                <div class="hero-feature">
+                    <strong>@Model.LinkTytul</strong>
+                    <span>Nazwa wpisu w portalu.</span>
+                </div>
+
+                <div class="hero-feature">
+                    <strong>Sklep 3D</strong>
+                    <span>Aktualność widoczna dla klientów.</span>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-8">
+        <article class="details-card">
+            <h2 class="h5 mb-3">Treść aktualności</h2>
+
+            <div class="tekst-strony text-muted">
+                @Model.Tresc
+            </div>
+        </article>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <aside class="details-card">
+            <h2 class="h5 mb-3">Szybkie przejścia</h2>
+
+            <div class="d-grid gap-2">
+                <a asp-controller="Sklep"
+                   asp-action="Index"
+                   class="btn btn-primary">
+                    Produkty
+                </a>
+
+                <a asp-controller="Promocja"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Promocje
+                </a>
+
+                <a asp-controller="Producent"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Producenci
+                </a>
+            </div>
+        </aside>
+    </div>
+</section>
