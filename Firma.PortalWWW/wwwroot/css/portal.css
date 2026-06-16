@@ -895,4 +895,116 @@ body {
     .portal-footer {
         padding-bottom: 1.5rem;
     }
+    /* Status zamówienia / portal klienta */
+
+    .status-zamowienia-page {
+        display: block;
+        margin-bottom: 2rem;
+    }
+
+    .status-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .status-summary-item,
+    .status-address-box {
+        background-color: #f8fafc;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 0.9rem;
+        padding: 1rem;
+    }
+
+        .status-summary-item span,
+        .status-address-box span {
+            display: block;
+            color: #64748b;
+            font-size: 0.86rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-summary-item strong,
+        .status-address-box strong {
+            display: block;
+            word-break: break-word;
+        }
+
+    .client-order-items {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .client-order-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 90px 130px 130px;
+        gap: 1rem;
+        align-items: center;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 0.9rem;
+        background-color: #ffffff;
+        padding: 0.9rem 1rem;
+    }
+
+    .client-order-header {
+        background-color: #f8fafc;
+        color: #334155;
+        font-weight: 800;
+    }
+
+    .client-order-product strong {
+        display: block;
+        word-break: break-word;
+    }
+
+    .client-order-product span {
+        display: block;
+        color: #64748b;
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+    }
+
+    .client-order-label {
+        display: none;
+        color: #64748b;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .status-summary-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .client-order-row {
+            grid-template-columns: minmax(0, 1fr) 80px 110px 110px;
+            gap: 0.75rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .status-summary-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .client-order-header {
+            display: none;
+        }
+
+        .client-order-row {
+            grid-template-columns: 1fr;
+            gap: 0.65rem;
+            align-items: start;
+        }
+
+        .client-order-label {
+            display: block;
+        }
+
+        .status-zamowienia-page .details-card {
+            overflow: visible;
+        }
+    }
 }
