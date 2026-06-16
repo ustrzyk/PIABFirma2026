@@ -1,8 +1,13 @@
-﻿@model IEnumerable<Firma.Data.Data.Sklep.Zamowienie>
+﻿@using Firma.Data.Data.Sklep
+@model IEnumerable<Firma.Data.Data.Sklep.Zamowienie>
 
 @{
     ViewData["Title"] = "Zamówienia";
     var czyAdministrator = User.IsInRole("Administrator");
+    var zamowienia = Model?.ToList() ?? new List<Zamowienie>();
+    var liczbaZamowienWWW = zamowienia.Count(z =>
+        !string.IsNullOrWhiteSpace(z.NumerZamowienia) &&
+        z.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase));
 }
 
 <style>
@@ -17,6 +22,15 @@
         padding: 1rem;
         margin-bottom: 1rem;
         box-shadow: 0 0.125rem 0.4rem rgba(0, 0, 0, 0.06);
+    }
+
+    .zamowienie-mobile-card-www {
+        border-color: #86b7fe;
+        background-color: #f8fbff;
+    }
+
+    .zamowienie-www-row {
+        --bs-table-bg: #f8fbff;
     }
 
     .zamowienie-mobile-actions {
@@ -46,6 +60,13 @@
             margin-bottom: 0;
             word-break: break-word;
         }
+
+    .zamowienie-zrodlo-box {
+        border: 1px solid #dee2e6;
+        border-radius: 0.75rem;
+        background-color: #ffffff;
+        padding: 1rem;
+    }
 
     @@media (max-width: 767.98px) {
         .zamowienie-desktop-table {
@@ -83,7 +104,7 @@
 <div class="crud-naglowek">
     <div>
         <h1 class="h2 mb-1">Zamówienia</h1>
-        <p class="crud-podtytul">Lista rekordów w module: zamówienia.</p>
+        <p class="crud-podtytul">Lista zamówień ręcznych oraz zamówień z portalu WWW.</p>
     </div>
 
     <div class="d-flex gap-2 flex-wrap btn-group-responsive">
@@ -106,9 +127,32 @@
     </div>
 </div>
 
+<div class="row g-3 mb-3">
+    <div class="col-12 col-md-4">
+        <div class="zamowienie-zrodlo-box">
+            <div class="text-muted small">Wszystkie zamówienia</div>
+            <div class="h4 mb-0">@zamowienia.Count</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="zamowienie-zrodlo-box">
+            <div class="text-muted small">Z portalu WWW</div>
+            <div class="h4 mb-0">@liczbaZamowienWWW</div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="zamowienie-zrodlo-box">
+            <div class="text-muted small">Dodane ręcznie / import</div>
+            <div class="h4 mb-0">@(zamowienia.Count - liczbaZamowienWWW)</div>
+        </div>
+    </div>
+</div>
+
 <div class="card crud-karta">
     <div class="card-body p-0">
-        @if (Model != null && Model.Any())
+        @if (zamowienia.Any())
         {
             <form method="post">
                 @Html.AntiForgeryToken()
@@ -145,6 +189,7 @@
                             <tr>
                                 <th style="width: 45px;"></th>
                                 <th>Numer zamówienia</th>
+                                <th>Źródło</th>
                                 <th>Data</th>
                                 <th>Status</th>
                                 <th>Wartość razem</th>
@@ -155,9 +200,13 @@
                         </thead>
 
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in zamowienia)
                             {
-                                <tr>
+                                var czyZamowienieWWW =
+                                    !string.IsNullOrWhiteSpace(item.NumerZamowienia) &&
+                                    item.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase);
+
+                                <tr class="@(czyZamowienieWWW ? "zamowienie-www-row" : string.Empty)">
                                     <td>
                                         <input type="checkbox"
                                                class="form-check-input checkbox-zamowienie"
@@ -167,6 +216,17 @@
 
                                     <td>
                                         <strong>@item.NumerZamowienia</strong>
+                                    </td>
+
+                                    <td>
+                                        @if (czyZamowienieWWW)
+                                        {
+                                            <span class="badge bg-primary">Portal WWW</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-light text-dark border">Intranet</span>
+                                        }
                                     </td>
 
                                     <td>
@@ -181,7 +241,14 @@
                                     </td>
 
                                     <td>
-                                        <span class="badge bg-secondary">@item.Status</span>
+                                        @if (czyZamowienieWWW && item.Status == "Nowe")
+                                        {
+                                            <span class="badge bg-success">@item.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">@item.Status</span>
+                                        }
                                     </td>
 
                                     <td>
@@ -247,12 +314,25 @@
                 </div>
 
                 <div class="zamowienie-mobile-list p-3">
-                    @foreach (var item in Model)
+                    @foreach (var item in zamowienia)
                     {
-                        <div class="zamowienie-mobile-card">
+                        var czyZamowienieWWW =
+                            !string.IsNullOrWhiteSpace(item.NumerZamowienia) &&
+                            item.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase);
+
+                        <div class="zamowienie-mobile-card @(czyZamowienieWWW ? "zamowienie-mobile-card-www" : string.Empty)">
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
                                 <div>
                                     <h2 class="h6 mb-1">@item.NumerZamowienia</h2>
+
+                                    @if (czyZamowienieWWW)
+                                    {
+                                        <span class="badge bg-primary mb-2">Portal WWW</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark border mb-2">Intranet</span>
+                                    }
 
                                     @if (item.Klient != null)
                                     {
@@ -289,7 +369,14 @@
 
                                 <dt>Status</dt>
                                 <dd>
-                                    <span class="badge bg-secondary">@item.Status</span>
+                                    @if (czyZamowienieWWW && item.Status == "Nowe")
+                                    {
+                                        <span class="badge bg-success">@item.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Status</span>
+                                    }
                                 </dd>
 
                                 <dt>Wartość</dt>

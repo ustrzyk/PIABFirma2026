@@ -2,12 +2,25 @@
 
 @{
     ViewData["Title"] = "Szczegóły - Zamówienie";
+
+    var czyZamowienieWWW =
+        !string.IsNullOrWhiteSpace(Model.NumerZamowienia) &&
+        Model.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase);
 }
 
 <div class="crud-naglowek">
     <div>
         <h1 class="h2 mb-1">Szczegóły zamówienia</h1>
-        <p class="crud-podtytul">Podgląd danych rekordu: zamówienie.</p>
+        <p class="crud-podtytul">
+            @if (czyZamowienieWWW)
+            {
+                <span>Zamówienie złożone przez portal WWW.</span>
+            }
+            else
+            {
+                <span>Podgląd danych rekordu: zamówienie.</span>
+            }
+        </p>
     </div>
 
     <a asp-action="PobierzFakturePdf"
@@ -17,9 +30,37 @@
     </a>
 </div>
 
+@if (czyZamowienieWWW)
+{
+    <div class="alert alert-primary d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+            <strong>Źródło: Portal WWW</strong>
+            <div class="small">
+                To zamówienie zostało zapisane z koszyka klienta w publicznym portalu.
+            </div>
+        </div>
+
+        <span class="badge bg-success">@Model.Status</span>
+    </div>
+}
+
 <div class="card crud-karta mb-4">
     <div class="card-body p-4">
         <dl class="row crud-opis mb-4">
+            <dt class="col-sm-4 col-lg-3">
+                Źródło zamówienia
+            </dt>
+            <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
+                @if (czyZamowienieWWW)
+                {
+                    <span class="badge bg-primary">Portal WWW</span>
+                }
+                else
+                {
+                    <span class="badge bg-light text-dark border">Intranet</span>
+                }
+            </dd>
+
             <dt class="col-sm-4 col-lg-3">
                 @Html.DisplayNameFor(model => model.NumerZamowienia)
             </dt>
@@ -45,7 +86,14 @@
                 @Html.DisplayNameFor(model => model.Status)
             </dt>
             <dd class="col-sm-8 col-lg-9 tekst-wielowierszowy">
-                @Html.DisplayFor(model => model.Status)
+                @if (czyZamowienieWWW && Model.Status == "Nowe")
+                {
+                    <span class="badge bg-success">@Model.Status</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">@Model.Status</span>
+                }
             </dd>
 
             <dt class="col-sm-4 col-lg-3">
