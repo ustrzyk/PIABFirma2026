@@ -1,0 +1,95 @@
+﻿@model Firma.PortalWWW.Models.KontoKlientaRejestracjaViewModel
+
+@{
+    ViewData["Title"] = "Rejestracja klienta";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="client-portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-7">
+            <span class="portal-badge">👤 Konto klienta</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Utwórz konto klienta
+            </h1>
+
+            <p class="hero-text mb-0">
+                Konto pozwala wrócić do swoich zamówień bez wpisywania numeru zamówienia za każdym razem.
+            </p>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="details-card">
+                <h2 class="h5 mb-3">Rejestracja</h2>
+
+                <form asp-controller="KontoKlienta"
+                      asp-action="Rejestracja"
+                      method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Imie" class="form-label"></label>
+                            <input asp-for="Imie" class="form-control" />
+                            <span asp-validation-for="Imie" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label asp-for="Nazwisko" class="form-label"></label>
+                            <input asp-for="Nazwisko" class="form-control" />
+                            <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   placeholder="email@example.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Telefon" class="form-label"></label>
+                            <input asp-for="Telefon" class="form-control" />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Haslo" class="form-label"></label>
+                            <input asp-for="Haslo" class="form-control" />
+                            <span asp-validation-for="Haslo" class="text-danger"></span>
+                            <div class="form-text">
+                                Minimum 8 znaków, duża litera, mała litera, cyfra i znak specjalny.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="PowtorzHaslo" class="form-label"></label>
+                            <input asp-for="PowtorzHaslo" class="form-control" />
+                            <span asp-validation-for="PowtorzHaslo" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                        Utwórz konto
+                    </button>
+                </form>
+
+                <div class="simple-note mt-3">
+                    Masz już konto?
+                    <a asp-controller="KontoKlienta"
+                       asp-action="Logowanie">
+                        Zaloguj się
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

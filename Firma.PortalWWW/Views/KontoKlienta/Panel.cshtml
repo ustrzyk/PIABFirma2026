@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>
+
+@{
+    ViewData["Title"] = "Moje konto";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+
+    var zamowienia = Model?.ToList() ?? new List<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>();
+}
+
+<section class="client-portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">👤 Moje konto</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Panel klienta
+            </h1>
+
+            <p class="hero-text mb-0">
+                Tutaj widzisz swoje zamówienia złożone w portalu oraz ich aktualny status.
+            </p>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="client-login-card">
+                <strong>@User.Identity?.Name</strong>
+
+                <div>
+                    <span>🧾</span>
+                    <p>Zamówienia: <strong>@zamowienia.Count</strong></p>
+                </div>
+
+                <div>
+                    <span>🛒</span>
+                    <p>Możesz wrócić do sklepu i złożyć kolejne zamówienie.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@if (zamowienia.Any())
+{
+    <section class="customer-orders-grid">
+        @foreach (var item in zamowienia)
+        {
+            <article class="customer-order-card">
+                <div class="customer-order-card-header">
+                    <div>
+                        <span class="portal-badge">Zamówienie</span>
+                        <h2 class="h5 mt-2 mb-1">@item.NumerZamowienia</h2>
+
+                        @if (item.DataZamowienia != null)
+                        {
+                            <div class="text-muted small">
+                                @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                            </div>
+                        }
+                    </div>
+
+                    @if (item.Status == "anulowane")
+                    {
+                        <span class="availability-badge unavailable">@item.Status</span>
+                    }
+                    else
+                    {
+                        <span class="availability-badge available">@item.Status</span>
+                    }
+                </div>
+
+                <div class="customer-order-card-body">
+                    <div>
+                        <span>Pozycje</span>
+                        <strong>@item.LiczbaPozycji</strong>
+                    </div>
+
+                    <div>
+                        <span>Wartość</span>
+                        <strong>@item.WartoscRazem.ToString("C")</strong>
+                    </div>
+                </div>
+
+                <a asp-controller="KontoKlienta"
+                   asp-action="Zamowienie"
+                   asp-route-id="@item.IdZamowienia"
+                   class="btn btn-primary w-100">
+                    Zobacz szczegóły
+                </a>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <section class="empty-state">
+        <span class="portal-badge">Moje zamówienia</span>
+
+        <h2 class="h4 mt-3">
+            Nie masz jeszcze zamówień na tym koncie
+        </h2>
+
+        <p>
+            Zamówienia pojawią się tutaj, jeżeli przy zakupie użyjesz tego samego adresu e-mail,
+            którym logujesz się do konta klienta.
+        </p>
+
+        <div class="empty-state-actions">
+            <a href="/Sklep/Index" class="btn btn-primary">
+                Przejdź do sklepu
+            </a>
+
+            <a asp-controller="StatusZamowienia"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Sprawdź zamówienie bez logowania
+            </a>
+        </div>
+    </section>
+}

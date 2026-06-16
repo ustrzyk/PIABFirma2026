@@ -22,6 +22,7 @@ namespace Firma.PortalWWW
             services.AddScoped<IStanMagazynowyService, StanMagazynowyService>();
             services.AddScoped<IZamowieniePubliczneService, ZamowieniePubliczneService>();
             services.AddScoped<IStatusZamowieniaService, StatusZamowieniaService>();
+            services.AddScoped<IKontoKlientaService, KontoKlientaService>();
         }
     }
 }

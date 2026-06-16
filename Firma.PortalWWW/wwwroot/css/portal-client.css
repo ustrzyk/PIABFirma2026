@@ -1,4 +1,4 @@
-﻿/* Portal klienta po zakupie */
+﻿/* Portal klienta po zakupie i konto klienta */
 
 .client-portal-hero {
     background: linear-gradient(135deg, #ffffff 0%, #eef5ff 100%);
@@ -54,6 +54,52 @@
 .customer-order-sidebar {
     min-width: 0;
 }
+
+.customer-orders-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.customer-order-card {
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: var(--portal-radius);
+    padding: 1.25rem;
+    box-shadow: var(--portal-shadow-soft);
+}
+
+.customer-order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.customer-order-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+    .customer-order-card-body div {
+        background-color: #f8fafc;
+        border-radius: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .customer-order-card-body span,
+    .customer-order-card-body strong {
+        display: block;
+    }
+
+    .customer-order-card-body span {
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
 
 .order-progress {
     display: grid;
@@ -146,6 +192,10 @@
     .customer-panel-grid {
         grid-template-columns: 1fr;
     }
+
+    .customer-orders-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 991.98px) {
@@ -159,7 +209,14 @@
         padding: 1rem;
     }
 
-    .order-progress {
+    .order-progress,
+    .customer-orders-grid,
+    .customer-order-card-body {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-order-card-header {
+        display: grid;
         grid-template-columns: 1fr;
     }
 }

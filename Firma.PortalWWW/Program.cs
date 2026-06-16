@@ -1,6 +1,7 @@
 using System.Globalization;
 using Firma.Data.Data;
 using Firma.PortalWWW;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var cultureInfo = new CultureInfo("pl-PL");
@@ -16,6 +17,28 @@ builder.Services.AddDbContext<FirmaContext>(options =>
     options.UseSqlServer(connectionString));
 
 DependencyInjectionFactory.Resolve(builder.Services, builder.Configuration);
+
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>(options =>
+    {
+        options.Password.RequiredLength = 8;
+        options.Password.RequireDigit = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireNonAlphanumeric = true;
+
+        options.User.RequireUniqueEmail = true;
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddEntityFrameworkStores<FirmaContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = ".Firma.PortalWWW.KontoKlienta";
+    options.LoginPath = "/KontoKlienta/Logowanie";
+    options.AccessDeniedPath = "/KontoKlienta/Logowanie";
+});
 
 builder.Services.AddDistributedMemoryCache();
 
@@ -41,7 +64,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseSession();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

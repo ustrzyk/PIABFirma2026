@@ -95,6 +95,37 @@
                     @await Html.PartialAsync("Odnosniki", strony)
 
                     <div class="portal-navbar-actions">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <a asp-controller="KontoKlienta"
+                               asp-action="Panel"
+                               class="btn btn-outline-secondary">
+                                <span class="btn-icon">👤</span>
+                                Moje konto
+                            </a>
+
+                            <form asp-controller="KontoKlienta"
+                                  asp-action="Wyloguj"
+                                  method="post"
+                                  class="d-inline">
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-outline-secondary">
+                                    Wyloguj
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="KontoKlienta"
+                               asp-action="Logowanie"
+                               class="btn btn-outline-secondary">
+                                <span class="btn-icon">👤</span>
+                                Zaloguj
+                            </a>
+                        }
+
                         <a asp-controller="Koszyk"
                            asp-action="Index"
                            class="btn btn-outline-secondary">
@@ -191,6 +222,7 @@
                     <a asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a>
                     <a asp-area="" asp-controller="Koszyk" asp-action="Index">Koszyk</a>
                     <a asp-area="" asp-controller="StatusZamowienia" asp-action="Index">Portal klienta</a>
+                    <a asp-area="" asp-controller="KontoKlienta" asp-action="Panel">Moje konto</a>
                     <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
                 </div>
             </div>
