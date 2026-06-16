@@ -6,6 +6,8 @@ namespace Firma.Interfaces.Sklep
     {
         Task UtworzLubAktualizujKlienta(string email, string imie, string nazwisko, string telefon);
 
+        Task<KontoKlientaDaneDto?> PobierzDaneKlienta(string email);
+
         Task<List<ZamowienieKlientaListaItemDto>> PobierzZamowieniaKlienta(string email);
 
         Task<StatusZamowieniaDto?> PobierzSzczegolyZamowieniaKlienta(string email, int idZamowienia);

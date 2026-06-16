@@ -13,10 +13,12 @@ namespace Firma.PortalWWW.Controllers
 
         private readonly ITowarService _towarService;
         private readonly IZamowieniePubliczneService _zamowieniePubliczneService;
+        private readonly IKontoKlientaService _kontoKlientaService;
 
         public KoszykController(
             ITowarService towarService,
             IZamowieniePubliczneService zamowieniePubliczneService,
+            IKontoKlientaService kontoKlientaService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService,
             IUstawieniePortaluService ustawieniePortaluService)
@@ -24,6 +26,7 @@ namespace Firma.PortalWWW.Controllers
         {
             _towarService = towarService;
             _zamowieniePubliczneService = zamowieniePubliczneService;
+            _kontoKlientaService = kontoKlientaService;
         }
 
         public async Task<IActionResult> Index()
@@ -154,8 +157,11 @@ namespace Firma.PortalWWW.Controllers
             }
 
             ViewBag.Koszyk = koszyk;
+            ViewBag.CzyZalogowanyKlient = CzyKlientZalogowany();
 
-            return View(new DaneZamowieniaViewModel());
+            var model = await PrzygotujModelZamowieniaDlaKlienta();
+
+            return View(model);
         }
 
         [HttpPost]
@@ -174,10 +180,26 @@ namespace Firma.PortalWWW.Controllers
             }
 
             ViewBag.Koszyk = koszyk;
+            ViewBag.CzyZalogowanyKlient = CzyKlientZalogowany();
+
+            if (CzyKlientZalogowany())
+            {
+                model.Email = PobierzEmailZalogowanegoKlienta();
+                ModelState.Remove(nameof(DaneZamowieniaViewModel.Email));
+            }
 
             if (!ModelState.IsValid)
             {
                 return View(model);
+            }
+
+            if (CzyKlientZalogowany())
+            {
+                await _kontoKlientaService.UtworzLubAktualizujKlienta(
+                    model.Email,
+                    model.Imie,
+                    model.Nazwisko,
+                    model.Telefon);
             }
 
             var wynik = await _zamowieniePubliczneService.ZlozZamowienie(new DaneZamowieniaPublicznegoDto
@@ -211,6 +233,44 @@ namespace Firma.PortalWWW.Controllers
             ViewBag.EmailZamowienia = model.Email;
 
             return View("Potwierdzenie", wynik);
+        }
+
+        private async Task<DaneZamowieniaViewModel> PrzygotujModelZamowieniaDlaKlienta()
+        {
+            if (!CzyKlientZalogowany())
+            {
+                return new DaneZamowieniaViewModel();
+            }
+
+            var email = PobierzEmailZalogowanegoKlienta();
+
+            var daneKlienta = await _kontoKlientaService.PobierzDaneKlienta(email);
+
+            if (daneKlienta == null)
+            {
+                return new DaneZamowieniaViewModel
+                {
+                    Email = email
+                };
+            }
+
+            return new DaneZamowieniaViewModel
+            {
+                Imie = daneKlienta.Imie,
+                Nazwisko = daneKlienta.Nazwisko,
+                Email = daneKlienta.Email,
+                Telefon = daneKlienta.Telefon
+            };
+        }
+
+        private bool CzyKlientZalogowany()
+        {
+            return User.Identity?.IsAuthenticated == true;
+        }
+
+        private string PobierzEmailZalogowanegoKlienta()
+        {
+            return User.Identity?.Name?.Trim().ToLowerInvariant() ?? string.Empty;
         }
 
         private KoszykViewModel PobierzKoszyk()

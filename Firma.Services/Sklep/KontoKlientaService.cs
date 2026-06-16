@@ -43,6 +43,27 @@ namespace Firma.Services.Sklep
             await _context.SaveChangesAsync();
         }
 
+        public async Task<KontoKlientaDaneDto?> PobierzDaneKlienta(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return null;
+            }
+
+            var emailKlienta = email.Trim().ToLowerInvariant();
+
+            return await _context.Klient
+                .Where(k => k.Email.ToLower() == emailKlienta)
+                .Select(k => new KontoKlientaDaneDto
+                {
+                    Imie = k.Imie,
+                    Nazwisko = k.Nazwisko,
+                    Email = k.Email,
+                    Telefon = k.Telefon
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<List<ZamowienieKlientaListaItemDto>> PobierzZamowieniaKlienta(string email)
         {
             var emailKlienta = email.Trim().ToLowerInvariant();

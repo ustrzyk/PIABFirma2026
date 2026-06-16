@@ -5,6 +5,7 @@
     ViewData["Title"] = "Złóż zamówienie";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
     var koszyk = ViewBag.Koszyk as KoszykViewModel ?? new KoszykViewModel();
+    var czyZalogowanyKlient = ViewBag.CzyZalogowanyKlient is bool value && value;
 }
 
 <section class="section-heading mb-4">
@@ -12,7 +13,14 @@
         <span class="portal-badge">🛒 Zamówienie</span>
         <h1 class="h2 mt-2 mb-2">Dane do zamówienia</h1>
         <p class="text-muted mb-0">
-            Podaj dane kontaktowe i adres dostawy. E-mail będzie później potrzebny do sprawdzenia statusu zamówienia.
+            @if (czyZalogowanyKlient)
+            {
+                <span>Dane kontaktowe zostały uzupełnione z konta klienta. Uzupełnij adres dostawy.</span>
+            }
+            else
+            {
+                <span>Podaj dane kontaktowe i adres dostawy. E-mail będzie później potrzebny do sprawdzenia statusu zamówienia.</span>
+            }
         </p>
     </div>
 
@@ -26,10 +34,24 @@
     <div class="details-card checkout-form-card">
         <h2 class="h5 mb-3">Dane klienta i dostawy</h2>
 
-        <div class="simple-note mb-4">
-            <strong>Ważne:</strong> zapamiętaj adres e-mail podany w formularzu.
-            Po złożeniu zamówienia razem z numerem zamówienia pozwoli on sprawdzić status realizacji.
-        </div>
+        @if (czyZalogowanyKlient)
+        {
+            <div class="simple-note mb-4">
+                <strong>Zalogowany klient</strong>
+                <span>
+                    Zamówienie zostanie przypisane do Twojego konta. Po zakupie zobaczysz je w panelu „Moje konto”.
+                </span>
+            </div>
+        }
+        else
+        {
+            <div class="simple-note mb-4">
+                <strong>Ważne:</strong>
+                <span>
+                    Zapamiętaj adres e-mail podany w formularzu. Po złożeniu zamówienia razem z numerem zamówienia pozwoli on sprawdzić status realizacji.
+                </span>
+            </div>
+        }
 
         <form asp-controller="Koszyk"
               asp-action="Zamowienie"
@@ -53,13 +75,27 @@
 
                 <div class="col-12 col-md-6">
                     <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email"
-                           class="form-control"
-                           placeholder="np. jan.kowalski@example.com" />
+
+                    @if (czyZalogowanyKlient)
+                    {
+                        <input asp-for="Email"
+                               class="form-control"
+                               readonly />
+                        <div class="form-text">
+                            E-mail pochodzi z konta klienta i przypisze zamówienie do panelu „Moje konto”.
+                        </div>
+                    }
+                    else
+                    {
+                        <input asp-for="Email"
+                               class="form-control"
+                               placeholder="np. jan.kowalski@example.com" />
+                        <div class="form-text">
+                            Ten adres będzie potrzebny do sprawdzenia statusu zamówienia.
+                        </div>
+                    }
+
                     <span asp-validation-for="Email" class="text-danger"></span>
-                    <div class="form-text">
-                        Ten adres będzie potrzebny do sprawdzenia statusu zamówienia.
-                    </div>
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -114,6 +150,15 @@
                    class="btn btn-outline-secondary">
                     Wróć do koszyka
                 </a>
+
+                @if (czyZalogowanyKlient)
+                {
+                    <a asp-controller="KontoKlienta"
+                       asp-action="Panel"
+                       class="btn btn-outline-secondary">
+                        Moje konto
+                    </a>
+                }
             </div>
         </form>
     </div>
@@ -141,9 +186,20 @@
                 <strong class="price-text">@koszyk.Suma.ToString("C")</strong>
             </div>
 
-            <div class="simple-note mt-3">
-                Po zatwierdzeniu zobaczysz numer zamówienia. Zapisz go razem z adresem e-mail.
-            </div>
+            @if (czyZalogowanyKlient)
+            {
+                <div class="simple-note mt-3">
+                    <strong>Po zakupie</strong>
+                    <span>Zamówienie pojawi się w panelu „Moje konto”.</span>
+                </div>
+            }
+            else
+            {
+                <div class="simple-note mt-3">
+                    <strong>Po zakupie</strong>
+                    <span>Zobaczysz numer zamówienia. Zapisz go razem z adresem e-mail.</span>
+                </div>
+            }
         </div>
     </aside>
 </section>
