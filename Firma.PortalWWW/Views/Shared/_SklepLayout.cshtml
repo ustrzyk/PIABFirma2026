@@ -72,8 +72,7 @@
                     @await Html.PartialAsync("Odnosniki", strony)
 
                     <div class="portal-navbar-actions">
-                        <a asp-controller="Sklep"
-                           asp-action="Index"
+                        <a href="/Sklep/Index"
                            class="btn btn-primary">
                             Zobacz produkty
                         </a>
@@ -90,8 +89,7 @@
                         <span class="category-hint">Szybki wybór rodzaju asortymentu</span>
                     </div>
 
-                    <a asp-controller="Sklep"
-                       asp-action="Index"
+                    <a href="/Sklep/Index"
                        class="category-all-link">
                         Pełna oferta
                     </a>
@@ -151,7 +149,7 @@
                 <div class="col-12 col-lg-3">
                     <div class="footer-title">Portal</div>
 
-                    <a asp-area="" asp-controller="Sklep" asp-action="Index">Sklep</a>
+                    <a href="/Sklep/Index">Sklep</a>
                     <a asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a>
                     <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
                 </div>
