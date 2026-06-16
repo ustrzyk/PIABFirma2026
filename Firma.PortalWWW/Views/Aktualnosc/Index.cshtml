@@ -8,19 +8,20 @@
 <section class="portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">Aktualność</span>
+            <span class="portal-badge">📰 Aktualność</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 @Model.Tytul
             </h1>
 
             <p class="hero-text mb-0">
-                Informacje, nowości i komunikaty związane z ofertą sklepu.
+                Informacja dla klientów sklepu.
             </p>
 
             <div class="hero-actions">
                 <a href="/Sklep/Index"
                    class="btn btn-primary btn-lg">
+                    <span class="btn-icon">🛒</span>
                     Przejdź do sklepu
                 </a>
 
@@ -34,7 +35,7 @@
 
         <div class="col-12 col-lg-4">
             <div class="hero-card">
-                <div class="hero-card-title">Informacja</div>
+                <div class="hero-card-title">Wpis</div>
 
                 <div class="hero-feature">
                     <strong>@Model.LinkTytul</strong>
@@ -43,46 +44,64 @@
 
                 <div class="hero-feature">
                     <strong>Sklep 3D</strong>
-                    <span>Aktualność widoczna dla klientów.</span>
+                    <span>Aktualność widoczna publicznie.</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="row g-4">
-    <div class="col-12 col-lg-8">
-        <article class="details-card">
-            <h2 class="h5 mb-3">Treść aktualności</h2>
+<section class="news-details-layout">
+    <article class="details-card">
+        <span class="home-quick-icon">📰</span>
 
-            <div class="tekst-strony text-muted">
-                @Model.Tresc
-            </div>
-        </article>
-    </div>
+        <h2 class="h5 mb-3">
+            Treść aktualności
+        </h2>
 
-    <div class="col-12 col-lg-4">
-        <aside class="details-card">
-            <h2 class="h5 mb-3">Szybkie przejścia</h2>
+        <div class="tekst-strony text-muted news-content">
+            @Model.Tresc
+        </div>
+    </article>
 
-            <div class="d-grid gap-2">
-                <a href="/Sklep/Index"
-                   class="btn btn-primary">
-                    Produkty
-                </a>
+    <aside class="details-card">
+        <span class="home-quick-icon">➡️</span>
 
-                <a asp-controller="Promocja"
-                   asp-action="Index"
-                   class="btn btn-outline-secondary">
-                    Promocje
-                </a>
+        <h2 class="h5 mb-3">
+            Szybkie przejścia
+        </h2>
 
-                <a asp-controller="Producent"
-                   asp-action="Index"
-                   class="btn btn-outline-secondary">
-                    Producenci
-                </a>
-            </div>
-        </aside>
-    </div>
+        <div class="quick-link-grid">
+            <a href="/Sklep/Index"
+               class="quick-link-card">
+                <span>🧩</span>
+                <strong>Produkty</strong>
+                <small>Przejdź do oferty sklepu.</small>
+            </a>
+
+            <a asp-controller="Promocja"
+               asp-action="Index"
+               class="quick-link-card">
+                <span>🏷️</span>
+                <strong>Promocje</strong>
+                <small>Zobacz aktywne oferty.</small>
+            </a>
+
+            <a asp-controller="Producent"
+               asp-action="Index"
+               class="quick-link-card">
+                <span>🏭</span>
+                <strong>Producenci</strong>
+                <small>Sprawdź marki w sklepie.</small>
+            </a>
+
+            <a asp-controller="StatusZamowienia"
+               asp-action="Index"
+               class="quick-link-card">
+                <span>🧾</span>
+                <strong>Status</strong>
+                <small>Sprawdź zamówienie.</small>
+            </a>
+        </div>
+    </aside>
 </section>

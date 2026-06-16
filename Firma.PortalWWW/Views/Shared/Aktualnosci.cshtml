@@ -9,8 +9,12 @@
     <section>
         <div class="section-heading mb-4">
             <div>
-                <span class="portal-badge">Aktualności</span>
-                <h2 class="h3 mt-2 mb-2">Najnowsze informacje</h2>
+                <span class="portal-badge">📰 Aktualności</span>
+
+                <h2 class="h3 mt-2 mb-2">
+                    Najnowsze informacje
+                </h2>
+
                 <p class="text-muted mb-0">
                     Nowości, komunikaty i informacje związane z ofertą sklepu.
                 </p>
@@ -22,48 +26,39 @@
             </div>
         </div>
 
-        <div class="product-grid">
+        <div class="news-grid">
             @foreach (var item in aktualnosci)
             {
                 var tresc = item.Tresc ?? string.Empty;
 
-                <article class="product-card">
-                    <div class="product-card-body">
-                        <div class="product-meta mb-3">
-                            <span>Aktualność</span>
-                            <span>Sklep 3D</span>
-                        </div>
+                <article class="news-card-portal">
+                    <div class="news-card-icon">📰</div>
 
-                        <h3 class="product-title">
-                            <a asp-area=""
-                               asp-controller="Aktualnosc"
-                               asp-action="Index"
-                               asp-route-id="@item.IdAktualnosci">
-                                @item.Tytul
-                            </a>
-                        </h3>
-
-                        <p class="product-description tekst-skrot">
-                            @tresc
-                        </p>
-
-                        <div class="product-card-footer">
-                            <div>
-                                <div class="small text-muted">Wpis</div>
-                                <div class="price-text product-price">
-                                    #@item.Pozycja
-                                </div>
-                            </div>
-
-                            <a class="btn btn-primary"
-                               asp-area=""
-                               asp-controller="Aktualnosc"
-                               asp-action="Index"
-                               asp-route-id="@item.IdAktualnosci">
-                                Czytaj
-                            </a>
-                        </div>
+                    <div class="product-meta mb-3">
+                        <span>Aktualność</span>
+                        <span>#@item.Pozycja</span>
                     </div>
+
+                    <h3 class="h5 mb-2">
+                        <a asp-area=""
+                           asp-controller="Aktualnosc"
+                           asp-action="Index"
+                           asp-route-id="@item.IdAktualnosci">
+                            @item.Tytul
+                        </a>
+                    </h3>
+
+                    <p class="text-muted tekst-skrot mb-3">
+                        @tresc
+                    </p>
+
+                    <a class="btn btn-primary w-100"
+                       asp-area=""
+                       asp-controller="Aktualnosc"
+                       asp-action="Index"
+                       asp-route-id="@item.IdAktualnosci">
+                        Czytaj
+                    </a>
                 </article>
             }
         </div>

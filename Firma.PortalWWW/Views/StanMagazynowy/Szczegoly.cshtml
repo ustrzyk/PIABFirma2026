@@ -27,11 +27,14 @@
         <div class="col-12 col-lg-7">
             <div class="product-details-panel">
                 <div class="product-meta mb-3">
-                    <span>@Model.Rodzaj</span>
-                    <span>@Model.Producent</span>
+                    <span>🧩 @Model.Rodzaj</span>
+                    <span>🏭 @Model.Producent</span>
+                    <span>🔖 @Model.KodTowaru</span>
                 </div>
 
-                <h1 class="h2 mb-3">@Model.NazwaTowaru</h1>
+                <h1 class="h2 mb-3">
+                    @Model.NazwaTowaru
+                </h1>
 
                 <p class="product-details-description">
                     @Model.OpisTowaru
@@ -49,13 +52,13 @@
                         @if (Model.CzyDostepny)
                         {
                             <span class="availability-badge available">
-                                dostępny: @Model.IloscSztuk szt.
+                                📦 dostępny: @Model.IloscSztuk szt.
                             </span>
                         }
                         else
                         {
                             <span class="availability-badge unavailable">
-                                brak na stanie
+                                📦 brak na stanie
                             </span>
                         }
                     </div>
@@ -69,82 +72,96 @@
                 }
 
                 <div class="product-details-actions">
-                    <a asp-controller="StanMagazynowy"
-                       asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Wróć do dostępności
-                    </a>
-
                     @if (Model.IdTowaru > 0)
                     {
                         <a class="btn btn-primary"
                            asp-controller="Sklep"
                            asp-action="Szczegoly"
                            asp-route-id="@Model.IdTowaru">
-                            Zobacz towar
+                            <span class="btn-icon">🧩</span>
+                            Zobacz produkt
                         </a>
                     }
+
+                    <a asp-controller="StanMagazynowy"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do dostępności
+                    </a>
+
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary">
+                        Sklep
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="row g-4">
-    <div class="col-12 col-lg-7">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Informacje o towarze</h2>
+<section class="stock-details-grid">
+    <div class="details-card">
+        <span class="home-quick-icon">ℹ️</span>
 
-            <dl class="details-list-clean mb-0">
-                <dt>Kod towaru</dt>
-                <dd>@Model.KodTowaru</dd>
+        <h2 class="h5 mb-3">
+            Informacje o produkcie
+        </h2>
 
-                <dt>Rodzaj</dt>
-                <dd>@Model.Rodzaj</dd>
+        <dl class="details-list-clean mb-0">
+            <dt>Kod towaru</dt>
+            <dd>@Model.KodTowaru</dd>
 
-                <dt>Producent</dt>
-                <dd>@Model.Producent</dd>
+            <dt>Rodzaj</dt>
+            <dd>@Model.Rodzaj</dd>
 
-                <dt>Lokalizacja</dt>
-                <dd>
-                    @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
-                    {
-                        @Model.Lokalizacja
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak danych</span>
-                    }
-                </dd>
-            </dl>
-        </div>
+            <dt>Producent</dt>
+            <dd>@Model.Producent</dd>
+
+            <dt>Lokalizacja</dt>
+            <dd>
+                @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
+                {
+                    @Model.Lokalizacja
+                }
+                else
+                {
+                    <span class="text-muted">brak danych</span>
+                }
+            </dd>
+        </dl>
     </div>
 
-    <div class="col-12 col-lg-5">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Stan magazynowy</h2>
+    <div class="details-card">
+        <span class="home-quick-icon">📦</span>
 
-            <div class="stock-box @(Model.CzyMaloTowaru ? string.Empty : "stock-box-ok") mb-3">
-                <strong>@Model.IloscSztuk szt.</strong>
-                <span>Aktualna ilość produktu.</span>
-            </div>
+        <h2 class="h5 mb-3">
+            Stan magazynowy
+        </h2>
 
-            <dl class="details-list-clean mb-0">
-                <dt>Minimum</dt>
-                <dd>@Model.MinimalnaIlosc szt.</dd>
+        <div class="stock-box @(Model.CzyMaloTowaru ? string.Empty : "stock-box-ok") mb-3">
+            <strong>@Model.IloscSztuk szt.</strong>
+            <span>Aktualna ilość produktu.</span>
+        </div>
 
-                <dt>Status</dt>
-                <dd>
-                    @if (Model.CzyMaloTowaru)
-                    {
-                        <span class="availability-badge unavailable">niski stan</span>
-                    }
-                    else
-                    {
-                        <span class="availability-badge available">stan OK</span>
-                    }
-                </dd>
-            </dl>
+        <dl class="details-list-clean mb-0">
+            <dt>Minimum</dt>
+            <dd>@Model.MinimalnaIlosc szt.</dd>
+
+            <dt>Status</dt>
+            <dd>
+                @if (Model.CzyMaloTowaru)
+                {
+                    <span class="availability-badge unavailable">niski stan</span>
+                }
+                else
+                {
+                    <span class="availability-badge available">stan OK</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="simple-note mt-3">
+            Dostępność jest widoczna dla klienta w sklepie oraz przy produkcie.
         </div>
     </div>
 </section>
