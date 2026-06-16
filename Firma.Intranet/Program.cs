@@ -3,7 +3,7 @@ using Firma.Data.Data;
 using Firma.Intranet;
 using Firma.Intranet.ModelBinders;
 using Firma.Intranet.Security;
-using Firma.Intranet.Services;
+using Firma.Intranet.Services.Intranet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

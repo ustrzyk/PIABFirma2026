@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Firma.Intranet.Services
+namespace Firma.Intranet.Services.Intranet
 {
     public static class UzytkownikStartowySeeder
     {
