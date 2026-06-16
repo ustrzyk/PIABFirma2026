@@ -8,8 +8,14 @@
 
 @if (TempData["KoszykKomunikat"] != null)
 {
-    <div class="alert alert-info">
-        @TempData["KoszykKomunikat"]
+    <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <span>@TempData["KoszykKomunikat"]</span>
+
+        <a asp-controller="Koszyk"
+           asp-action="Index"
+           class="alert-link">
+            Przejdź do koszyka
+        </a>
     </div>
 }
 
@@ -77,8 +83,7 @@
                 }
 
                 <div class="product-details-actions">
-                    <a asp-controller="Sklep"
-                       asp-action="Index"
+                    <a href="/Sklep/Index"
                        class="btn btn-outline-secondary">
                         Wróć do sklepu
                     </a>

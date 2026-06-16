@@ -1,9 +1,28 @@
+@using System.Text.Json
+@using Firma.PortalWWW.Models
 @using Firma.Services.Data.Dto.CMS
+@using Microsoft.AspNetCore.Http
 
 @{
     var wyglad = ViewBag.WygladPortalu as PortalWygladDto ?? new PortalWygladDto();
     var strony = ViewBag.ModelStrony as IEnumerable<StronaMenuItemDto> ?? Enumerable.Empty<StronaMenuItemDto>();
     var aktualnosci = ViewBag.ModelAktualnosci as IEnumerable<AktualnoscListaItemDto> ?? Enumerable.Empty<AktualnoscListaItemDto>();
+
+    var koszykLiczbaSztuk = 0;
+    var koszykJson = Context.Session.GetString("PortalKoszyk");
+
+    if (!string.IsNullOrWhiteSpace(koszykJson))
+    {
+        try
+        {
+            var koszyk = JsonSerializer.Deserialize<KoszykViewModel>(koszykJson);
+            koszykLiczbaSztuk = koszyk?.LiczbaSztuk ?? 0;
+        }
+        catch
+        {
+            koszykLiczbaSztuk = 0;
+        }
+    }
 }
 
 <!DOCTYPE html>
@@ -73,6 +92,16 @@
                     @await Html.PartialAsync("Odnosniki", strony)
 
                     <div class="portal-navbar-actions">
+                        <a asp-controller="Koszyk"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary">
+                            Koszyk
+                            @if (koszykLiczbaSztuk > 0)
+                            {
+                                <span class="badge bg-primary ms-1">@koszykLiczbaSztuk</span>
+                            }
+                        </a>
+
                         <a href="/Sklep/Index"
                            class="btn btn-primary">
                             Zobacz produkty
@@ -152,6 +181,7 @@
 
                     <a href="/Sklep/Index">Sklep</a>
                     <a asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a>
+                    <a asp-area="" asp-controller="Koszyk" asp-action="Index">Koszyk</a>
                     <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
                 </div>
             </div>
