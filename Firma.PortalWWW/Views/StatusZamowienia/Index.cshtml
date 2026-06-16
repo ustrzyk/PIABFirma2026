@@ -1,0 +1,181 @@
+﻿@model Firma.PortalWWW.Models.StatusZamowieniaViewModel
+
+@{
+    ViewData["Title"] = "Status zamówienia";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Portal klienta</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Sprawdź status zamówienia
+            </h1>
+
+            <p class="hero-text mb-0">
+                Wpisz numer zamówienia oraz adres e-mail podany przy składaniu zamówienia.
+            </p>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Dane potrzebne do sprawdzenia</div>
+
+                <div class="hero-feature">
+                    <strong>Numer zamówienia</strong>
+                    <span>Na przykład WWW-20260616-001.</span>
+                </div>
+
+                <div class="hero-feature">
+                    <strong>E-mail</strong>
+                    <span>Adres użyty podczas składania zamówienia.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Dane zamówienia</h2>
+
+            <form asp-controller="StatusZamowienia"
+                  asp-action="Index"
+                  method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NumerZamowienia" class="form-label"></label>
+                    <input asp-for="NumerZamowienia"
+                           class="form-control"
+                           placeholder="WWW-20260616-001" />
+                    <span asp-validation-for="NumerZamowienia" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email"
+                           class="form-control"
+                           placeholder="email@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Sprawdź zamówienie
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+        @if (Model.Wynik != null)
+        {
+            <div class="details-card mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                    <div>
+                        <span class="portal-badge">Wynik</span>
+                        <h2 class="h4 mt-2 mb-1">@Model.Wynik.NumerZamowienia</h2>
+
+                        @if (Model.Wynik.DataZamowienia != null)
+                        {
+                            <div class="text-muted">
+                                Data zamówienia: @Model.Wynik.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                            </div>
+                        }
+                    </div>
+
+                    <span class="availability-badge available">
+                        @Model.Wynik.Status
+                    </span>
+                </div>
+
+                <dl class="details-list-clean mb-0">
+                    <dt>Klient</dt>
+                    <dd>@Model.Wynik.ImieNazwisko</dd>
+
+                    <dt>E-mail</dt>
+                    <dd>@Model.Wynik.Email</dd>
+
+                    <dt>Telefon</dt>
+                    <dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.Wynik.Telefon))
+                        {
+                            @Model.Wynik.Telefon
+                        }
+                        else
+                        {
+                            <span class="text-muted">brak danych</span>
+                        }
+                    </dd>
+
+                    <dt>Adres dostawy</dt>
+                    <dd>@Model.Wynik.AdresDostawy</dd>
+
+                    <dt>Wartość</dt>
+                    <dd>
+                        <strong class="price-text">@Model.Wynik.WartoscRazem.ToString("C")</strong>
+                    </dd>
+                </dl>
+            </div>
+
+            <div class="details-card">
+                <h2 class="h5 mb-3">Produkty w zamówieniu</h2>
+
+                @if (Model.Wynik.Pozycje.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Produkt</th>
+                                    <th>Ilość</th>
+                                    <th>Cena</th>
+                                    <th>Wartość</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model.Wynik.Pozycje)
+                                {
+                                    <tr>
+                                        <td>
+                                            <strong>@item.NazwaTowaru</strong>
+                                            <div class="small text-muted">@item.KodTowaru</div>
+                                        </td>
+
+                                        <td>@item.Ilosc</td>
+                                        <td>@item.CenaJednostkowa.ToString("C")</td>
+                                        <td>
+                                            <strong>@item.Wartosc.ToString("C")</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state empty-state-small">
+                        Brak pozycji zamówienia.
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state empty-state-small">
+                Po wpisaniu danych zobaczysz tutaj status zamówienia.
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

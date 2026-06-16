@@ -24,6 +24,12 @@
                     Wróć do sklepu
                 </a>
 
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Sprawdź status
+                </a>
+
                 <a asp-controller="Home"
                    asp-action="Index"
                    class="btn btn-outline-secondary btn-lg">
@@ -38,7 +44,7 @@
 
                 <div class="hero-feature">
                     <strong>@Model.NumerZamowienia</strong>
-                    <span>Zapisz ten numer do kontaktu w sprawie zamówienia.</span>
+                    <span>Zapisz ten numer do sprawdzenia statusu zamówienia.</span>
                 </div>
             </div>
         </div>
@@ -49,7 +55,6 @@
     <h2 class="h5 mb-3">Co dalej?</h2>
 
     <p class="text-muted mb-0">
-        Obsługa sklepu może teraz sprawdzić zamówienie w panelu Intranet.
-        Status początkowy zamówienia to „Nowe”.
+        Status zamówienia możesz sprawdzić w portalu, podając numer zamówienia oraz adres e-mail użyty podczas składania zamówienia.
     </p>
 </section>
