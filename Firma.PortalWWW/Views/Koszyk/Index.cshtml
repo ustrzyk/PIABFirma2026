@@ -1,0 +1,191 @@
+﻿@model Firma.PortalWWW.Models.KoszykViewModel
+
+@{
+    ViewData["Title"] = "Koszyk";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="section-heading mb-4">
+    <div>
+        <span class="portal-badge">Koszyk</span>
+        <h1 class="h2 mt-2 mb-2">Twoje produkty</h1>
+        <p class="text-muted mb-0">
+            Sprawdź produkty przed złożeniem zamówienia.
+        </p>
+    </div>
+
+    <div class="section-summary">
+        <strong>@Model.LiczbaSztuk</strong>
+        <span>sztuk</span>
+    </div>
+</section>
+
+@if (TempData["KoszykKomunikat"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["KoszykKomunikat"]
+    </div>
+}
+
+@if (Model.Pozycje.Any())
+{
+    <section class="details-card mb-4">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Produkt</th>
+                        <th>Cena</th>
+                        <th>Ilość</th>
+                        <th>Wartość</th>
+                        <th class="text-end">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Pozycje)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                                    {
+                                        <img src="@item.FotoUrl"
+                                             alt="@item.Nazwa"
+                                             class="product-mini-img" />
+                                    }
+                                    else
+                                    {
+                                        <img src="~/content/CA.png"
+                                             alt="@item.Nazwa"
+                                             class="product-mini-img" />
+                                    }
+
+                                    <div>
+                                        <strong>@item.Nazwa</strong>
+                                        <div class="small text-muted">
+                                            @item.Kod · @item.Producent · @item.Rodzaj
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>@item.Cena.ToString("C")</td>
+
+                            <td>
+                                <form asp-controller="Koszyk"
+                                      asp-action="ZmienIlosc"
+                                      method="post"
+                                      class="d-flex gap-2">
+                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+
+                                    <input type="number"
+                                           name="ilosc"
+                                           value="@item.Ilosc"
+                                           min="1"
+                                           max="20"
+                                           class="form-control"
+                                           style="width: 90px;" />
+
+                                    <button type="submit" class="btn btn-outline-secondary">
+                                        Zmień
+                                    </button>
+                                </form>
+                            </td>
+
+                            <td>
+                                <strong>@item.Wartosc.ToString("C")</strong>
+                            </td>
+
+                            <td class="text-end">
+                                <form asp-controller="Koszyk"
+                                      asp-action="Usun"
+                                      method="post">
+                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        Usuń
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="row g-4">
+        <div class="col-12 col-lg-7">
+            <div class="details-card">
+                <h2 class="h5 mb-3">Co dalej?</h2>
+
+                <p class="text-muted">
+                    Po kliknięciu „Złóż zamówienie” wpiszesz dane kontaktowe i adres dostawy.
+                    Zamówienie trafi do panelu Intranet do dalszej obsługi.
+                </p>
+
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary">
+                        Kontynuuj zakupy
+                    </a>
+
+                    <form asp-controller="Koszyk"
+                          asp-action="Wyczysc"
+                          method="post">
+                        <button type="submit" class="btn btn-outline-danger">
+                            Wyczyść koszyk
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="details-card">
+                <h2 class="h5 mb-3">Podsumowanie</h2>
+
+                <dl class="details-list-clean mb-3">
+                    <dt>Liczba sztuk</dt>
+                    <dd>@Model.LiczbaSztuk</dd>
+
+                    <dt>Wartość razem</dt>
+                    <dd>
+                        <strong class="price-text">@Model.Suma.ToString("C")</strong>
+                    </dd>
+                </dl>
+
+                <a asp-controller="Koszyk"
+                   asp-action="Zamowienie"
+                   class="btn btn-primary w-100">
+                    Złóż zamówienie
+                </a>
+            </div>
+        </div>
+    </section>
+}
+else
+{
+    <div class="empty-state">
+        <span class="portal-badge">Koszyk</span>
+
+        <h2 class="h4 mt-3">Koszyk jest pusty</h2>
+
+        <p>
+            Dodaj produkty z oferty sklepu, a następnie wróć tutaj, żeby złożyć zamówienie.
+        </p>
+
+        <div class="empty-state-actions">
+            <a href="/Sklep/Index"
+               class="btn btn-primary">
+                Przejdź do sklepu
+            </a>
+
+            <a asp-controller="Promocja"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Zobacz promocje
+            </a>
+        </div>
+    </div>
+}

@@ -4,6 +4,7 @@
     ViewData["Title"] = "Sklep";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
     var towary = Model?.ToList() ?? new List<Firma.Services.Data.Dto.Towary.TowarListaItemDto>();
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <section class="section-heading mb-4">
@@ -20,6 +21,13 @@
         <span>produktów</span>
     </div>
 </section>
+
+@if (TempData["KoszykKomunikat"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["KoszykKomunikat"]
+    </div>
+}
 
 @if (towary.Any())
 {
@@ -87,12 +95,29 @@
                             }
                         </div>
 
-                        <a class="btn btn-primary"
-                           asp-controller="Sklep"
-                           asp-action="Szczegoly"
-                           asp-route-id="@item.IdTowaru">
-                            Zobacz
-                        </a>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a class="btn btn-outline-secondary"
+                               asp-controller="Sklep"
+                               asp-action="Szczegoly"
+                               asp-route-id="@item.IdTowaru">
+                                Zobacz
+                            </a>
+
+                            @if (item.CzyDostepny)
+                            {
+                                <form asp-controller="Koszyk"
+                                      asp-action="Dodaj"
+                                      method="post">
+                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+                                    <input type="hidden" name="ilosc" value="1" />
+                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                                    <button type="submit" class="btn btn-primary">
+                                        Do koszyka
+                                    </button>
+                                </form>
+                            }
+                        </div>
                     </div>
                 </div>
             </article>

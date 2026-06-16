@@ -20,6 +20,7 @@ namespace Firma.PortalWWW
             services.AddScoped<ITowarService, TowarService>();
             services.AddScoped<IProducentService, ProducentService>();
             services.AddScoped<IStanMagazynowyService, StanMagazynowyService>();
+            services.AddScoped<IZamowieniePubliczneService, ZamowieniePubliczneService>();
         }
     }
 }

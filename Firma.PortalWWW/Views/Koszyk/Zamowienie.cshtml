@@ -1,0 +1,142 @@
+﻿@using Firma.PortalWWW.Models
+@model Firma.PortalWWW.Models.DaneZamowieniaViewModel
+
+@{
+    ViewData["Title"] = "Złóż zamówienie";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+    var koszyk = ViewBag.Koszyk as KoszykViewModel ?? new KoszykViewModel();
+}
+
+<section class="section-heading mb-4">
+    <div>
+        <span class="portal-badge">Zamówienie</span>
+        <h1 class="h2 mt-2 mb-2">Dane do zamówienia</h1>
+        <p class="text-muted mb-0">
+            Uzupełnij dane kontaktowe i adres dostawy.
+        </p>
+    </div>
+
+    <div class="section-summary">
+        <strong>@koszyk.Suma.ToString("C")</strong>
+        <span>wartość</span>
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Dane klienta</h2>
+
+            <form asp-controller="Koszyk"
+                  asp-action="Zamowienie"
+                  method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Imie" class="form-label"></label>
+                        <input asp-for="Imie" class="form-control" />
+                        <span asp-validation-for="Imie" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Nazwisko" class="form-label"></label>
+                        <input asp-for="Nazwisko" class="form-control" />
+                        <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Telefon" class="form-label"></label>
+                        <input asp-for="Telefon" class="form-control" />
+                        <span asp-validation-for="Telefon" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <hr />
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Ulica" class="form-label"></label>
+                        <input asp-for="Ulica" class="form-control" />
+                        <span asp-validation-for="Ulica" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="NumerDomu" class="form-label"></label>
+                        <input asp-for="NumerDomu" class="form-control" />
+                        <span asp-validation-for="NumerDomu" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="NumerLokalu" class="form-label"></label>
+                        <input asp-for="NumerLokalu" class="form-control" />
+                        <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="KodPocztowy" class="form-label"></label>
+                        <input asp-for="KodPocztowy" class="form-control" />
+                        <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Miasto" class="form-label"></label>
+                        <input asp-for="Miasto" class="form-control" />
+                        <span asp-validation-for="Miasto" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Potwierdź zamówienie
+                    </button>
+
+                    <a asp-controller="Koszyk"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do koszyka
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Podsumowanie koszyka</h2>
+
+            @foreach (var item in koszyk.Pozycje)
+            {
+                <div class="d-flex justify-content-between gap-3 border-bottom py-2">
+                    <div>
+                        <strong>@item.Nazwa</strong>
+                        <div class="small text-muted">
+                            @item.Ilosc x @item.Cena.ToString("C")
+                        </div>
+                    </div>
+
+                    <div class="text-end">
+                        <strong>@item.Wartosc.ToString("C")</strong>
+                    </div>
+                </div>
+            }
+
+            <div class="d-flex justify-content-between gap-3 mt-3">
+                <strong>Razem</strong>
+                <strong class="price-text">@koszyk.Suma.ToString("C")</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -17,6 +17,16 @@ builder.Services.AddDbContext<FirmaContext>(options =>
 
 DependencyInjectionFactory.Resolve(builder.Services, builder.Configuration);
 
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".Firma.PortalWWW.Koszyk";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -29,6 +39,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 

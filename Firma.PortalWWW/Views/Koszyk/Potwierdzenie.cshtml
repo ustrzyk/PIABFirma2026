@@ -1,0 +1,55 @@
+﻿@model Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowieniePubliczneWynikDto
+
+@{
+    ViewData["Title"] = "Zamówienie złożone";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Zamówienie</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Dziękujemy za złożenie zamówienia
+            </h1>
+
+            <p class="hero-text mb-0">
+                Zamówienie zostało zapisane i trafiło do obsługi w panelu administracyjnym.
+            </p>
+
+            <div class="hero-actions">
+                <a href="/Sklep/Index"
+                   class="btn btn-primary btn-lg">
+                    Wróć do sklepu
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Strona główna
+                </a>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Numer zamówienia</div>
+
+                <div class="hero-feature">
+                    <strong>@Model.NumerZamowienia</strong>
+                    <span>Zapisz ten numer do kontaktu w sprawie zamówienia.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="details-card">
+    <h2 class="h5 mb-3">Co dalej?</h2>
+
+    <p class="text-muted mb-0">
+        Obsługa sklepu może teraz sprawdzić zamówienie w panelu Intranet.
+        Status początkowy zamówienia to „Nowe”.
+    </p>
+</section>
