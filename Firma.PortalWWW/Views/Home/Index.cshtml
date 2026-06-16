@@ -22,8 +22,7 @@
                     </div>
 
                     <div class="hero-actions">
-                        <a asp-controller="Sklep"
-                           asp-action="Index"
+                        <a href="/Sklep/Index"
                            class="btn btn-primary btn-lg">
                             Przejdź do sklepu
                         </a>
@@ -66,7 +65,7 @@
                 <span class="info-tile-number">01</span>
                 <h2 class="h5">Produkty</h2>
                 <p>Przejrzysta lista towarów z ceną, producentem i dostępnością.</p>
-                <a asp-controller="Sklep" asp-action="Index">Zobacz sklep</a>
+                <a href="/Sklep/Index">Zobacz sklep</a>
             </div>
         </div>
 
@@ -75,7 +74,7 @@
                 <span class="info-tile-number">02</span>
                 <h2 class="h5">Kategorie</h2>
                 <p>Szybkie przejście do wybranego rodzaju produktów.</p>
-                <a asp-controller="Sklep" asp-action="Index">Przeglądaj kategorie</a>
+                <a href="/Sklep/Index">Przeglądaj kategorie</a>
             </div>
         </div>
 
@@ -92,7 +91,21 @@
 else
 {
     <div class="empty-state">
-        <h1 class="h4">Brak strony głównej</h1>
-        <p>Dodaj aktywną stronę w panelu Intranet.</p>
+        <span class="portal-badge">Strona główna</span>
+        <h1 class="h4 mt-3">Strona główna jest chwilowo niedostępna</h1>
+        <p>Możesz przejść bezpośrednio do oferty sklepu albo sprawdzić aktualne promocje.</p>
+
+        <div class="empty-state-actions">
+            <a href="/Sklep/Index"
+               class="btn btn-primary">
+                Przejdź do sklepu
+            </a>
+
+            <a asp-controller="Promocja"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Zobacz promocje
+            </a>
+        </div>
     </div>
 }
