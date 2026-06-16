@@ -1,23 +1,61 @@
 ﻿@model IEnumerable<Firma.Services.Data.Dto.Rodzaje.RodzajMenuItemDto>
 
-@{
-    var rodzaje = Model?.ToList() ?? new List<Firma.Services.Data.Dto.Rodzaje.RodzajMenuItemDto>();
+@functions {
+    private static string Normalizuj(string? tekst)
+    {
+        return (tekst ?? string.Empty)
+            .Trim()
+            .ToLowerInvariant();
+    }
+
+    private static string IkonaKategorii(string? nazwa)
+    {
+        var tekst = Normalizuj(nazwa);
+
+        if (tekst.Contains("drukark"))
+        {
+            return "🖨️";
+        }
+
+        if (tekst.Contains("filament") || tekst.Contains("materiał") || tekst.Contains("material"))
+        {
+            return "🧵";
+        }
+
+        if (tekst.Contains("akcesor"))
+        {
+            return "🧰";
+        }
+
+        if (tekst.Contains("części") || tekst.Contains("czesci") || tekst.Contains("dysza") || tekst.Contains("płyta") || tekst.Contains("plyta"))
+        {
+            return "⚙️";
+        }
+
+        if (tekst.Contains("serwis"))
+        {
+            return "🛠️";
+        }
+
+        return "🧩";
+    }
 }
 
-<a class="category-link category-link-main"
-   href="/Sklep/Index">
+<a href="/Sklep/Index"
+   class="category-link category-link-main">
+    <span class="category-icon">🛒</span>
     Wszystkie produkty
 </a>
 
-@if (rodzaje.Any())
+@if (Model != null && Model.Any())
 {
-    foreach (var item in rodzaje)
+    foreach (var item in Model)
     {
-        <a class="category-link"
-           asp-area=""
-           asp-controller="Sklep"
+        <a asp-controller="Sklep"
            asp-action="Index"
-           asp-route-id="@item.IdRodzaju">
+           asp-route-id="@item.IdRodzaju"
+           class="category-link">
+            <span class="category-icon">@IkonaKategorii(item.Nazwa)</span>
             @item.Nazwa
         </a>
     }
@@ -25,6 +63,7 @@
 else
 {
     <span class="category-empty">
+        <span class="category-icon">ℹ️</span>
         Brak aktywnych kategorii
     </span>
 }

@@ -1,5 +1,74 @@
 @model IEnumerable<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>
 
+@functions {
+    private static string Normalizuj(string? tekst)
+    {
+        return (tekst ?? string.Empty)
+            .Trim()
+            .ToLowerInvariant();
+    }
+
+    private static string IkonaStrony(string? tytul)
+    {
+        var tekst = Normalizuj(tytul);
+
+        if (tekst.Contains("o sklepie") || tekst.Contains("firma") || tekst.Contains("o nas"))
+        {
+            return "🏪";
+        }
+
+        if (tekst.Contains("dostawa") || tekst.Contains("odbiór") || tekst.Contains("odbior"))
+        {
+            return "🚚";
+        }
+
+        if (tekst.Contains("serwis") || tekst.Contains("napraw"))
+        {
+            return "🛠️";
+        }
+
+        if (tekst.Contains("kontakt"))
+        {
+            return "☎️";
+        }
+
+        if (tekst.Contains("regulamin"))
+        {
+            return "📄";
+        }
+
+        if (tekst.Contains("prywat"))
+        {
+            return "🔒";
+        }
+
+        if (tekst.Contains("faq") || tekst.Contains("pytania"))
+        {
+            return "❓";
+        }
+
+        return "ℹ️";
+    }
+
+    private static bool CzyUkrycStroneZCms(string? tytul)
+    {
+        var tekst = Normalizuj(tytul);
+
+        return tekst == "start"
+            || tekst == "sklep"
+            || tekst == "promocje"
+            || tekst == "producenci"
+            || tekst == "dostępność"
+            || tekst == "dostepnosc"
+            || tekst == "status"
+            || tekst == "status zamówienia"
+            || tekst == "status zamowienia"
+            || tekst == "koszyk"
+            || tekst == "prywatność"
+            || tekst == "prywatnosc";
+    }
+}
+
 <ul class="navbar-nav me-auto mb-2 mb-lg-0 portal-nav">
     <li class="nav-item">
         <a class="nav-link"
@@ -41,7 +110,7 @@
 
     @if (Model != null)
     {
-        foreach (var item in Model)
+        foreach (var item in Model.Where(s => !CzyUkrycStroneZCms(s.LinkTytul)))
         {
             <li class="nav-item">
                 <a class="nav-link"
@@ -49,7 +118,7 @@
                    asp-controller="Home"
                    asp-action="Index"
                    asp-route-id="@item.IdStrony">
-                    <span class="nav-icon">ℹ️</span>
+                    <span class="nav-icon">@IkonaStrony(item.LinkTytul)</span>
                     @item.LinkTytul
                 </a>
             </li>
