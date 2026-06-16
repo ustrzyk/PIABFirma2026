@@ -23,6 +23,7 @@ namespace Firma.PortalWWW.Controllers
         public async Task<IActionResult> Index()
         {
             await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
 
             return View(new StatusZamowieniaViewModel());
         }
@@ -32,6 +33,7 @@ namespace Firma.PortalWWW.Controllers
         public async Task<IActionResult> Index(StatusZamowieniaViewModel model)
         {
             await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
 
             if (!ModelState.IsValid)
             {

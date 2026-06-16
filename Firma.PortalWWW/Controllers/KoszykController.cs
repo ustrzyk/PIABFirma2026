@@ -29,6 +29,7 @@ namespace Firma.PortalWWW.Controllers
         public async Task<IActionResult> Index()
         {
             await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
 
             return View(PobierzKoszyk());
         }
@@ -142,6 +143,7 @@ namespace Firma.PortalWWW.Controllers
         public async Task<IActionResult> Zamowienie()
         {
             await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
 
             var koszyk = PobierzKoszyk();
 
@@ -161,6 +163,7 @@ namespace Firma.PortalWWW.Controllers
         public async Task<IActionResult> Zamowienie(DaneZamowieniaViewModel model)
         {
             await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
 
             var koszyk = PobierzKoszyk();
 

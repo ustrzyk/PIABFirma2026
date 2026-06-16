@@ -7,6 +7,7 @@
     var wyglad = ViewBag.WygladPortalu as PortalWygladDto ?? new PortalWygladDto();
     var strony = ViewBag.ModelStrony as IEnumerable<StronaMenuItemDto> ?? Enumerable.Empty<StronaMenuItemDto>();
     var aktualnosci = ViewBag.ModelAktualnosci as IEnumerable<AktualnoscListaItemDto> ?? Enumerable.Empty<AktualnoscListaItemDto>();
+    var ukryjAktualnosci = ViewBag.UkryjAktualnosci == true;
 
     var koszykLiczbaSztuk = 0;
     var koszykJson = Context.Session.GetString("PortalKoszyk");
@@ -138,11 +139,14 @@
         </main>
     </div>
 
-    <section class="portal-news-section">
-        <div class="container">
-            @await Html.PartialAsync("Aktualnosci", aktualnosci)
-        </div>
-    </section>
+    @if (!ukryjAktualnosci)
+    {
+        <section class="portal-news-section">
+            <div class="container">
+                @await Html.PartialAsync("Aktualnosci", aktualnosci)
+            </div>
+        </section>
+    }
 
     <footer class="portal-footer">
         <div class="container">
