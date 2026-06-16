@@ -3,31 +3,34 @@
 @{
     ViewData["Title"] = "Zamówienie złożone";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+
+    var emailZamowienia = ViewBag.EmailZamowienia as string ?? string.Empty;
 }
 
 <section class="portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">Zamówienie</span>
+            <span class="portal-badge">✅ Zamówienie</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 Dziękujemy za złożenie zamówienia
             </h1>
 
             <p class="hero-text mb-0">
-                Zamówienie zostało zapisane i trafiło do obsługi w panelu administracyjnym.
+                Zamówienie zostało zapisane i trafiło do obsługi w panelu Intranet.
             </p>
 
             <div class="hero-actions">
-                <a href="/Sklep/Index"
-                   class="btn btn-primary btn-lg">
-                    Wróć do sklepu
-                </a>
-
                 <a asp-controller="StatusZamowienia"
                    asp-action="Index"
-                   class="btn btn-outline-secondary btn-lg">
+                   class="btn btn-primary btn-lg">
+                    <span class="btn-icon">🧾</span>
                     Sprawdź status
+                </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Wróć do sklepu
                 </a>
 
                 <a asp-controller="Home"
@@ -44,17 +47,94 @@
 
                 <div class="hero-feature">
                     <strong>@Model.NumerZamowienia</strong>
-                    <span>Zapisz ten numer do sprawdzenia statusu zamówienia.</span>
+                    <span>Zapisz ten numer. Będzie potrzebny do sprawdzenia statusu.</span>
+                </div>
+
+                <div class="hero-feature">
+                    <strong>
+                        @if (!string.IsNullOrWhiteSpace(emailZamowienia))
+                        {
+                            @emailZamowienia
+                        }
+                        else
+                        {
+                            <text>E-mail z formularza</text>
+                        }
+                    </strong>
+                    <span>Ten adres też będzie potrzebny do sprawdzenia statusu.</span>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="details-card">
-    <h2 class="h5 mb-3">Co dalej?</h2>
+<section class="confirmation-grid">
+    <article class="details-card">
+        <span class="home-quick-icon">🧾</span>
 
-    <p class="text-muted mb-0">
-        Status zamówienia możesz sprawdzić w portalu, podając numer zamówienia oraz adres e-mail użyty podczas składania zamówienia.
-    </p>
+        <h2 class="h5 mb-3">Jak sprawdzić status?</h2>
+
+        <div class="confirmation-steps">
+            <div class="confirmation-step">
+                <span>1</span>
+                <div>
+                    <strong>Wejdź w Status zamówienia</strong>
+                    <p>Link znajduje się w górnym menu portalu oraz na tej stronie.</p>
+                </div>
+            </div>
+
+            <div class="confirmation-step">
+                <span>2</span>
+                <div>
+                    <strong>Wpisz numer zamówienia</strong>
+                    <p>Numer zamówienia: <strong>@Model.NumerZamowienia</strong></p>
+                </div>
+            </div>
+
+            <div class="confirmation-step">
+                <span>3</span>
+                <div>
+                    <strong>Wpisz adres e-mail</strong>
+                    <p>
+                        Użyj tego samego adresu, który został podany przy składaniu zamówienia.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <aside class="details-card">
+        <span class="home-quick-icon">✅</span>
+
+        <h2 class="h5 mb-3">Co dalej?</h2>
+
+        <dl class="details-list-clean mb-0">
+            <dt>Status startowy</dt>
+            <dd>Nowe</dd>
+
+            <dt>Obsługa</dt>
+            <dd>Panel Intranet</dd>
+
+            <dt>Numer</dt>
+            <dd>
+                <strong>@Model.NumerZamowienia</strong>
+            </dd>
+
+            <dt>E-mail</dt>
+            <dd>
+                @if (!string.IsNullOrWhiteSpace(emailZamowienia))
+                {
+                    <strong>@emailZamowienia</strong>
+                }
+                else
+                {
+                    <span class="text-muted">adres podany w formularzu</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="simple-note mt-3">
+            Nie potrzebujesz konta klienta. Do sprawdzenia wystarczy numer zamówienia i e-mail.
+        </div>
+    </aside>
 </section>

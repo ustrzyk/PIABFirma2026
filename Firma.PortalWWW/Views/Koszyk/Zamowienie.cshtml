@@ -9,10 +9,10 @@
 
 <section class="section-heading mb-4">
     <div>
-        <span class="portal-badge">Zamówienie</span>
+        <span class="portal-badge">🛒 Zamówienie</span>
         <h1 class="h2 mt-2 mb-2">Dane do zamówienia</h1>
         <p class="text-muted mb-0">
-            Uzupełnij dane kontaktowe i adres dostawy.
+            Podaj dane kontaktowe i adres dostawy. E-mail będzie później potrzebny do sprawdzenia statusu zamówienia.
         </p>
     </div>
 
@@ -25,6 +25,11 @@
 <section class="checkout-layout">
     <div class="details-card checkout-form-card">
         <h2 class="h5 mb-3">Dane klienta i dostawy</h2>
+
+        <div class="simple-note mb-4">
+            <strong>Ważne:</strong> zapamiętaj adres e-mail podany w formularzu.
+            Po złożeniu zamówienia razem z numerem zamówienia pozwoli on sprawdzić status realizacji.
+        </div>
 
         <form asp-controller="Koszyk"
               asp-action="Zamowienie"
@@ -48,8 +53,13 @@
 
                 <div class="col-12 col-md-6">
                     <label asp-for="Email" class="form-label"></label>
-                    <input asp-for="Email" class="form-control" />
+                    <input asp-for="Email"
+                           class="form-control"
+                           placeholder="np. jan.kowalski@example.com" />
                     <span asp-validation-for="Email" class="text-danger"></span>
+                    <div class="form-text">
+                        Ten adres będzie potrzebny do sprawdzenia statusu zamówienia.
+                    </div>
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -95,6 +105,7 @@
 
             <div class="checkout-actions">
                 <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">✅</span>
                     Potwierdź zamówienie
                 </button>
 
@@ -128,6 +139,10 @@
             <div class="checkout-total">
                 <span>Razem</span>
                 <strong class="price-text">@koszyk.Suma.ToString("C")</strong>
+            </div>
+
+            <div class="simple-note mt-3">
+                Po zatwierdzeniu zobaczysz numer zamówienia. Zapisz go razem z adresem e-mail.
             </div>
         </div>
     </aside>

@@ -208,6 +208,8 @@ namespace Firma.PortalWWW.Controllers
 
             HttpContext.Session.Remove(KoszykSessionKey);
 
+            ViewBag.EmailZamowienia = model.Email;
+
             return View("Potwierdzenie", wynik);
         }
 

@@ -78,6 +78,11 @@
     color: #475569;
 }
 
+    .simple-note strong,
+    .simple-note span {
+        display: block;
+    }
+
 /* Menu */
 
 .portal-nav .nav-link {
@@ -418,20 +423,74 @@
         margin-bottom: 0;
     }
 
+/* Status i potwierdzenie zamówienia */
+
+.status-instruction-grid,
+.confirmation-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.confirmation-grid {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    align-items: stretch;
+}
+
+.confirmation-steps {
+    display: grid;
+    gap: 1rem;
+}
+
+.confirmation-step {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 0.85rem;
+    align-items: flex-start;
+    background-color: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.9rem;
+    padding: 1rem;
+}
+
+    .confirmation-step > span {
+        display: inline-flex;
+        width: 42px;
+        height: 42px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        background-color: var(--portal-button-color);
+        color: #ffffff;
+        font-weight: 900;
+    }
+
+    .confirmation-step strong,
+    .confirmation-step p {
+        margin: 0;
+    }
+
+    .confirmation-step p {
+        color: #64748b;
+        margin-top: 0.2rem;
+    }
+
 /* Responsywność */
 
 @media (max-width: 1199.98px) {
     .promo-grid,
     .producer-grid,
     .news-grid,
-    .privacy-grid {
+    .privacy-grid,
+    .status-instruction-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .product-info-panels,
     .promo-details-grid,
     .stock-details-grid,
-    .news-details-layout {
+    .news-details-layout,
+    .confirmation-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -467,7 +526,8 @@
     .producer-card-actions,
     .stock-card-actions,
     .news-grid,
-    .privacy-grid {
+    .privacy-grid,
+    .status-instruction-grid {
         grid-template-columns: 1fr;
     }
 
@@ -488,4 +548,8 @@
         .product-buy-form .form-control {
             width: 100%;
         }
+
+    .confirmation-step {
+        grid-template-columns: 1fr;
+    }
 }
