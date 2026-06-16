@@ -3,190 +3,229 @@
 @{
     ViewData["Title"] = Model.Nazwa;
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+    var towary = Model.Towary?.ToList() ?? new List<Firma.Services.Data.Dto.Towary.TowarListaItemDto>();
 }
 
-<div class="portal-header portal-header-responsive mb-4">
-    <div>
-        <h1 class="h3 mb-1">@Model.Nazwa</h1>
-        <p class="text-muted mb-0">
-            Szczegóły producenta oraz powiązane towary.
-        </p>
-    </div>
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Producent</span>
 
-    <div class="portal-actions">
-        <a asp-controller="Producent"
-           asp-action="Index"
-           class="btn btn-outline-secondary">
-            Powrót do producentów
-        </a>
-    </div>
-</div>
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                @Model.Nazwa
+            </h1>
 
-<div class="row g-4">
-    <div class="col-12 col-lg-4">
-        <div class="card page-card shadow-sm h-100">
-            <div class="card-body">
-                <h2 class="h5 mb-3">Informacje</h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Opis))
+            {
+                <p class="hero-text tekst-strony mb-0">
+                    @Model.Opis
+                </p>
+            }
+            else
+            {
+                <p class="hero-text mb-0">
+                    Produkty tego producenta są dostępne w katalogu sklepu.
+                </p>
+            }
 
-                <dl class="row details-list">
-                    <dt class="col-sm-5">Nazwa</dt>
-                    <dd class="col-sm-7">@Model.Nazwa</dd>
+            <div class="hero-actions">
+                <a asp-controller="Producent"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Wróć do producentów
+                </a>
 
-                    <dt class="col-sm-5">Kraj</dt>
-                    <dd class="col-sm-7">
+                @if (!string.IsNullOrWhiteSpace(Model.StronaWWW))
+                {
+                    <a href="@Model.StronaWWW"
+                       target="_blank"
+                       class="btn btn-primary btn-lg">
+                        Strona producenta
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Informacje</div>
+
+                <div class="hero-feature">
+                    <strong>@Model.IloscTowarow</strong>
+                    <span>Liczba aktywnych towarów.</span>
+                </div>
+
+                <div class="hero-feature">
+                    <strong>
                         @if (!string.IsNullOrWhiteSpace(Model.Kraj))
                         {
                             @Model.Kraj
                         }
                         else
                         {
-                            <span class="text-muted">brak danych</span>
+                            <text>Brak danych</text>
                         }
-                    </dd>
+                    </strong>
+                    <span>Kraj producenta.</span>
+                </div>
 
-                    <dt class="col-sm-5">Towary</dt>
-                    <dd class="col-sm-7">
-                        <span class="badge bg-secondary">@Model.IloscTowarow</span>
-                    </dd>
-
-                    <dt class="col-sm-5">Strona WWW</dt>
-                    <dd class="col-sm-7">
+                <div class="hero-feature">
+                    <strong>
                         @if (!string.IsNullOrWhiteSpace(Model.StronaWWW))
                         {
-                            <a href="@Model.StronaWWW"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-secondary">
-                                Otwórz
-                            </a>
+                            <text>Dostępna</text>
                         }
                         else
                         {
-                            <span class="text-muted">brak danych</span>
+                            <text>Brak</text>
                         }
-                    </dd>
-                </dl>
+                    </strong>
+                    <span>Strona internetowa.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-                @if (!string.IsNullOrWhiteSpace(Model.Opis))
-                {
-                    <hr />
-                    <p class="text-muted mb-0">
-                        @Model.Opis
+<section class="details-card mb-4">
+    <h2 class="h5 mb-3">Dane producenta</h2>
+
+    <dl class="details-list-clean mb-0">
+        <dt>Nazwa</dt>
+        <dd>@Model.Nazwa</dd>
+
+        <dt>Kraj</dt>
+        <dd>
+            @if (!string.IsNullOrWhiteSpace(Model.Kraj))
+            {
+                @Model.Kraj
+            }
+            else
+            {
+                <span class="text-muted">brak danych</span>
+            }
+        </dd>
+
+        <dt>Strona WWW</dt>
+        <dd>
+            @if (!string.IsNullOrWhiteSpace(Model.StronaWWW))
+            {
+                <a href="@Model.StronaWWW" target="_blank">@Model.StronaWWW</a>
+            }
+            else
+            {
+                <span class="text-muted">brak danych</span>
+            }
+        </dd>
+
+        <dt>Liczba towarów</dt>
+        <dd>@Model.IloscTowarow</dd>
+    </dl>
+</section>
+
+<section class="section-heading mb-4">
+    <div>
+        <span class="portal-badge">Towary</span>
+        <h2 class="h3 mt-2 mb-2">Produkty producenta</h2>
+        <p class="text-muted mb-0">
+            Aktywne towary powiązane z tym producentem.
+        </p>
+    </div>
+
+    <div class="section-summary">
+        <strong>@towary.Count</strong>
+        <span>produktów</span>
+    </div>
+</section>
+
+@if (towary.Any())
+{
+    <section class="product-grid">
+        @foreach (var item in towary)
+        {
+            <article class="product-card">
+                <a asp-controller="Sklep"
+                   asp-action="Szczegoly"
+                   asp-route-id="@item.IdTowaru"
+                   class="product-image-link">
+                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                    {
+                        <img src="@item.FotoUrl"
+                             alt="@item.Nazwa"
+                             class="product-card-img" />
+                    }
+                    else
+                    {
+                        <img src="~/content/CA.png"
+                             alt="@item.Nazwa"
+                             class="product-card-img" />
+                    }
+                </a>
+
+                <div class="product-card-body">
+                    <div class="product-meta">
+                        <span>@item.Rodzaj</span>
+                        <span>@item.Producent</span>
+                    </div>
+
+                    <h3 class="product-title">
+                        <a asp-controller="Sklep"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdTowaru">
+                            @item.Nazwa
+                        </a>
+                    </h3>
+
+                    <div class="product-code">
+                        Kod: @item.Kod
+                    </div>
+
+                    <p class="product-description tekst-skrot">
+                        @item.Opis
                     </p>
-                }
-            </div>
-        </div>
-    </div>
 
-    <div class="col-12 col-lg-8">
-        <div class="card page-card shadow-sm">
-            <div class="card-body">
-                <h2 class="h5 mb-3">Towary producenta</h2>
-
-                @if (Model.Towary != null && Model.Towary.Any())
-                {
-                    <div class="table-responsive desktop-table-wrap">
-                        <table class="table table-hover align-middle mb-0 sklep-table">
-                            <thead>
-                                <tr>
-                                    <th>Zdjęcie</th>
-                                    <th>Nazwa</th>
-                                    <th>Kod</th>
-                                    <th>Rodzaj</th>
-                                    <th>Cena</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach (var item in Model.Towary)
-                                {
-                                    <tr>
-                                        <td style="width: 110px;">
-                                            @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
-                                            {
-                                                <img src="@item.FotoUrl"
-                                                     alt="@item.Nazwa"
-                                                     class="product-mini-img" />
-                                            }
-                                            else
-                                            {
-                                                <img src="~/content/CA.png"
-                                                     alt="@item.Nazwa"
-                                                     class="product-mini-img" />
-                                            }
-                                        </td>
-
-                                        <td>
-                                            <strong>@item.Nazwa</strong>
-                                        </td>
-
-                                        <td>@item.Kod</td>
-                                        <td>@item.Rodzaj</td>
-
-                                        <td>
-                                            <strong>@item.Cena.ToString("C")</strong>
-                                        </td>
-
-                                        <td class="text-end">
-                                            <a class="btn btn-sm btn-primary"
-                                               asp-controller="Sklep"
-                                               asp-action="Szczegoly"
-                                               asp-route-id="@item.IdTowaru">
-                                                Towar
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mobile-card-list">
-                        @foreach (var item in Model.Towary)
-                        {
-                            <div class="mobile-product-card">
-                                <div class="mobile-product-img-wrap">
-                                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
-                                    {
-                                        <img src="@item.FotoUrl"
-                                             alt="@item.Nazwa"
-                                             class="mobile-product-img" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/content/CA.png"
-                                             alt="@item.Nazwa"
-                                             class="mobile-product-img" />
-                                    }
-                                </div>
-
-                                <div class="mobile-product-body">
-                                    <h3 class="h6 mb-1">@item.Nazwa</h3>
-                                    <div class="small text-muted mb-2">@item.Kod</div>
-
-                                    <div class="d-flex flex-wrap gap-2 mb-3">
-                                        <span class="badge bg-light text-dark border">@item.Rodzaj</span>
-                                        <span class="badge bg-secondary">@item.Cena.ToString("C")</span>
-                                    </div>
-
-                                    <a class="btn btn-primary w-100"
-                                       asp-controller="Sklep"
-                                       asp-action="Szczegoly"
-                                       asp-route-id="@item.IdTowaru">
-                                        Zobacz towar
-                                    </a>
-                                </div>
+                    <div class="product-card-footer">
+                        <div>
+                            <div class="price-text product-price">
+                                @item.Cena.ToString("C")
                             </div>
-                        }
+
+                            @if (item.CzyDostepny)
+                            {
+                                <span class="availability-badge available">
+                                    @item.IloscSztuk szt.
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="availability-badge unavailable">
+                                    brak danych
+                                </span>
+                            }
+                        </div>
+
+                        <a class="btn btn-primary"
+                           asp-controller="Sklep"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdTowaru">
+                            Zobacz
+                        </a>
                     </div>
-                }
-                else
-                {
-                    <div class="alert alert-info mb-0">
-                        Brak aktywnych towarów tego producenta.
-                    </div>
-                }
-            </div>
-        </div>
+                </div>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <div class="empty-state">
+        <h2 class="h4">Brak produktów</h2>
+        <p>Ten producent nie ma aktualnie aktywnych towarów.</p>
+
+        <a asp-controller="Sklep"
+           asp-action="Index"
+           class="btn btn-primary">
+            Przejdź do sklepu
+        </a>
     </div>
-</div>
+}

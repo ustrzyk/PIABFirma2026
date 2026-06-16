@@ -5,79 +5,132 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header portal-header-responsive mb-4">
-    <div>
-        <h1 class="h3 mb-1">@Model.Tytul</h1>
-        <p class="text-muted mb-0">
-            Szczegóły promocji dostępnej w portalu.
-        </p>
-    </div>
+<section class="portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Promocja</span>
 
-    <div class="portal-actions">
-        <a asp-controller="Promocja"
-           asp-action="Index"
-           class="btn btn-outline-secondary">
-            Powrót do promocji
-        </a>
-    </div>
-</div>
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                @Model.Tytul
+            </h1>
 
-<div class="card page-card shadow-sm">
-    <div class="card-body p-4">
-        <div class="d-flex flex-wrap gap-2 mb-3">
-            @if (Model.CzyAktualna)
-            {
-                <span class="badge bg-success">
-                    aktywna
-                </span>
-            }
-            else
-            {
-                <span class="badge bg-secondary">
-                    poza terminem
-                </span>
-            }
+            <p class="hero-text tekst-strony mb-0">
+                @Model.Opis
+            </p>
 
-            <span class="badge bg-danger">
-                -@Model.RabatProcentowy%
-            </span>
+            <div class="hero-actions">
+                <a asp-controller="Sklep"
+                   asp-action="Index"
+                   class="btn btn-primary btn-lg">
+                    Przejdź do sklepu
+                </a>
+
+                <a asp-controller="Promocja"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Wróć do promocji
+                </a>
+            </div>
         </div>
 
-        <h2 class="h4 mb-3">@Model.Tytul</h2>
+        <div class="col-12 col-lg-4">
+            <div class="hero-card">
+                <div class="hero-card-title">Szczegóły oferty</div>
 
-        <p class="text-muted tekst-strony">
-            @Model.Opis
-        </p>
+                <div class="hero-feature">
+                    <strong>-@Model.RabatProcentowy%</strong>
+                    <span>Wartość rabatu.</span>
+                </div>
 
-        <hr />
+                <div class="hero-feature">
+                    <strong>
+                        @if (Model.CzyAktualna)
+                        {
+                            <text>Aktywna</text>
+                        }
+                        else
+                        {
+                            <text>Poza terminem</text>
+                        }
+                    </strong>
+                    <span>Status promocji według dat.</span>
+                </div>
 
-        <dl class="row details-list mb-0">
-            <dt class="col-sm-3">Rabat</dt>
-            <dd class="col-sm-9">@Model.RabatProcentowy%</dd>
-
-            <dt class="col-sm-3">Data od</dt>
-            <dd class="col-sm-9">
-                @if (Model.DataOd != null)
-                {
-                    @Model.DataOd.Value.ToShortDateString()
-                }
-                else
-                {
-                    <span class="text-muted">brak danych</span>
-                }
-            </dd>
-
-            <dt class="col-sm-3">Data do</dt>
-            <dd class="col-sm-9">
-                @if (Model.DataDo != null)
-                {
-                    @Model.DataDo.Value.ToShortDateString()
-                }
-                else
-                {
-                    <span class="text-muted">brak danych</span>
-                }
-            </dd>
-        </dl>
+                <div class="hero-feature">
+                    <strong>
+                        @if (Model.DataDo != null)
+                        {
+                            @Model.DataDo.Value.ToString("dd.MM.yyyy")
+                        }
+                        else
+                        {
+                            <text>Bez daty końca</text>
+                        }
+                    </strong>
+                    <span>Termin zakończenia.</span>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Opis promocji</h2>
+
+            <p class="tekst-strony text-muted mb-0">
+                @Model.Opis
+            </p>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Parametry</h2>
+
+            <dl class="details-list-clean mb-0">
+                <dt>Status</dt>
+                <dd>
+                    @if (Model.CzyAktualna)
+                    {
+                        <span class="availability-badge available">aktywna</span>
+                    }
+                    else
+                    {
+                        <span class="availability-badge unavailable">poza terminem</span>
+                    }
+                </dd>
+
+                <dt>Rabat</dt>
+                <dd>
+                    <strong class="price-text">@Model.RabatProcentowy%</strong>
+                </dd>
+
+                <dt>Data od</dt>
+                <dd>
+                    @if (Model.DataOd != null)
+                    {
+                        @Model.DataOd.Value.ToString("dd.MM.yyyy")
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+
+                <dt>Data do</dt>
+                <dd>
+                    @if (Model.DataDo != null)
+                    {
+                        @Model.DataDo.Value.ToString("dd.MM.yyyy")
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+</section>

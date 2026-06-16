@@ -1,130 +1,150 @@
 @model Firma.Services.Data.Dto.StanyMagazynowe.StanMagazynowySzczegolyDto
 
 @{
-    ViewData["Title"] = "Stan magazynowy";
+    ViewData["Title"] = $"Dostępność - {Model.NazwaTowaru}";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header portal-header-responsive mb-4">
-    <div>
-        <h1 class="h3 mb-1">Stan magazynowy</h1>
-        <p class="text-muted mb-0">
-            Szczegóły dostępności produktu.
-        </p>
-    </div>
-
-    <div class="portal-actions">
-        <a asp-controller="StanMagazynowy"
-           asp-action="Index"
-           class="btn btn-outline-secondary">
-            Powrót do stanów
-        </a>
-    </div>
-</div>
-
-<div class="row g-4">
-    <div class="col-12 col-lg-5">
-        <div class="card page-card shadow-sm">
-            <div class="card-body">
+<section class="product-details-hero mb-4">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-5">
+            <div class="product-details-gallery">
                 @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
                 {
                     <img src="@Model.FotoUrl"
                          alt="@Model.NazwaTowaru"
-                         class="img-fluid rounded product-details-img" />
+                         class="product-details-img" />
                 }
                 else
                 {
                     <img src="~/content/CA.png"
                          alt="@Model.NazwaTowaru"
-                         class="img-fluid rounded product-details-img" />
+                         class="product-details-img" />
                 }
             </div>
         </div>
-    </div>
 
-    <div class="col-12 col-lg-7">
-        <div class="card page-card shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-secondary">@Model.Rodzaj</span>
-                    <span class="badge bg-light text-dark border">@Model.Producent</span>
-
-                    @if (Model.CzyMaloTowaru)
-                    {
-                        <span class="badge bg-warning text-dark">niski stan</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-success">stan OK</span>
-                    }
+        <div class="col-12 col-lg-7">
+            <div class="product-details-panel">
+                <div class="product-meta mb-3">
+                    <span>@Model.Rodzaj</span>
+                    <span>@Model.Producent</span>
                 </div>
 
-                <h2 class="h4 mb-3">@Model.NazwaTowaru</h2>
+                <h1 class="h2 mb-3">@Model.NazwaTowaru</h1>
 
-                <p class="text-muted">
+                <p class="product-details-description">
                     @Model.OpisTowaru
                 </p>
 
-                <dl class="row details-list">
-                    <dt class="col-sm-4">Kod towaru</dt>
-                    <dd class="col-sm-8">@Model.KodTowaru</dd>
+                <div class="product-buy-box">
+                    <div>
+                        <div class="small text-muted">Cena produktu</div>
+                        <div class="price-text product-details-price">
+                            @Model.CenaTowaru.ToString("C")
+                        </div>
+                    </div>
 
-                    <dt class="col-sm-4">Cena</dt>
-                    <dd class="col-sm-8">
-                        <strong>@Model.CenaTowaru.ToString("C")</strong>
-                    </dd>
-
-                    <dt class="col-sm-4">Rodzaj</dt>
-                    <dd class="col-sm-8">@Model.Rodzaj</dd>
-
-                    <dt class="col-sm-4">Producent</dt>
-                    <dd class="col-sm-8">@Model.Producent</dd>
-
-                    <dt class="col-sm-4">Ilość sztuk</dt>
-                    <dd class="col-sm-8">
+                    <div>
                         @if (Model.CzyDostepny)
                         {
-                            <span class="badge bg-success">@Model.IloscSztuk szt.</span>
+                            <span class="availability-badge available">
+                                dostępny: @Model.IloscSztuk szt.
+                            </span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">brak</span>
+                            <span class="availability-badge unavailable">
+                                brak na stanie
+                            </span>
                         }
-                    </dd>
-
-                    <dt class="col-sm-4">Minimalna ilość</dt>
-                    <dd class="col-sm-8">@Model.MinimalnaIlosc</dd>
-
-                    <dt class="col-sm-4">Lokalizacja</dt>
-                    <dd class="col-sm-8">
-                        @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
-                        {
-                            @Model.Lokalizacja
-                        }
-                        else
-                        {
-                            <span class="text-muted">brak danych</span>
-                        }
-                    </dd>
-                </dl>
+                    </div>
+                </div>
 
                 @if (Model.CzyMaloTowaru)
                 {
-                    <div class="alert alert-warning mb-3">
-                        Ilość produktu jest niska względem minimalnego stanu magazynowego.
+                    <div class="alert alert-warning mt-3 mb-0">
+                        Niski stan magazynowy względem ustawionego minimum.
                     </div>
                 }
 
-                @if (Model.IdTowaru > 0)
-                {
-                    <a class="btn btn-primary details-main-button"
-                       asp-controller="Sklep"
-                       asp-action="Szczegoly"
-                       asp-route-id="@Model.IdTowaru">
-                        Zobacz towar
+                <div class="product-details-actions">
+                    <a asp-controller="StanMagazynowy"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do dostępności
                     </a>
-                }
+
+                    @if (Model.IdTowaru > 0)
+                    {
+                        <a class="btn btn-primary"
+                           asp-controller="Sklep"
+                           asp-action="Szczegoly"
+                           asp-route-id="@Model.IdTowaru">
+                            Zobacz towar
+                        </a>
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="row g-4">
+    <div class="col-12 col-lg-7">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Informacje o towarze</h2>
+
+            <dl class="details-list-clean mb-0">
+                <dt>Kod towaru</dt>
+                <dd>@Model.KodTowaru</dd>
+
+                <dt>Rodzaj</dt>
+                <dd>@Model.Rodzaj</dd>
+
+                <dt>Producent</dt>
+                <dd>@Model.Producent</dd>
+
+                <dt>Lokalizacja</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
+                    {
+                        @Model.Lokalizacja
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Stan magazynowy</h2>
+
+            <div class="stock-box @(Model.CzyMaloTowaru ? string.Empty : "stock-box-ok") mb-3">
+                <strong>@Model.IloscSztuk szt.</strong>
+                <span>Aktualna ilość produktu.</span>
+            </div>
+
+            <dl class="details-list-clean mb-0">
+                <dt>Minimum</dt>
+                <dd>@Model.MinimalnaIlosc szt.</dd>
+
+                <dt>Status</dt>
+                <dd>
+                    @if (Model.CzyMaloTowaru)
+                    {
+                        <span class="availability-badge unavailable">niski stan</span>
+                    }
+                    else
+                    {
+                        <span class="availability-badge available">stan OK</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+</section>

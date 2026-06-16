@@ -1,145 +1,135 @@
 @model IEnumerable<Firma.Services.Data.Dto.StanyMagazynowe.StanMagazynowyListaItemDto>
 
 @{
-    ViewData["Title"] = "Stany magazynowe";
+    ViewData["Title"] = "Dostępność";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+    var stany = Model?.ToList() ?? new List<Firma.Services.Data.Dto.StanyMagazynowe.StanMagazynowyListaItemDto>();
+    var niskieStany = stany.Count(s => s.CzyMaloTowaru);
 }
 
-<div class="portal-header mb-4">
+<section class="section-heading mb-4">
     <div>
-        <h1 class="h3 mb-1">Stany magazynowe</h1>
+        <span class="portal-badge">Dostępność</span>
+        <h1 class="h2 mt-2 mb-2">Stany magazynowe produktów</h1>
         <p class="text-muted mb-0">
-            Podgląd dostępności produktów w sklepie.
+            Szybki podgląd dostępności towarów w sklepie.
         </p>
     </div>
-</div>
 
-<div class="card page-card shadow-sm">
-    <div class="card-body p-0">
-        @if (Model != null && Model.Any())
-        {
-            <div class="table-responsive desktop-table-wrap">
-                <table class="table table-hover align-middle mb-0 sklep-table">
-                    <thead>
-                        <tr>
-                            <th>Towar</th>
-                            <th>Kod</th>
-                            <th>Rodzaj</th>
-                            <th>Producent</th>
-                            <th>Ilość</th>
-                            <th>Minimum</th>
-                            <th>Lokalizacja</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <strong>@item.NazwaTowaru</strong>
-                                </td>
-
-                                <td>@item.KodTowaru</td>
-                                <td>@item.Rodzaj</td>
-                                <td>@item.Producent</td>
-                                <td>@item.IloscSztuk</td>
-                                <td>@item.MinimalnaIlosc</td>
-                                <td>@item.Lokalizacja</td>
-
-                                <td>
-                                    @if (item.CzyMaloTowaru)
-                                    {
-                                        <span class="badge bg-warning text-dark">mało</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">OK</span>
-                                    }
-                                </td>
-
-                                <td class="text-end">
-                                    <a class="btn btn-sm btn-primary"
-                                       asp-controller="StanMagazynowy"
-                                       asp-action="Szczegoly"
-                                       asp-route-id="@item.IdStanuMagazynowego">
-                                        Szczegóły
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mobile-card-list p-3">
-                @foreach (var item in Model)
-                {
-                    <div class="mobile-info-card">
-                        <div class="mobile-info-body">
-                            <div class="d-flex justify-content-between gap-2 mb-2">
-                                <div>
-                                    <h2 class="h6 mb-1">@item.NazwaTowaru</h2>
-                                    <div class="small text-muted">@item.KodTowaru</div>
-                                </div>
-
-                                <div class="text-end">
-                                    @if (item.CzyMaloTowaru)
-                                    {
-                                        <span class="badge bg-warning text-dark">mało</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">OK</span>
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-wrap gap-2 mb-3">
-                                <span class="badge bg-light text-dark border">@item.Rodzaj</span>
-                                <span class="badge bg-light text-dark border">@item.Producent</span>
-                            </div>
-
-                            <dl class="mobile-details-list">
-                                <dt>Ilość</dt>
-                                <dd>@item.IloscSztuk szt.</dd>
-
-                                <dt>Minimum</dt>
-                                <dd>@item.MinimalnaIlosc szt.</dd>
-
-                                <dt>Lokalizacja</dt>
-                                <dd>
-                                    @if (!string.IsNullOrWhiteSpace(item.Lokalizacja))
-                                    {
-                                        @item.Lokalizacja
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">brak danych</span>
-                                    }
-                                </dd>
-                            </dl>
-
-                            <a class="btn btn-primary w-100"
-                               asp-controller="StanMagazynowy"
-                               asp-action="Szczegoly"
-                               asp-route-id="@item.IdStanuMagazynowego">
-                                Szczegóły
-                            </a>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="p-4">
-                <div class="alert alert-info mb-0">
-                    Brak stanów magazynowych do wyświetlenia.
-                </div>
-            </div>
-        }
+    <div class="section-summary">
+        <strong>@stany.Count</strong>
+        <span>pozycji</span>
     </div>
-</div>
+</section>
+
+@if (stany.Any())
+{
+    <section class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">Towary</span>
+                <h2 class="h5">@stany.Count</h2>
+                <p>Łączna liczba widocznych pozycji magazynowych.</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">Niskie stany</span>
+                <h2 class="h5">@niskieStany</h2>
+                <p>Pozycje, które są na poziomie minimum lub niżej.</p>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">Dostępne sztuki</span>
+                <h2 class="h5">@stany.Sum(s => s.IloscSztuk)</h2>
+                <p>Łączna ilość sztuk pokazanych w zestawieniu.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="product-grid">
+        @foreach (var item in stany)
+        {
+            <article class="product-card">
+                <div class="product-card-body">
+                    <div class="product-meta mb-3">
+                        <span>@item.Rodzaj</span>
+                        <span>@item.Producent</span>
+                    </div>
+
+                    <h2 class="product-title">
+                        <a asp-controller="StanMagazynowy"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdStanuMagazynowego">
+                            @item.NazwaTowaru
+                        </a>
+                    </h2>
+
+                    <div class="product-code">
+                        Kod: @item.KodTowaru
+                    </div>
+
+                    <dl class="details-list-clean mb-3">
+                        <dt>Ilość</dt>
+                        <dd>@item.IloscSztuk szt.</dd>
+
+                        <dt>Minimum</dt>
+                        <dd>@item.MinimalnaIlosc szt.</dd>
+
+                        <dt>Lokalizacja</dt>
+                        <dd>
+                            @if (!string.IsNullOrWhiteSpace(item.Lokalizacja))
+                            {
+                                @item.Lokalizacja
+                            }
+                            else
+                            {
+                                <span class="text-muted">brak danych</span>
+                            }
+                        </dd>
+                    </dl>
+
+                    <div class="product-card-footer">
+                        <div>
+                            @if (item.CzyMaloTowaru)
+                            {
+                                <span class="availability-badge unavailable">
+                                    niski stan
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="availability-badge available">
+                                    stan OK
+                                </span>
+                            }
+                        </div>
+
+                        <a class="btn btn-primary"
+                           asp-controller="StanMagazynowy"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdStanuMagazynowego">
+                            Szczegóły
+                        </a>
+                    </div>
+                </div>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <div class="empty-state">
+        <h2 class="h4">Brak danych magazynowych</h2>
+        <p>Nie ma aktywnych stanów magazynowych do wyświetlenia.</p>
+
+        <a asp-controller="Sklep"
+           asp-action="Index"
+           class="btn btn-primary">
+            Przejdź do sklepu
+        </a>
+    </div>
+}
