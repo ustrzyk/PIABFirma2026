@@ -5,7 +5,7 @@ namespace Firma.Intranet.Interfaces.Intranet
 {
     public interface IStanMagazynowyIntranetService
     {
-        Task<List<StanMagazynowy>> PobierzListe();
+        Task<List<StanMagazynowy>> PobierzListe(bool tylkoNiskie = false);
 
         Task<StanMagazynowy?> PobierzSzczegoly(int id);
 
@@ -26,5 +26,11 @@ namespace Firma.Intranet.Interfaces.Intranet
         Task<bool> CzyTowarMaStanMagazynowy(int idTowaru, int? idStanuDoPominiecia = null);
 
         Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList(int? idAktualnegoTowaru = null);
+
+        Task<int> PoliczWszystkieStany();
+
+        Task<int> PoliczAktywneStany();
+
+        Task<int> PoliczNiskieStany();
     }
 }

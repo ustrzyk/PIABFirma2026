@@ -15,11 +15,22 @@ namespace Firma.Intranet.Services.Intranet
             _context = context;
         }
 
-        public async Task<List<StanMagazynowy>> PobierzListe()
+        public async Task<List<StanMagazynowy>> PobierzListe(bool tylkoNiskie = false)
         {
-            return await _context.StanMagazynowy
+            var zapytanie = _context.StanMagazynowy
                 .Include(s => s.Towar)
-                .OrderBy(s => s.Towar != null ? s.Towar.Nazwa : string.Empty)
+                .AsQueryable();
+
+            if (tylkoNiskie)
+            {
+                zapytanie = zapytanie.Where(s =>
+                    s.CzyAktywny &&
+                    s.IloscSztuk <= s.MinimalnaIlosc);
+            }
+
+            return await zapytanie
+                .OrderBy(s => s.CzyAktywny && s.IloscSztuk <= s.MinimalnaIlosc ? 0 : 1)
+                .ThenBy(s => s.Towar != null ? s.Towar.Nazwa : string.Empty)
                 .ToListAsync();
         }
 
@@ -161,6 +172,25 @@ namespace Firma.Intranet.Services.Intranet
                     Nazwa = t.Nazwa
                 })
                 .ToListAsync();
+        }
+
+        public async Task<int> PoliczWszystkieStany()
+        {
+            return await _context.StanMagazynowy.CountAsync();
+        }
+
+        public async Task<int> PoliczAktywneStany()
+        {
+            return await _context.StanMagazynowy
+                .CountAsync(s => s.CzyAktywny);
+        }
+
+        public async Task<int> PoliczNiskieStany()
+        {
+            return await _context.StanMagazynowy
+                .CountAsync(s =>
+                    s.CzyAktywny &&
+                    s.IloscSztuk <= s.MinimalnaIlosc);
         }
 
         private static void PrzygotujDaneStanu(StanMagazynowy stanMagazynowy)

@@ -2,18 +2,102 @@
 
 @{
     ViewData["Title"] = "Stany magazynowe";
+
     var czyAdministrator = User.IsInRole("Administrator");
+    var tylkoNiskie = ViewBag.TylkoNiskie is bool value && value;
+
+    var wszystkieStany = ViewBag.WszystkieStany ?? 0;
+    var aktywneStany = ViewBag.AktywneStany ?? 0;
+    var niskieStany = ViewBag.NiskieStany ?? 0;
 }
 
 <div class="crud-naglowek">
     <div>
         <h1 class="h2 mb-1">Stany magazynowe</h1>
-        <p class="crud-podtytul">Lista rekordów w module: stany magazynowe.</p>
+        <p class="crud-podtytul">
+            @if (tylkoNiskie)
+            {
+                <span>Lista produktów wymagających uzupełnienia.</span>
+            }
+            else
+            {
+                <span>Lista stanów magazynowych.</span>
+            }
+        </p>
     </div>
 
     <a asp-action="Create" class="btn btn-primary">
         Dodaj nowy rekord
     </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Wszystkie stany</div>
+                <div class="display-6 fw-bold">@wszystkieStany</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <div class="text-muted small">Aktywne stany</div>
+                <div class="display-6 fw-bold">@aktywneStany</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <a class="text-decoration-none"
+           asp-action="Index"
+           asp-route-tylkoNiskie="true">
+            <div class="card h-100 shadow-sm @(Convert.ToInt32(niskieStany) > 0 ? "border-warning" : "border-success")">
+                <div class="card-body">
+                    <div class="text-muted small">Niskie stany</div>
+                    <div class="display-6 fw-bold @(Convert.ToInt32(niskieStany) > 0 ? "text-warning" : "text-success")">
+                        @niskieStany
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div class="card crud-karta mb-4">
+    <div class="card-body">
+        <form method="get"
+              asp-action="Index"
+              class="d-flex flex-wrap gap-2 align-items-end">
+            <div>
+                <label class="form-label">Widok</label>
+                <select name="tylkoNiskie" class="form-select">
+                    @if (tylkoNiskie)
+                    {
+                        <option value="false">Wszystkie stany</option>
+                        <option value="true" selected>Niskie stany</option>
+                    }
+                    else
+                    {
+                        <option value="false" selected>Wszystkie stany</option>
+                        <option value="true">Niskie stany</option>
+                    }
+                </select>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary">
+                    Filtruj
+                </button>
+
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    Wyczyść
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card crud-karta">
@@ -24,10 +108,11 @@
                 <table class="table table-hover table-striped mb-0 crud-tabela">
                     <thead class="table-light">
                         <tr>
+                            <th>Towar</th>
                             <th>Ilość sztuk</th>
                             <th>Minimalna ilość</th>
+                            <th>Status</th>
                             <th>Lokalizacja</th>
-                            <th>Towar</th>
                             <th>Aktywny</th>
                             <th class="text-end">Akcje</th>
                         </tr>
@@ -36,13 +121,37 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            var czyNiskiStan = item.CzyAktywny && item.IloscSztuk <= item.MinimalnaIlosc;
+
+                            <tr class="@(czyNiskiStan ? "table-warning" : "")">
+                                <td>
+                                    @if (item.Towar != null)
+                                    {
+                                        <strong>@item.Towar.Nazwa</strong>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">brak towaru</span>
+                                    }
+                                </td>
+
                                 <td>
                                     @item.IloscSztuk
                                 </td>
 
                                 <td>
                                     @item.MinimalnaIlosc
+                                </td>
+
+                                <td>
+                                    @if (czyNiskiStan)
+                                    {
+                                        <span class="badge bg-warning text-dark">niski stan</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">stan OK</span>
+                                    }
                                 </td>
 
                                 <td>
@@ -53,17 +162,6 @@
                                     else
                                     {
                                         <span class="text-muted">brak</span>
-                                    }
-                                </td>
-
-                                <td>
-                                    @if (item.Towar != null)
-                                    {
-                                        @item.Towar.Nazwa
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">brak towaru</span>
                                     }
                                 </td>
 
@@ -140,9 +238,18 @@
         else
         {
             <div class="p-4">
-                <div class="alert alert-info mb-0">
-                    Brak stanów magazynowych do wyświetlenia.
-                </div>
+                @if (tylkoNiskie)
+                {
+                    <div class="alert alert-success mb-0">
+                        Brak produktów z niskim stanem magazynowym.
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info mb-0">
+                        Brak stanów magazynowych do wyświetlenia.
+                    </div>
+                }
             </div>
         }
     </div>

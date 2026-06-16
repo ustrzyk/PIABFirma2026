@@ -14,9 +14,14 @@ namespace Firma.Intranet.Controllers
             _stanMagazynowyIntranetService = stanMagazynowyIntranetService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool tylkoNiskie = false)
         {
-            var stanyMagazynowe = await _stanMagazynowyIntranetService.PobierzListe();
+            var stanyMagazynowe = await _stanMagazynowyIntranetService.PobierzListe(tylkoNiskie);
+
+            ViewBag.TylkoNiskie = tylkoNiskie;
+            ViewBag.WszystkieStany = await _stanMagazynowyIntranetService.PoliczWszystkieStany();
+            ViewBag.AktywneStany = await _stanMagazynowyIntranetService.PoliczAktywneStany();
+            ViewBag.NiskieStany = await _stanMagazynowyIntranetService.PoliczNiskieStany();
 
             return View(stanyMagazynowe);
         }

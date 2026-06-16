@@ -5,6 +5,10 @@
     var zamowieniaWWW = ViewBag.ZamowieniaWWW ?? 0;
     var noweZamowieniaWWW = ViewBag.NoweZamowieniaWWW ?? 0;
     var zamowieniaDoObslugi = ViewBag.ZamowieniaDoObslugi ?? 0;
+
+    var wszystkieStany = ViewBag.WszystkieStany ?? 0;
+    var aktywneStany = ViewBag.AktywneStany ?? 0;
+    var niskieStany = ViewBag.NiskieStany ?? 0;
 }
 
 <div class="mb-4">
@@ -94,6 +98,70 @@
     </div>
 </div>
 
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none"
+           asp-controller="StanMagazynowy"
+           asp-action="Index"
+           asp-route-tylkoNiskie="true">
+            <div class="card h-100 shadow-sm panel-karta @(Convert.ToInt32(niskieStany) > 0 ? "border-warning" : "")">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <div class="text-muted small">Niskie stany magazynowe</div>
+                            <div class="display-6 fw-bold @(Convert.ToInt32(niskieStany) > 0 ? "text-warning" : "text-success")">
+                                @niskieStany
+                            </div>
+                        </div>
+
+                        <span class="badge @(Convert.ToInt32(niskieStany) > 0 ? "bg-warning text-dark" : "bg-success")">
+                            magazyn
+                        </span>
+                    </div>
+
+                    <div class="small text-muted mt-2">
+                        Produkty aktywne, w których ilość jest równa lub niższa od minimum.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none"
+           asp-controller="StanMagazynowy"
+           asp-action="Index">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <div class="text-muted small">Aktywne stany magazynowe</div>
+                    <div class="display-6 fw-bold">@aktywneStany</div>
+
+                    <div class="small text-muted mt-2">
+                        Pozycje magazynowe dostępne publicznie i administracyjnie.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <a class="text-decoration-none"
+           asp-controller="StanMagazynowy"
+           asp-action="Index">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <div class="text-muted small">Wszystkie stany magazynowe</div>
+                    <div class="display-6 fw-bold">@wszystkieStany</div>
+
+                    <div class="small text-muted mt-2">
+                        Pełna lista stanów magazynowych.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
 <div class="row g-4">
     <div class="col-12 col-md-6 col-xl-3">
         <div class="card h-100 shadow-sm panel-karta">
@@ -141,6 +209,13 @@
                        asp-controller="Towar"
                        asp-action="Index">
                         Towary
+                    </a>
+
+                    <a class="btn btn-outline-success"
+                       asp-controller="StanMagazynowy"
+                       asp-action="Index"
+                       asp-route-tylkoNiskie="true">
+                        Niskie stany
                     </a>
 
                     <a class="btn btn-outline-success"
