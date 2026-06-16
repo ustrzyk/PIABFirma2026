@@ -28,5 +28,13 @@ namespace Firma.Intranet.Interfaces.Intranet
         Task<List<Zamowienie>> PobierzZaznaczoneDoDokumentow(int[] ids);
 
         Task<List<KlientSelectItemDto>> PobierzKlientowDoSelectList();
+
+        Task<int> PoliczWszystkieZamowienia();
+
+        Task<int> PoliczZamowieniaWWW();
+
+        Task<int> PoliczNoweZamowieniaWWW();
+
+        Task<int> PoliczZamowieniaDoObslugi();
     }
 }

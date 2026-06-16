@@ -1,12 +1,97 @@
 ﻿@{
     ViewData["Title"] = "Panel główny";
+
+    var wszystkieZamowienia = ViewBag.WszystkieZamowienia ?? 0;
+    var zamowieniaWWW = ViewBag.ZamowieniaWWW ?? 0;
+    var noweZamowieniaWWW = ViewBag.NoweZamowieniaWWW ?? 0;
+    var zamowieniaDoObslugi = ViewBag.ZamowieniaDoObslugi ?? 0;
 }
 
 <div class="mb-4">
     <h1 class="h2">Panel pracownika</h1>
     <p class="text-muted mb-0">
-        Zarządzanie treścią portalu, asortymentem oraz zamówieniami firmy sprzedającej drukarki 3D.
+        Zarządzanie portalem, asortymentem i zamówieniami sklepu 3D.
     </p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-xl-3">
+        <a class="text-decoration-none"
+           asp-controller="Zamowienie"
+           asp-action="Index"
+           asp-route-zrodlo="www"
+           asp-route-status="Nowe">
+            <div class="card h-100 shadow-sm panel-karta border-primary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                        <div>
+                            <div class="text-muted small">Nowe z portalu WWW</div>
+                            <div class="display-6 fw-bold text-primary">@noweZamowieniaWWW</div>
+                        </div>
+
+                        <span class="badge bg-primary">WWW</span>
+                    </div>
+
+                    <div class="small text-muted mt-2">
+                        Zamówienia z portalu oczekujące na przyjęcie.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <a class="text-decoration-none"
+           asp-controller="Zamowienie"
+           asp-action="Index"
+           asp-route-status="w trakcie">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <div class="text-muted small">Zamówienia w obsłudze</div>
+                    <div class="display-6 fw-bold">@zamowieniaDoObslugi</div>
+
+                    <div class="small text-muted mt-2">
+                        Status: Nowe lub w trakcie.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <a class="text-decoration-none"
+           asp-controller="Zamowienie"
+           asp-action="Index"
+           asp-route-zrodlo="www">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <div class="text-muted small">Wszystkie z portalu WWW</div>
+                    <div class="display-6 fw-bold">@zamowieniaWWW</div>
+
+                    <div class="small text-muted mt-2">
+                        Zamówienia złożone przez publiczny portal.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-3">
+        <a class="text-decoration-none"
+           asp-controller="Zamowienie"
+           asp-action="Index">
+            <div class="card h-100 shadow-sm panel-karta">
+                <div class="card-body">
+                    <div class="text-muted small">Wszystkie zamówienia</div>
+                    <div class="display-6 fw-bold">@wszystkieZamowienia</div>
+
+                    <div class="small text-muted mt-2">
+                        Zamówienia ręczne, importowane i z portalu WWW.
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -14,12 +99,32 @@
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">CMS</h2>
-                <p class="text-muted">Zarządzanie treściami portalu klienta.</p>
+                <p class="text-muted">Treści widoczne w portalu klienta.</p>
+
                 <div class="d-grid gap-2">
-                    <a class="btn btn-outline-primary" asp-controller="Aktualnosc" asp-action="Index">Aktualności</a>
-                    <a class="btn btn-outline-primary" asp-controller="Promocja" asp-action="Index">Promocje</a>
-                    <a class="btn btn-outline-primary" asp-controller="Strona" asp-action="Index">Strony</a>
-                    <a class="btn btn-outline-primary" asp-controller="UstawieniePortalu" asp-action="Index">Ustawienia portalu</a>
+                    <a class="btn btn-outline-primary"
+                       asp-controller="Strona"
+                       asp-action="Index">
+                        Strony
+                    </a>
+
+                    <a class="btn btn-outline-primary"
+                       asp-controller="Aktualnosc"
+                       asp-action="Index">
+                        Aktualności
+                    </a>
+
+                    <a class="btn btn-outline-primary"
+                       asp-controller="Promocja"
+                       asp-action="Index">
+                        Promocje
+                    </a>
+
+                    <a class="btn btn-outline-primary"
+                       asp-controller="UstawieniePortalu"
+                       asp-action="Index">
+                        Ustawienia portalu
+                    </a>
                 </div>
             </div>
         </div>
@@ -29,13 +134,38 @@
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">Asortyment</h2>
-                <p class="text-muted">Obsługa produktów, załączników i magazynu.</p>
+                <p class="text-muted">Produkty, kategorie, producenci i magazyn.</p>
+
                 <div class="d-grid gap-2">
-                    <a class="btn btn-outline-success" asp-controller="Towar" asp-action="Index">Towary</a>
-                    <a class="btn btn-outline-success" asp-controller="ZalacznikTowaru" asp-action="Index">Załączniki towarów</a>
-                    <a class="btn btn-outline-success" asp-controller="Producent" asp-action="Index">Producenci</a>
-                    <a class="btn btn-outline-success" asp-controller="Rodzaj" asp-action="Index">Rodzaje</a>
-                    <a class="btn btn-outline-success" asp-controller="StanMagazynowy" asp-action="Index">Stany magazynowe</a>
+                    <a class="btn btn-outline-success"
+                       asp-controller="Towar"
+                       asp-action="Index">
+                        Towary
+                    </a>
+
+                    <a class="btn btn-outline-success"
+                       asp-controller="StanMagazynowy"
+                       asp-action="Index">
+                        Stany magazynowe
+                    </a>
+
+                    <a class="btn btn-outline-success"
+                       asp-controller="Producent"
+                       asp-action="Index">
+                        Producenci
+                    </a>
+
+                    <a class="btn btn-outline-success"
+                       asp-controller="Rodzaj"
+                       asp-action="Index">
+                        Rodzaje
+                    </a>
+
+                    <a class="btn btn-outline-success"
+                       asp-controller="ZalacznikTowaru"
+                       asp-action="Index">
+                        Załączniki towarów
+                    </a>
                 </div>
             </div>
         </div>
@@ -45,11 +175,33 @@
         <div class="card h-100 shadow-sm panel-karta">
             <div class="card-body">
                 <h2 class="h5">Sprzedaż</h2>
-                <p class="text-muted">Obsługa klientów i zamówień.</p>
+                <p class="text-muted">Obsługa zamówień i klientów.</p>
+
                 <div class="d-grid gap-2">
-                    <a class="btn btn-outline-dark" asp-controller="Zamowienie" asp-action="Index">Zamówienia</a>
-                    <a class="btn btn-outline-dark" asp-controller="PozycjaZamowienia" asp-action="Index">Pozycje zamówień</a>
-                    <a class="btn btn-outline-dark" asp-controller="Klient" asp-action="Index">Klienci</a>
+                    <a class="btn btn-outline-dark"
+                       asp-controller="Zamowienie"
+                       asp-action="Index">
+                        Zamówienia
+                    </a>
+
+                    <a class="btn btn-outline-dark"
+                       asp-controller="Zamowienie"
+                       asp-action="Index"
+                       asp-route-zrodlo="www">
+                        Zamówienia WWW
+                    </a>
+
+                    <a class="btn btn-outline-dark"
+                       asp-controller="Zamowienie"
+                       asp-action="ImportExcel">
+                        Import Excel
+                    </a>
+
+                    <a class="btn btn-outline-dark"
+                       asp-controller="Klient"
+                       asp-action="Index">
+                        Klienci
+                    </a>
                 </div>
             </div>
         </div>
@@ -61,9 +213,14 @@
             <div class="card h-100 shadow-sm panel-karta">
                 <div class="card-body">
                     <h2 class="h5">Administracja</h2>
-                    <p class="text-muted">Zarządzanie użytkownikami i rolami.</p>
+                    <p class="text-muted">Użytkownicy i uprawnienia.</p>
+
                     <div class="d-grid gap-2">
-                        <a class="btn btn-outline-danger" asp-controller="Uzytkownik" asp-action="Index">Użytkownicy i role</a>
+                        <a class="btn btn-outline-danger"
+                           asp-controller="Uzytkownik"
+                           asp-action="Index">
+                            Użytkownicy i role
+                        </a>
                     </div>
                 </div>
             </div>

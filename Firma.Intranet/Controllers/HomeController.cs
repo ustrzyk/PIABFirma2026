@@ -1,3 +1,4 @@
+using Firma.Intranet.Interfaces.Intranet;
 using Firma.Intranet.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -6,8 +7,20 @@ namespace Firma.Intranet.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly IZamowienieIntranetService _zamowienieIntranetService;
+
+        public HomeController(IZamowienieIntranetService zamowienieIntranetService)
         {
+            _zamowienieIntranetService = zamowienieIntranetService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            ViewBag.WszystkieZamowienia = await _zamowienieIntranetService.PoliczWszystkieZamowienia();
+            ViewBag.ZamowieniaWWW = await _zamowienieIntranetService.PoliczZamowieniaWWW();
+            ViewBag.NoweZamowieniaWWW = await _zamowienieIntranetService.PoliczNoweZamowieniaWWW();
+            ViewBag.ZamowieniaDoObslugi = await _zamowienieIntranetService.PoliczZamowieniaDoObslugi();
+
             return View();
         }
 

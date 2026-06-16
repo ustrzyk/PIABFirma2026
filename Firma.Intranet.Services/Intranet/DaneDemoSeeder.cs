@@ -12,193 +12,264 @@ namespace Firma.Intranet.Services.Intranet
         {
             var context = serviceProvider.GetRequiredService<FirmaContext>();
 
-            await DodajUstawieniaPortalu(context);
-            await DodajStronyIAktualnosci(context);
-            await DodajPromocje(context);
+            await DodajLubAktualizujUstawieniaPortalu(context);
+            await DodajLubAktualizujStronyIAktualnosci(context);
+            await DodajLubAktualizujPromocje(context);
 
-            var rodzaje = await DodajRodzaje(context);
-            var producenci = await DodajProducentow(context);
-
-            await context.SaveChangesAsync();
-
-            await DodajTowary(context, rodzaje, producenci);
+            var rodzaje = await DodajLubAktualizujRodzaje(context);
+            var producenci = await DodajLubAktualizujProducentow(context);
 
             await context.SaveChangesAsync();
 
-            await DodajStanyMagazynowe(context);
-            await DodajKlientowIZamowienia(context);
+            await DodajLubAktualizujTowary(context, rodzaje, producenci);
+
+            await context.SaveChangesAsync();
+
+            await DodajLubAktualizujStanyMagazynowe(context);
+            await DodajLubAktualizujKlientowIZamowienia(context);
 
             await context.SaveChangesAsync();
         }
 
-        private static async Task DodajUstawieniaPortalu(FirmaContext context)
+        private static async Task DodajLubAktualizujUstawieniaPortalu(FirmaContext context)
         {
-            await DodajUstawienie(context, "NazwaPortalu", "3D Print Store", "Nazwa widoczna w portalu publicznym");
-            await DodajUstawienie(context, "StopkaTekst", "Sklep z drukarkami 3D, filamentami i akcesoriami.", "Tekst w stopce");
-            await DodajUstawienie(context, "StopkaAdres", "ul. Technologiczna 12, 35-001 Rzeszów", "Adres sklepu");
-            await DodajUstawienie(context, "StopkaEmail", "kontakt@3dprintstore.pl", "Adres e-mail w stopce");
-            await DodajUstawienie(context, "StopkaTelefon", "+48 600 700 800", "Telefon w stopce");
-            await DodajUstawienie(context, "StopkaFacebook", "https://facebook.com", "Link do Facebooka");
-            await DodajUstawienie(context, "KolorTlaPortalu", "#eef2f6", "Kolor tła portalu");
-            await DodajUstawienie(context, "KolorNawigacji", "#ffffff", "Kolor nawigacji");
-            await DodajUstawienie(context, "KolorStopki", "#f8f9fa", "Kolor stopki");
-            await DodajUstawienie(context, "KolorPrzyciskow", "#0d6efd", "Kolor przycisków");
-            await DodajUstawienie(context, "KolorAkcentu", "#258cfb", "Kolor akcentu");
+            await Ustawienie(context, "NazwaPortalu", "3D Print Store", "Nazwa widoczna w portalu publicznym");
+            await Ustawienie(context, "StopkaTekst", "Sklep z drukarkami 3D, filamentami, częściami i akcesoriami.", "Tekst w stopce");
+            await Ustawienie(context, "StopkaAdres", "ul. Technologiczna 12, 35-001 Rzeszów", "Adres sklepu");
+            await Ustawienie(context, "StopkaEmail", "kontakt@3dprintstore.pl", "Adres e-mail w stopce");
+            await Ustawienie(context, "StopkaTelefon", "+48 600 700 800", "Telefon w stopce");
+            await Ustawienie(context, "StopkaFacebook", "https://facebook.com", "Link do Facebooka");
+            await Ustawienie(context, "KolorTlaPortalu", "#eef2f6", "Kolor tła portalu");
+            await Ustawienie(context, "KolorNawigacji", "#ffffff", "Kolor nawigacji");
+            await Ustawienie(context, "KolorStopki", "#f8f9fa", "Kolor stopki");
+            await Ustawienie(context, "KolorPrzyciskow", "#0d6efd", "Kolor przycisków");
+            await Ustawienie(context, "KolorAkcentu", "#258cfb", "Kolor akcentu");
         }
 
-        private static async Task DodajUstawienie(
+        private static async Task Ustawienie(
             FirmaContext context,
             string klucz,
             string wartosc,
             string opis)
         {
-            var istnieje = await context.UstawieniePortalu
-                .AnyAsync(u => u.Klucz == klucz);
+            var ustawienie = await context.UstawieniePortalu
+                .FirstOrDefaultAsync(u => u.Klucz == klucz);
 
-            if (istnieje)
+            if (ustawienie == null)
             {
+                context.UstawieniePortalu.Add(new UstawieniePortalu
+                {
+                    Klucz = klucz,
+                    Wartosc = wartosc,
+                    Opis = opis,
+                    CzyAktywny = true
+                });
+
                 return;
             }
 
-            context.UstawieniePortalu.Add(new UstawieniePortalu
+            if (string.IsNullOrWhiteSpace(ustawienie.Wartosc))
             {
-                Klucz = klucz,
-                Wartosc = wartosc,
-                Opis = opis,
-                CzyAktywny = true
-            });
+                ustawienie.Wartosc = wartosc;
+            }
+
+            if (string.IsNullOrWhiteSpace(ustawienie.Opis))
+            {
+                ustawienie.Opis = opis;
+            }
+
+            ustawienie.CzyAktywny = true;
         }
 
-        private static async Task DodajStronyIAktualnosci(FirmaContext context)
+        private static async Task DodajLubAktualizujStronyIAktualnosci(FirmaContext context)
         {
-            if (!await context.Strona.AnyAsync(s => s.LinkTytul == "Start"))
+            await Strona(
+                context,
+                "Start",
+                "Druk 3D dla domu, szkoły i firmy",
+                "Wybierz drukarkę 3D, filament lub akcesoria i złóż zamówienie online. Portal pokazuje dostępność produktów, pozwala dodać towary do koszyka oraz sprawdzić status zamówienia po numerze i adresie e-mail.",
+                1);
+
+            await Strona(
+                context,
+                "O sklepie",
+                "O sklepie",
+                "Specjalizujemy się w sprzedaży drukarek 3D, filamentów, części zamiennych i akcesoriów. Oferta jest przygotowana tak, aby klient szybko znalazł produkt, sprawdził dostępność i złożył zamówienie.",
+                2);
+
+            await Strona(
+                context,
+                "Dostawa",
+                "Dostawa i odbiór",
+                "Zamówienia są obsługiwane przez panel Intranet. Po złożeniu zamówienia klient otrzymuje numer, którym może sprawdzić status realizacji w portalu.",
+                3);
+
+            await Strona(
+                context,
+                "Serwis",
+                "Serwis drukarek 3D",
+                "W ofercie znajdują się również części i akcesoria serwisowe. Produkty mają stany magazynowe, dzięki czemu klient widzi, czy dany element jest dostępny.",
+                4);
+
+            await Aktualnosc(
+                context,
+                "Nowości",
+                "Nowe drukarki 3D w ofercie",
+                "Do oferty dodano drukarki 3D do zastosowań domowych, edukacyjnych i firmowych. Sprawdź dostępność produktów w sklepie.",
+                1);
+
+            await Aktualnosc(
+                context,
+                "Filamenty",
+                "Filamenty PLA i PETG dostępne od ręki",
+                "Najpopularniejsze materiały do druku 3D są dostępne w magazynie. Wybierz kolor i typ materiału dopasowany do projektu.",
+                2);
+
+            await Aktualnosc(
+                context,
+                "Serwis",
+                "Części zamienne i akcesoria serwisowe",
+                "Dysze, płyty robocze i podstawowe zestawy serwisowe możesz dodać do koszyka razem z drukarką.",
+                3);
+        }
+
+        private static async Task Strona(
+            FirmaContext context,
+            string linkTytul,
+            string tytul,
+            string tresc,
+            int pozycja)
+        {
+            var strona = await context.Strona
+                .FirstOrDefaultAsync(s => s.LinkTytul == linkTytul);
+
+            if (strona == null)
             {
-                var stronyDoPrzesuniecia = await context.Strona
-                    .Where(s => s.Pozycja >= 1 && s.Pozycja < 20)
-                    .ToListAsync();
-
-                foreach (var strona in stronyDoPrzesuniecia)
-                {
-                    strona.Pozycja++;
-                }
-
                 context.Strona.Add(new Strona
                 {
-                    LinkTytul = "Start",
-                    Tytul = "Druk 3D dla domu, szkoły i firmy",
-                    Tresc = "Wybierz drukarkę 3D, filament lub akcesoria i złóż zamówienie online. Portal pokazuje dostępność produktów, pozwala dodać towary do koszyka oraz sprawdzić status zamówienia po numerze i adresie e-mail.",
-                    Pozycja = 1,
+                    LinkTytul = linkTytul,
+                    Tytul = tytul,
+                    Tresc = tresc,
+                    Pozycja = pozycja,
                     CzyAktywny = true
                 });
+
+                return;
             }
 
-            await DodajStrone(context, "O sklepie", "O sklepie", "Specjalizujemy się w sprzedaży drukarek 3D, filamentów, części zamiennych i akcesoriów. Oferta jest przygotowana tak, aby klient szybko znalazł produkt, sprawdził dostępność i złożył zamówienie bez kontaktu z administracją.", 2);
-            await DodajStrone(context, "Dostawa", "Dostawa i odbiór", "Zamówienia są obsługiwane przez panel Intranet. Po złożeniu zamówienia klient otrzymuje numer, którym może sprawdzić status realizacji w portalu.", 3);
-            await DodajStrone(context, "Serwis", "Serwis drukarek 3D", "W ofercie znajdują się również części i akcesoria serwisowe. Produkty mają stany magazynowe, dzięki czemu klient widzi, czy dany element jest dostępny.", 4);
-
-            await DodajAktualnosc(context, "Nowości", "Nowe drukarki 3D w ofercie", "Do oferty dodano drukarki 3D do zastosowań domowych, edukacyjnych i firmowych. Sprawdź dostępność produktów w sklepie.", 1);
-            await DodajAktualnosc(context, "Filamenty", "Filamenty PLA i PETG dostępne od ręki", "Najpopularniejsze materiały do druku 3D są dostępne w magazynie. Wybierz kolor i typ materiału dopasowany do projektu.", 2);
-            await DodajAktualnosc(context, "Serwis", "Części zamienne i akcesoria serwisowe", "Dysze, płyty robocze i podstawowe zestawy serwisowe możesz dodać do koszyka razem z drukarką.", 3);
+            strona.Tytul = tytul;
+            strona.Tresc = tresc;
+            strona.Pozycja = pozycja;
+            strona.CzyAktywny = true;
         }
 
-        private static async Task DodajStrone(
+        private static async Task Aktualnosc(
             FirmaContext context,
             string linkTytul,
             string tytul,
             string tresc,
             int pozycja)
         {
-            if (await context.Strona.AnyAsync(s => s.LinkTytul == linkTytul))
+            var aktualnosc = await context.Aktualnosc
+                .FirstOrDefaultAsync(a => a.LinkTytul == linkTytul);
+
+            if (aktualnosc == null)
             {
+                context.Aktualnosc.Add(new Aktualnosc
+                {
+                    LinkTytul = linkTytul,
+                    Tytul = tytul,
+                    Tresc = tresc,
+                    Pozycja = pozycja,
+                    CzyAktywny = true
+                });
+
                 return;
             }
 
-            context.Strona.Add(new Strona
-            {
-                LinkTytul = linkTytul,
-                Tytul = tytul,
-                Tresc = tresc,
-                Pozycja = pozycja,
-                CzyAktywny = true
-            });
+            aktualnosc.Tytul = tytul;
+            aktualnosc.Tresc = tresc;
+            aktualnosc.Pozycja = pozycja;
+            aktualnosc.CzyAktywny = true;
         }
 
-        private static async Task DodajAktualnosc(
+        private static async Task DodajLubAktualizujPromocje(FirmaContext context)
+        {
+            await Promocja(
+                context,
+                "Zestaw startowy z filamentem",
+                "Kup drukarkę 3D razem z filamentem i akcesoriami startowymi w promocyjnej cenie.",
+                10,
+                DateTime.Today.AddDays(-7),
+                DateTime.Today.AddDays(21));
+
+            await Promocja(
+                context,
+                "Akcesoria serwisowe taniej",
+                "Dysze, płyty robocze i części eksploatacyjne w niższej cenie dla zamówień z portalu.",
+                15,
+                DateTime.Today.AddDays(-3),
+                DateTime.Today.AddDays(14));
+        }
+
+        private static async Task Promocja(
             FirmaContext context,
-            string linkTytul,
             string tytul,
-            string tresc,
-            int pozycja)
+            string opis,
+            int rabatProcentowy,
+            DateTime dataOd,
+            DateTime dataDo)
         {
-            if (await context.Aktualnosc.AnyAsync(a => a.LinkTytul == linkTytul))
+            var promocja = await context.Promocja
+                .FirstOrDefaultAsync(p => p.Tytul == tytul);
+
+            if (promocja == null)
             {
+                context.Promocja.Add(new Promocja
+                {
+                    Tytul = tytul,
+                    Opis = opis,
+                    RabatProcentowy = rabatProcentowy,
+                    DataOd = dataOd,
+                    DataDo = dataDo,
+                    CzyAktywny = true
+                });
+
                 return;
             }
 
-            context.Aktualnosc.Add(new Aktualnosc
-            {
-                LinkTytul = linkTytul,
-                Tytul = tytul,
-                Tresc = tresc,
-                Pozycja = pozycja,
-                CzyAktywny = true
-            });
+            promocja.Opis = opis;
+            promocja.RabatProcentowy = rabatProcentowy;
+            promocja.DataOd = dataOd;
+            promocja.DataDo = dataDo;
+            promocja.CzyAktywny = true;
         }
 
-        private static async Task DodajPromocje(FirmaContext context)
-        {
-            if (!await context.Promocja.AnyAsync(p => p.Tytul == "Zestaw startowy z filamentem"))
-            {
-                context.Promocja.Add(new Promocja
-                {
-                    Tytul = "Zestaw startowy z filamentem",
-                    Opis = "Kup drukarkę 3D razem z filamentem i akcesoriami startowymi w promocyjnej cenie.",
-                    RabatProcentowy = 10,
-                    DataOd = DateTime.Today.AddDays(-7),
-                    DataDo = DateTime.Today.AddDays(21),
-                    CzyAktywny = true
-                });
-            }
-
-            if (!await context.Promocja.AnyAsync(p => p.Tytul == "Akcesoria serwisowe taniej"))
-            {
-                context.Promocja.Add(new Promocja
-                {
-                    Tytul = "Akcesoria serwisowe taniej",
-                    Opis = "Dysze, płyty robocze i części eksploatacyjne w niższej cenie dla zamówień z portalu.",
-                    RabatProcentowy = 15,
-                    DataOd = DateTime.Today.AddDays(-3),
-                    DataDo = DateTime.Today.AddDays(14),
-                    CzyAktywny = true
-                });
-            }
-        }
-
-        private static async Task<Dictionary<string, Rodzaj>> DodajRodzaje(FirmaContext context)
+        private static async Task<Dictionary<string, Rodzaj>> DodajLubAktualizujRodzaje(FirmaContext context)
         {
             var wynik = new Dictionary<string, Rodzaj>();
 
-            wynik["Drukarki 3D"] = await PobierzAlboDodajRodzaj(
+            wynik["Drukarki 3D"] = await Rodzaj(
                 context,
                 "Drukarki 3D",
                 "Drukarki do domu, szkoły i firmy.");
 
-            wynik["Filamenty"] = await PobierzAlboDodajRodzaj(
+            wynik["Filamenty"] = await Rodzaj(
                 context,
                 "Filamenty",
                 "Materiały do druku 3D.");
 
-            wynik["Akcesoria"] = await PobierzAlboDodajRodzaj(
+            wynik["Akcesoria"] = await Rodzaj(
                 context,
                 "Akcesoria",
                 "Akcesoria i dodatki do drukarek.");
 
-            wynik["Części"] = await PobierzAlboDodajRodzaj(
+            wynik["Części"] = await Rodzaj(
                 context,
                 "Części",
                 "Części zamienne i eksploatacyjne.");
 
-            wynik["Serwis"] = await PobierzAlboDodajRodzaj(
+            wynik["Serwis"] = await Rodzaj(
                 context,
                 "Serwis",
                 "Zestawy i elementy serwisowe.");
@@ -206,7 +277,7 @@ namespace Firma.Intranet.Services.Intranet
             return wynik;
         }
 
-        private static async Task<Rodzaj> PobierzAlboDodajRodzaj(
+        private static async Task<Rodzaj> Rodzaj(
             FirmaContext context,
             string nazwa,
             string opis)
@@ -214,56 +285,59 @@ namespace Firma.Intranet.Services.Intranet
             var rodzaj = await context.Rodzaj
                 .FirstOrDefaultAsync(r => r.Nazwa == nazwa);
 
-            if (rodzaj != null)
+            if (rodzaj == null)
             {
+                rodzaj = new Rodzaj
+                {
+                    Nazwa = nazwa,
+                    Opis = opis,
+                    CzyAktywny = true
+                };
+
+                context.Rodzaj.Add(rodzaj);
+
                 return rodzaj;
             }
 
-            rodzaj = new Rodzaj
-            {
-                Nazwa = nazwa,
-                Opis = opis,
-                CzyAktywny = true
-            };
-
-            context.Rodzaj.Add(rodzaj);
+            rodzaj.Opis = opis;
+            rodzaj.CzyAktywny = true;
 
             return rodzaj;
         }
 
-        private static async Task<Dictionary<string, Producent>> DodajProducentow(FirmaContext context)
+        private static async Task<Dictionary<string, Producent>> DodajLubAktualizujProducentow(FirmaContext context)
         {
             var wynik = new Dictionary<string, Producent>();
 
-            wynik["Prusa Research"] = await PobierzAlboDodajProducent(
+            wynik["Prusa Research"] = await Producent(
                 context,
                 "Prusa Research",
                 "Czechy",
                 "https://www.prusa3d.com",
                 "Producent drukarek 3D i rozwiązań dla wymagających użytkowników.");
 
-            wynik["Bambu Lab"] = await PobierzAlboDodajProducent(
+            wynik["Bambu Lab"] = await Producent(
                 context,
                 "Bambu Lab",
                 "Chiny",
                 "https://bambulab.com",
                 "Producent szybkich drukarek 3D dla użytkowników domowych i firm.");
 
-            wynik["Creality"] = await PobierzAlboDodajProducent(
+            wynik["Creality"] = await Producent(
                 context,
                 "Creality",
                 "Chiny",
                 "https://www.creality.com",
                 "Popularne drukarki 3D i akcesoria w przystępnych cenach.");
 
-            wynik["Fiberlogy"] = await PobierzAlboDodajProducent(
+            wynik["Fiberlogy"] = await Producent(
                 context,
                 "Fiberlogy",
                 "Polska",
                 "https://fiberlogy.com",
                 "Polski producent filamentów do druku 3D.");
 
-            wynik["Noctuo"] = await PobierzAlboDodajProducent(
+            wynik["Noctuo"] = await Producent(
                 context,
                 "Noctuo",
                 "Polska",
@@ -273,7 +347,7 @@ namespace Firma.Intranet.Services.Intranet
             return wynik;
         }
 
-        private static async Task<Producent> PobierzAlboDodajProducent(
+        private static async Task<Producent> Producent(
             FirmaContext context,
             string nazwa,
             string kraj,
@@ -283,31 +357,36 @@ namespace Firma.Intranet.Services.Intranet
             var producent = await context.Producent
                 .FirstOrDefaultAsync(p => p.Nazwa == nazwa);
 
-            if (producent != null)
+            if (producent == null)
             {
+                producent = new Producent
+                {
+                    Nazwa = nazwa,
+                    Kraj = kraj,
+                    StronaWWW = stronaWWW,
+                    Opis = opis,
+                    CzyAktywny = true
+                };
+
+                context.Producent.Add(producent);
+
                 return producent;
             }
 
-            producent = new Producent
-            {
-                Nazwa = nazwa,
-                Kraj = kraj,
-                StronaWWW = stronaWWW,
-                Opis = opis,
-                CzyAktywny = true
-            };
-
-            context.Producent.Add(producent);
+            producent.Kraj = kraj;
+            producent.StronaWWW = stronaWWW;
+            producent.Opis = opis;
+            producent.CzyAktywny = true;
 
             return producent;
         }
 
-        private static async Task DodajTowary(
+        private static async Task DodajLubAktualizujTowary(
             FirmaContext context,
             Dictionary<string, Rodzaj> rodzaje,
             Dictionary<string, Producent> producenci)
         {
-            await DodajTowar(
+            await Towar(
                 context,
                 "PR3D-MK4",
                 "Prusa MK4S",
@@ -317,7 +396,7 @@ namespace Firma.Intranet.Services.Intranet
                 rodzaje["Drukarki 3D"],
                 producenci["Prusa Research"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "BBL-P1S",
                 "Bambu Lab P1S",
@@ -327,7 +406,7 @@ namespace Firma.Intranet.Services.Intranet
                 rodzaje["Drukarki 3D"],
                 producenci["Bambu Lab"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "CRE-K1C",
                 "Creality K1C",
@@ -337,27 +416,27 @@ namespace Firma.Intranet.Services.Intranet
                 rodzaje["Drukarki 3D"],
                 producenci["Creality"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "FIL-PLA-MAT",
-                "Filament PLA Matt 1kg",
+                "Filament PLA Matt 1 kg",
                 89.90m,
                 "Matowy filament PLA do wydruków dekoracyjnych, makiet i modeli użytkowych.",
                 Foto("PLA Matt"),
                 rodzaje["Filamenty"],
                 producenci["Fiberlogy"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "FIL-PETG-CF",
-                "Filament PETG CF 0.75kg",
+                "Filament PETG CF 0.75 kg",
                 159.90m,
                 "Wzmocniony filament PETG z dodatkiem włókna węglowego do elementów technicznych.",
                 Foto("PETG CF"),
                 rodzaje["Filamenty"],
                 producenci["Fiberlogy"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "DYSZA-04",
                 "Dysza stalowa 0.4 mm",
@@ -367,7 +446,7 @@ namespace Firma.Intranet.Services.Intranet
                 rodzaje["Części"],
                 producenci["Noctuo"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "PLYTA-PEI",
                 "Płyta robocza PEI",
@@ -377,7 +456,7 @@ namespace Firma.Intranet.Services.Intranet
                 rodzaje["Akcesoria"],
                 producenci["Noctuo"]);
 
-            await DodajTowar(
+            await Towar(
                 context,
                 "ZEST-SERWIS",
                 "Zestaw serwisowy drukarki 3D",
@@ -388,7 +467,7 @@ namespace Firma.Intranet.Services.Intranet
                 producenci["Noctuo"]);
         }
 
-        private static async Task DodajTowar(
+        private static async Task Towar(
             FirmaContext context,
             string kod,
             string nazwa,
@@ -398,37 +477,48 @@ namespace Firma.Intranet.Services.Intranet
             Rodzaj rodzaj,
             Producent producent)
         {
-            if (await context.Towar.AnyAsync(t => t.Kod == kod))
+            var towar = await context.Towar
+                .FirstOrDefaultAsync(t => t.Kod == kod);
+
+            if (towar == null)
             {
+                context.Towar.Add(new Towar
+                {
+                    Kod = kod,
+                    Nazwa = nazwa,
+                    Cena = cena,
+                    Opis = opis,
+                    FotoUrl = fotoUrl,
+                    IdRodzaju = rodzaj.IdRodzaju,
+                    IdProducenta = producent.IdProducenta,
+                    CzyAktywny = true
+                });
+
                 return;
             }
 
-            context.Towar.Add(new Towar
-            {
-                Kod = kod,
-                Nazwa = nazwa,
-                Cena = cena,
-                Opis = opis,
-                FotoUrl = fotoUrl,
-                IdRodzaju = rodzaj.IdRodzaju,
-                IdProducenta = producent.IdProducenta,
-                CzyAktywny = true
-            });
+            towar.Nazwa = nazwa;
+            towar.Cena = cena;
+            towar.Opis = opis;
+            towar.FotoUrl = fotoUrl;
+            towar.IdRodzaju = rodzaj.IdRodzaju;
+            towar.IdProducenta = producent.IdProducenta;
+            towar.CzyAktywny = true;
         }
 
-        private static async Task DodajStanyMagazynowe(FirmaContext context)
+        private static async Task DodajLubAktualizujStanyMagazynowe(FirmaContext context)
         {
-            await DodajStan(context, "PR3D-MK4", 8, 2, "A1-01");
-            await DodajStan(context, "BBL-P1S", 5, 2, "A1-02");
-            await DodajStan(context, "CRE-K1C", 11, 3, "A1-03");
-            await DodajStan(context, "FIL-PLA-MAT", 64, 10, "B2-01");
-            await DodajStan(context, "FIL-PETG-CF", 28, 8, "B2-02");
-            await DodajStan(context, "DYSZA-04", 120, 20, "C3-01");
-            await DodajStan(context, "PLYTA-PEI", 24, 5, "C3-02");
-            await DodajStan(context, "ZEST-SERWIS", 16, 4, "C3-03");
+            await StanMagazynowy(context, "PR3D-MK4", 8, 2, "A1-01");
+            await StanMagazynowy(context, "BBL-P1S", 5, 2, "A1-02");
+            await StanMagazynowy(context, "CRE-K1C", 11, 3, "A1-03");
+            await StanMagazynowy(context, "FIL-PLA-MAT", 64, 10, "B2-01");
+            await StanMagazynowy(context, "FIL-PETG-CF", 28, 8, "B2-02");
+            await StanMagazynowy(context, "DYSZA-04", 120, 20, "C3-01");
+            await StanMagazynowy(context, "PLYTA-PEI", 24, 5, "C3-02");
+            await StanMagazynowy(context, "ZEST-SERWIS", 16, 4, "C3-03");
         }
 
-        private static async Task DodajStan(
+        private static async Task StanMagazynowy(
             FirmaContext context,
             string kodTowaru,
             int ilosc,
@@ -443,22 +533,30 @@ namespace Firma.Intranet.Services.Intranet
                 return;
             }
 
-            if (await context.StanMagazynowy.AnyAsync(s => s.IdTowaru == towar.IdTowaru))
+            var stan = await context.StanMagazynowy
+                .FirstOrDefaultAsync(s => s.IdTowaru == towar.IdTowaru);
+
+            if (stan == null)
             {
+                context.StanMagazynowy.Add(new StanMagazynowy
+                {
+                    IdTowaru = towar.IdTowaru,
+                    IloscSztuk = ilosc,
+                    MinimalnaIlosc = minimum,
+                    Lokalizacja = lokalizacja,
+                    CzyAktywny = true
+                });
+
                 return;
             }
 
-            context.StanMagazynowy.Add(new StanMagazynowy
-            {
-                IdTowaru = towar.IdTowaru,
-                IloscSztuk = ilosc,
-                MinimalnaIlosc = minimum,
-                Lokalizacja = lokalizacja,
-                CzyAktywny = true
-            });
+            stan.IloscSztuk = ilosc;
+            stan.MinimalnaIlosc = minimum;
+            stan.Lokalizacja = lokalizacja;
+            stan.CzyAktywny = true;
         }
 
-        private static async Task DodajKlientowIZamowienia(FirmaContext context)
+        private static async Task DodajLubAktualizujKlientowIZamowienia(FirmaContext context)
         {
             var klient = await context.Klient
                 .FirstOrDefaultAsync(k => k.Email == "jan.kowalski@example.com");
@@ -476,10 +574,11 @@ namespace Firma.Intranet.Services.Intranet
                 context.Klient.Add(klient);
                 await context.SaveChangesAsync();
             }
-
-            if (await context.Zamowienie.AnyAsync(z => z.NumerZamowienia == "WWW-DEMO-001"))
+            else
             {
-                return;
+                klient.Imie = "Jan";
+                klient.Nazwisko = "Kowalski";
+                klient.Telefon = "600700800";
             }
 
             var drukarka = await context.Towar
@@ -493,19 +592,48 @@ namespace Firma.Intranet.Services.Intranet
                 return;
             }
 
-            var zamowienie = new Zamowienie
+            var zamowienie = await context.Zamowienie
+                .Include(z => z.PozycjaZamowienia)
+                .FirstOrDefaultAsync(z => z.NumerZamowienia == "WWW-DEMO-001");
+
+            if (zamowienie == null)
             {
-                NumerZamowienia = "WWW-DEMO-001",
-                DataZamowienia = DateTime.Today.AddDays(-1),
-                Status = "w trakcie",
-                Ulica = "Kwiatowa",
-                NumerDomu = "14",
-                NumerLokalu = "3",
-                KodPocztowy = "35-001",
-                Miasto = "Rzeszów",
-                IdKlienta = klient.IdKlienta,
-                WartoscRazem = drukarka.Cena + filament.Cena
-            };
+                zamowienie = new Zamowienie
+                {
+                    NumerZamowienia = "WWW-DEMO-001",
+                    DataZamowienia = DateTime.Today.AddDays(-1),
+                    Status = "w trakcie",
+                    Ulica = "Kwiatowa",
+                    NumerDomu = "14",
+                    NumerLokalu = "3",
+                    KodPocztowy = "35-001",
+                    Miasto = "Rzeszów",
+                    IdKlienta = klient.IdKlienta,
+                    WartoscRazem = 0
+                };
+
+                context.Zamowienie.Add(zamowienie);
+            }
+            else
+            {
+                foreach (var pozycja in zamowienie.PozycjaZamowienia.ToList())
+                {
+                    context.Remove(pozycja);
+                }
+
+                zamowienie.PozycjaZamowienia.Clear();
+
+                zamowienie.DataZamowienia = DateTime.Today.AddDays(-1);
+                zamowienie.Status = "w trakcie";
+                zamowienie.Ulica = "Kwiatowa";
+                zamowienie.NumerDomu = "14";
+                zamowienie.NumerLokalu = "3";
+                zamowienie.KodPocztowy = "35-001";
+                zamowienie.Miasto = "Rzeszów";
+                zamowienie.IdKlienta = klient.IdKlienta;
+            }
+
+            zamowienie.WartoscRazem = drukarka.Cena + (2 * filament.Cena);
 
             zamowienie.PozycjaZamowienia.Add(new PozycjaZamowienia
             {
@@ -517,11 +645,9 @@ namespace Firma.Intranet.Services.Intranet
             zamowienie.PozycjaZamowienia.Add(new PozycjaZamowienia
             {
                 IdTowaru = filament.IdTowaru,
-                Ilosc = 1,
+                Ilosc = 2,
                 CenaJednostkowa = filament.Cena
             });
-
-            context.Zamowienie.Add(zamowienie);
         }
 
         private static string Foto(string tekst)

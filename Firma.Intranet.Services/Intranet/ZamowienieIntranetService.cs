@@ -203,6 +203,33 @@ namespace Firma.Intranet.Services.Intranet
                 .ToListAsync();
         }
 
+        public async Task<int> PoliczWszystkieZamowienia()
+        {
+            return await _context.Zamowienie.CountAsync();
+        }
+
+        public async Task<int> PoliczZamowieniaWWW()
+        {
+            return await _context.Zamowienie.CountAsync(z =>
+                z.NumerZamowienia != null &&
+                z.NumerZamowienia.StartsWith("WWW"));
+        }
+
+        public async Task<int> PoliczNoweZamowieniaWWW()
+        {
+            return await _context.Zamowienie.CountAsync(z =>
+                z.NumerZamowienia != null &&
+                z.NumerZamowienia.StartsWith("WWW") &&
+                z.Status == "Nowe");
+        }
+
+        public async Task<int> PoliczZamowieniaDoObslugi()
+        {
+            return await _context.Zamowienie.CountAsync(z =>
+                z.Status == "Nowe" ||
+                z.Status == "w trakcie");
+        }
+
         private IQueryable<Zamowienie> ZapytanieZamowienDoDokumentow()
         {
             return _context.Zamowienie
