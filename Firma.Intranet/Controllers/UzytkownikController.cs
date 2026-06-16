@@ -1,47 +1,37 @@
-﻿using Firma.Intranet.Models;
+﻿using System.Security.Claims;
+using Firma.Intranet.Interfaces.Intranet;
+using Firma.Intranet.Models;
+using Firma.Intranet.Services.Data.Intranet;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Firma.Intranet.Controllers
 {
     [Authorize(Roles = "Administrator")]
     public class UzytkownikController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IUzytkownikIntranetService _uzytkownikIntranetService;
 
-        public UzytkownikController(
-            UserManager<IdentityUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+        public UzytkownikController(IUzytkownikIntranetService uzytkownikIntranetService)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _uzytkownikIntranetService = uzytkownikIntranetService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var aktualnyUzytkownikId = _userManager.GetUserId(User);
-            var uzytkownicy = await _userManager.Users
-                .OrderBy(u => u.Email)
-                .ToListAsync();
+            var uzytkownicy = await _uzytkownikIntranetService.PobierzListe(
+                PobierzIdAktualnegoUzytkownika());
 
-            var model = new List<UzytkownikListaItemViewModel>();
-
-            foreach (var uzytkownik in uzytkownicy)
-            {
-                var role = await _userManager.GetRolesAsync(uzytkownik);
-
-                model.Add(new UzytkownikListaItemViewModel
+            var model = uzytkownicy
+                .Select(u => new UzytkownikListaItemViewModel
                 {
-                    Id = uzytkownik.Id,
-                    Email = uzytkownik.Email ?? string.Empty,
-                    NazwaUzytkownika = uzytkownik.UserName ?? string.Empty,
-                    Role = role,
-                    CzyAktualnieZalogowany = uzytkownik.Id == aktualnyUzytkownikId
-                });
-            }
+                    Id = u.Id,
+                    Email = u.Email,
+                    NazwaUzytkownika = u.NazwaUzytkownika,
+                    Role = u.Role,
+                    CzyAktualnieZalogowany = u.CzyAktualnieZalogowany
+                })
+                .ToList();
 
             return View(model);
         }
@@ -50,7 +40,7 @@ namespace Firma.Intranet.Controllers
         {
             var model = new UzytkownikCreateViewModel
             {
-                DostepneRole = await PobierzRole()
+                DostepneRole = await _uzytkownikIntranetService.PobierzRole()
             };
 
             return View(model);
@@ -60,35 +50,21 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UzytkownikCreateViewModel model)
         {
-            model.DostepneRole = await PobierzRole();
+            model.DostepneRole = await _uzytkownikIntranetService.PobierzRole();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var uzytkownik = new IdentityUser
+            var wynik = await _uzytkownikIntranetService.Dodaj(
+                model.Email,
+                model.Haslo,
+                model.Rola);
+
+            if (!wynik.CzySukces)
             {
-                UserName = model.Email,
-                Email = model.Email,
-                EmailConfirmed = true
-            };
-
-            var wynik = await _userManager.CreateAsync(uzytkownik, model.Haslo);
-
-            if (!wynik.Succeeded)
-            {
-                DodajBledyIdentity(wynik);
-
-                return View(model);
-            }
-
-            var wynikRoli = await _userManager.AddToRoleAsync(uzytkownik, model.Rola);
-
-            if (!wynikRoli.Succeeded)
-            {
-                await _userManager.DeleteAsync(uzytkownik);
-                DodajBledyIdentity(wynikRoli);
+                DodajBledy(wynik);
 
                 return View(model);
             }
@@ -98,23 +74,22 @@ namespace Firma.Intranet.Controllers
 
         public async Task<IActionResult> Edit(string id)
         {
-            var uzytkownik = await _userManager.FindByIdAsync(id);
+            var uzytkownik = await _uzytkownikIntranetService.PobierzDoEdycji(
+                id,
+                PobierzIdAktualnegoUzytkownika());
 
             if (uzytkownik == null)
             {
                 return NotFound();
             }
 
-            var role = await _userManager.GetRolesAsync(uzytkownik);
-            var aktualnyUzytkownikId = _userManager.GetUserId(User);
-
             var model = new UzytkownikEditViewModel
             {
                 Id = uzytkownik.Id,
-                Email = uzytkownik.Email ?? string.Empty,
-                Rola = role.FirstOrDefault() ?? string.Empty,
-                CzyAktualnieZalogowany = uzytkownik.Id == aktualnyUzytkownikId,
-                DostepneRole = await PobierzRole()
+                Email = uzytkownik.Email,
+                Rola = uzytkownik.Rola,
+                CzyAktualnieZalogowany = uzytkownik.CzyAktualnieZalogowany,
+                DostepneRole = uzytkownik.DostepneRole
             };
 
             return View(model);
@@ -129,60 +104,28 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            model.DostepneRole = await PobierzRole();
-
-            var uzytkownik = await _userManager.FindByIdAsync(id);
-
-            if (uzytkownik == null)
-            {
-                return NotFound();
-            }
-
-            var aktualnyUzytkownikId = _userManager.GetUserId(User);
-            model.CzyAktualnieZalogowany = uzytkownik.Id == aktualnyUzytkownikId;
-
-            if (model.CzyAktualnieZalogowany && model.Rola != "Administrator")
-            {
-                ModelState.AddModelError(string.Empty, "Nie można odebrać roli Administrator aktualnie zalogowanemu użytkownikowi");
-            }
+            model.DostepneRole = await _uzytkownikIntranetService.PobierzRole();
+            model.CzyAktualnieZalogowany = model.Id == PobierzIdAktualnegoUzytkownika();
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            uzytkownik.Email = model.Email;
-            uzytkownik.UserName = model.Email;
-            uzytkownik.EmailConfirmed = true;
+            var wynik = await _uzytkownikIntranetService.Aktualizuj(
+                id,
+                model.Email,
+                model.Rola,
+                PobierzIdAktualnegoUzytkownika());
 
-            var wynikAktualizacji = await _userManager.UpdateAsync(uzytkownik);
-
-            if (!wynikAktualizacji.Succeeded)
+            if (!wynik.CzyZnaleziono)
             {
-                DodajBledyIdentity(wynikAktualizacji);
-
-                return View(model);
+                return NotFound();
             }
 
-            var aktualneRole = await _userManager.GetRolesAsync(uzytkownik);
-
-            if (aktualneRole.Any())
+            if (!wynik.CzySukces)
             {
-                var wynikUsunieciaRol = await _userManager.RemoveFromRolesAsync(uzytkownik, aktualneRole);
-
-                if (!wynikUsunieciaRol.Succeeded)
-                {
-                    DodajBledyIdentity(wynikUsunieciaRol);
-
-                    return View(model);
-                }
-            }
-
-            var wynikDodaniaRoli = await _userManager.AddToRoleAsync(uzytkownik, model.Rola);
-
-            if (!wynikDodaniaRoli.Succeeded)
-            {
-                DodajBledyIdentity(wynikDodaniaRoli);
+                DodajBledy(wynik);
 
                 return View(model);
             }
@@ -192,17 +135,17 @@ namespace Firma.Intranet.Controllers
 
         public async Task<IActionResult> ResetHasla(string id)
         {
-            var uzytkownik = await _userManager.FindByIdAsync(id);
+            var email = await _uzytkownikIntranetService.PobierzEmail(id);
 
-            if (uzytkownik == null)
+            if (email == null)
             {
                 return NotFound();
             }
 
             var model = new ResetHaslaUzytkownikaViewModel
             {
-                Id = uzytkownik.Id,
-                Email = uzytkownik.Email ?? string.Empty
+                Id = id,
+                Email = email
             };
 
             return View(model);
@@ -217,26 +160,32 @@ namespace Firma.Intranet.Controllers
                 return NotFound();
             }
 
-            var uzytkownik = await _userManager.FindByIdAsync(id);
+            var email = await _uzytkownikIntranetService.PobierzEmail(id);
 
-            if (uzytkownik == null)
+            if (email == null)
             {
                 return NotFound();
             }
 
-            model.Email = uzytkownik.Email ?? string.Empty;
+            model.Email = email;
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(uzytkownik);
-            var wynik = await _userManager.ResetPasswordAsync(uzytkownik, token, model.NoweHaslo);
+            var wynik = await _uzytkownikIntranetService.ResetujHaslo(
+                id,
+                model.NoweHaslo);
 
-            if (!wynik.Succeeded)
+            if (!wynik.CzyZnaleziono)
             {
-                DodajBledyIdentity(wynik);
+                return NotFound();
+            }
+
+            if (!wynik.CzySukces)
+            {
+                DodajBledy(wynik);
 
                 return View(model);
             }
@@ -246,23 +195,16 @@ namespace Firma.Intranet.Controllers
 
         public async Task<IActionResult> Delete(string id)
         {
-            var uzytkownik = await _userManager.FindByIdAsync(id);
+            var uzytkownik = await _uzytkownikIntranetService.PobierzDoUsuniecia(
+                id,
+                PobierzIdAktualnegoUzytkownika());
 
             if (uzytkownik == null)
             {
                 return NotFound();
             }
 
-            var aktualnyUzytkownikId = _userManager.GetUserId(User);
-            var role = await _userManager.GetRolesAsync(uzytkownik);
-
-            var model = new UsunUzytkownikaViewModel
-            {
-                Id = uzytkownik.Id,
-                Email = uzytkownik.Email ?? string.Empty,
-                Role = role,
-                CzyAktualnieZalogowany = uzytkownik.Id == aktualnyUzytkownikId
-            };
+            var model = MapujDoModeluUsuniecia(uzytkownik);
 
             return View(model);
         }
@@ -271,86 +213,55 @@ namespace Firma.Intranet.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var uzytkownik = await _userManager.FindByIdAsync(id);
+            var wynik = await _uzytkownikIntranetService.Usun(
+                id,
+                PobierzIdAktualnegoUzytkownika());
 
-            if (uzytkownik == null)
+            if (!wynik.CzyZnaleziono)
             {
                 return NotFound();
             }
 
-            var aktualnyUzytkownikId = _userManager.GetUserId(User);
-
-            if (uzytkownik.Id == aktualnyUzytkownikId)
+            if (!wynik.CzySukces)
             {
-                ModelState.AddModelError(string.Empty, "Nie można usunąć aktualnie zalogowanego użytkownika");
+                DodajBledy(wynik);
 
-                var role = await _userManager.GetRolesAsync(uzytkownik);
+                var uzytkownik = await _uzytkownikIntranetService.PobierzDoUsuniecia(
+                    id,
+                    PobierzIdAktualnegoUzytkownika());
 
-                var model = new UsunUzytkownikaViewModel
+                if (uzytkownik == null)
                 {
-                    Id = uzytkownik.Id,
-                    Email = uzytkownik.Email ?? string.Empty,
-                    Role = role,
-                    CzyAktualnieZalogowany = true
-                };
+                    return NotFound();
+                }
 
-                return View(model);
-            }
-
-            var wynik = await _userManager.DeleteAsync(uzytkownik);
-
-            if (!wynik.Succeeded)
-            {
-                DodajBledyIdentity(wynik);
-
-                var role = await _userManager.GetRolesAsync(uzytkownik);
-
-                var model = new UsunUzytkownikaViewModel
-                {
-                    Id = uzytkownik.Id,
-                    Email = uzytkownik.Email ?? string.Empty,
-                    Role = role
-                };
-
-                return View(model);
+                return View(MapujDoModeluUsuniecia(uzytkownik));
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<List<string>> PobierzRole()
+        private string? PobierzIdAktualnegoUzytkownika()
         {
-            await ZapewnijRole();
-
-            return await _roleManager.Roles
-                .Select(r => r.Name ?? string.Empty)
-                .Where(nazwa => nazwa != string.Empty)
-                .OrderBy(nazwa => nazwa)
-                .ToListAsync();
+            return User.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
-        private async Task ZapewnijRole()
+        private static UsunUzytkownikaViewModel MapujDoModeluUsuniecia(UzytkownikUsuniecieDto uzytkownik)
         {
-            var role = new[]
+            return new UsunUzytkownikaViewModel
             {
-                "Administrator",
-                "Pracownik"
+                Id = uzytkownik.Id,
+                Email = uzytkownik.Email,
+                Role = uzytkownik.Role,
+                CzyAktualnieZalogowany = uzytkownik.CzyAktualnieZalogowany
             };
-
-            foreach (var nazwaRoli in role)
-            {
-                if (!await _roleManager.RoleExistsAsync(nazwaRoli))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(nazwaRoli));
-                }
-            }
         }
 
-        private void DodajBledyIdentity(IdentityResult wynik)
+        private void DodajBledy(OperacjaUzytkownikaWynikDto wynik)
         {
-            foreach (var blad in wynik.Errors)
+            foreach (var blad in wynik.Bledy)
             {
-                ModelState.AddModelError(string.Empty, blad.Description);
+                ModelState.AddModelError(string.Empty, blad);
             }
         }
     }
