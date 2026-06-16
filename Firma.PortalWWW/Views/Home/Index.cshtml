@@ -2,51 +2,97 @@
 
 @{
     ViewData["Title"] = Model != null ? Model.LinkTytul : "Strona główna";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
 @if (Model != null)
 {
-    <div class="portal-header portal-header-responsive mb-4">
-        <div>
-            <span class="portal-badge">Portal klienta</span>
-            <h1 class="h3 mt-2 mb-1">@Model.Tytul</h1>
-            <p class="text-muted mb-0">
-                Treść strony jest zarządzana w panelu Intranet.
-            </p>
-        </div>
+    <section class="portal-hero mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-12 col-lg-7">
+                <div class="hero-content">
+                    <span class="portal-badge">Sklep 3D</span>
 
-        <div class="portal-actions">
-            <a asp-controller="Sklep"
-               asp-action="Index"
-               class="btn btn-primary">
-                Przejdź do sklepu
-            </a>
+                    <h1 class="display-6 fw-bold mt-3 mb-3">
+                        @Model.Tytul
+                    </h1>
 
-            <a asp-controller="Promocja"
-               asp-action="Index"
-               class="btn btn-outline-secondary">
-                Promocje
-            </a>
-        </div>
-    </div>
+                    <div class="hero-text tekst-strony">
+                        @Model.Tresc
+                    </div>
 
-    <div class="card page-card shadow-sm">
-        <div class="card-body p-4">
-            <div class="tekst-strony">
-                @Model.Tresc
+                    <div class="hero-actions">
+                        <a asp-controller="Sklep"
+                           asp-action="Index"
+                           class="btn btn-primary btn-lg">
+                            Przejdź do sklepu
+                        </a>
+
+                        <a asp-controller="Promocja"
+                           asp-action="Index"
+                           class="btn btn-outline-secondary btn-lg">
+                            Sprawdź promocje
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <hr />
+            <div class="col-12 col-lg-5">
+                <div class="hero-card">
+                    <div class="hero-card-title">Oferta portalu</div>
 
-            <p class="text-muted small mb-0">
-                Data i godzina wejścia: @DateTime.Now.ToString("dd.MM.yyyy HH:mm")
-            </p>
+                    <div class="hero-feature">
+                        <strong>Drukarki 3D</strong>
+                        <span>Modele do domu, szkoły i firmy.</span>
+                    </div>
+
+                    <div class="hero-feature">
+                        <strong>Akcesoria</strong>
+                        <span>Części, dysze, stoły robocze i narzędzia.</span>
+                    </div>
+
+                    <div class="hero-feature">
+                        <strong>Materiały</strong>
+                        <span>Produkty dobrane pod druk i serwis.</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <section class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">01</span>
+                <h2 class="h5">Produkty</h2>
+                <p>Przejrzysta lista towarów z ceną, producentem i dostępnością.</p>
+                <a asp-controller="Sklep" asp-action="Index">Zobacz sklep</a>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">02</span>
+                <h2 class="h5">Kategorie</h2>
+                <p>Szybkie przejście do wybranego rodzaju produktów.</p>
+                <a asp-controller="Sklep" asp-action="Index">Przeglądaj kategorie</a>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="info-tile">
+                <span class="info-tile-number">03</span>
+                <h2 class="h5">Promocje</h2>
+                <p>Osobna sekcja z aktywnymi ofertami specjalnymi.</p>
+                <a asp-controller="Promocja" asp-action="Index">Zobacz promocje</a>
+            </div>
+        </div>
+    </section>
 }
 else
 {
-    <div class="alert alert-warning">
-        Brak strony do wyświetlenia. Dodaj aktywny rekord w Intranecie w tabeli Strona.
+    <div class="empty-state">
+        <h1 class="h4">Brak strony głównej</h1>
+        <p>Dodaj aktywną stronę w panelu Intranet.</p>
     </div>
 }

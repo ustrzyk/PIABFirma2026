@@ -2,6 +2,8 @@
 
 @{
     var wyglad = ViewBag.WygladPortalu as PortalWygladDto ?? new PortalWygladDto();
+    var strony = ViewBag.ModelStrony as IEnumerable<StronaMenuItemDto> ?? Enumerable.Empty<StronaMenuItemDto>();
+    var aktualnosci = ViewBag.ModelAktualnosci as IEnumerable<AktualnoscListaItemDto> ?? Enumerable.Empty<AktualnoscListaItemDto>();
 }
 
 <!DOCTYPE html>
@@ -16,11 +18,11 @@
 
     <style>
         :root {
-            --portal-bg: @wyglad.KolorTlaPortalu;
-            --portal-navbar-bg: @wyglad.KolorNawigacji;
-            --portal-footer-bg: @wyglad.KolorStopki;
-            --portal-button-color: @wyglad.KolorPrzyciskow;
-            --portal-focus-color: @wyglad.KolorAkcentu;
+        --portal-bg: @wyglad.KolorTlaPortalu;
+        --portal-navbar-bg: @wyglad.KolorNawigacji;
+        --portal-footer-bg: @wyglad.KolorStopki;
+        --portal-button-color: @wyglad.KolorPrzyciskow;
+        --portal-focus-color: @wyglad.KolorAkcentu;
         }
     </style>
 
@@ -30,11 +32,30 @@
 </head>
 
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light border-bottom shadow-sm portal-navbar">
+    <header class="portal-site-header">
+        <div class="portal-topbar">
+            <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <span>Drukarki 3D, akcesoria i materiały</span>
+
+                <span class="portal-topbar-contact">
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
+                    {
+                        <span>@wyglad.StopkaTelefon</span>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
+                    {
+                        <a href="mailto:@wyglad.StopkaEmail">@wyglad.StopkaEmail</a>
+                    }
+                </span>
+            </div>
+        </div>
+
+        <nav class="navbar navbar-expand-lg portal-navbar">
             <div class="container">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">
-                    @wyglad.NazwaPortalu
+                <a class="navbar-brand portal-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="brand-mark">3D</span>
+                    <span>@wyglad.NazwaPortalu</span>
                 </a>
 
                 <button class="navbar-toggler"
@@ -48,18 +69,23 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="menuGlowne">
-                    @await Html.PartialAsync(
-                        "Odnosniki",
-                        (IEnumerable<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>)ViewBag.ModelStrony)
+                    @await Html.PartialAsync("Odnosniki", strony)
+
+                    <div class="portal-navbar-actions">
+                        <a asp-controller="Sklep"
+                           asp-action="Index"
+                           class="btn btn-primary">
+                            Zobacz produkty
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <div class="category-bar border-bottom">
-            <div class="container py-2">
-                <div class="d-flex flex-wrap align-items-center gap-2">
-                    <span class="fw-semibold me-2">Kategorie:</span>
-
+        <div class="category-bar">
+            <div class="container">
+                <div class="category-scroller">
+                    <span class="category-label">Kategorie</span>
                     @await Component.InvokeAsync("RodzajeMenuComponent")
                 </div>
             </div>
@@ -67,52 +93,55 @@
     </header>
 
     <div class="page-bg">
-        <main class="container py-4">
+        <main class="container portal-main">
             @RenderBody()
         </main>
     </div>
 
-    <section class="bg-white border-top">
-        @await Html.PartialAsync(
-            "Aktualnosci",
-            (IEnumerable<Firma.Services.Data.Dto.CMS.AktualnoscListaItemDto>)ViewBag.ModelAktualnosci)
+    <section class="portal-news-section">
+        <div class="container">
+            @await Html.PartialAsync("Aktualnosci", aktualnosci)
+        </div>
     </section>
 
-    <footer class="border-top footer text-muted portal-footer">
-        <div class="container py-3">
-            <div class="row g-3 align-items-center">
-                <div class="col-12 col-md-6">
-                    <strong>@wyglad.StopkaTekst</strong>
+    <footer class="portal-footer">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+                <div class="col-12 col-lg-5">
+                    <div class="footer-brand mb-2">@wyglad.NazwaPortalu</div>
+                    <div>@wyglad.StopkaTekst</div>
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaAdres))
                     {
-                        <div class="small">@wyglad.StopkaAdres</div>
+                        <div class="small mt-2">@wyglad.StopkaAdres</div>
                     }
                 </div>
 
-                <div class="col-12 col-md-6 text-md-end">
+                <div class="col-12 col-lg-4">
+                    <div class="footer-title">Kontakt</div>
+
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
                     {
-                        <a href="mailto:@wyglad.StopkaEmail" class="me-2">
-                            @wyglad.StopkaEmail
-                        </a>
+                        <a href="mailto:@wyglad.StopkaEmail">@wyglad.StopkaEmail</a>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
                     {
-                        <span class="me-2">@wyglad.StopkaTelefon</span>
+                        <span>@wyglad.StopkaTelefon</span>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaFacebook))
                     {
-                        <a href="@wyglad.StopkaFacebook" target="_blank">
-                            Facebook
-                        </a>
+                        <a href="@wyglad.StopkaFacebook" target="_blank">Facebook</a>
                     }
+                </div>
 
-                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="ms-2">
-                        Prywatność
-                    </a>
+                <div class="col-12 col-lg-3">
+                    <div class="footer-title">Portal</div>
+
+                    <a asp-area="" asp-controller="Sklep" asp-action="Index">Sklep</a>
+                    <a asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy">Prywatność</a>
                 </div>
             </div>
         </div>

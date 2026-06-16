@@ -5,199 +5,211 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<div class="portal-header portal-header-responsive mb-4">
-    <div>
-        <h1 class="h3 mb-1">@Model.Nazwa</h1>
-        <p class="text-muted mb-0">
-            Szczegóły produktu dostępnego w sklepie.
-        </p>
-    </div>
-
-    <div class="portal-actions">
-        <a asp-controller="Sklep"
-           asp-action="Index"
-           class="btn btn-outline-secondary">
-            Powrót do sklepu
-        </a>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <div class="col-12 col-lg-5">
-        <div class="card page-card shadow-sm">
-            <div class="card-body">
+<section class="product-details-hero mb-4">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-12 col-lg-5">
+            <div class="product-details-gallery">
                 @if (!string.IsNullOrWhiteSpace(Model.FotoUrl))
                 {
                     <img src="@Model.FotoUrl"
                          alt="@Model.Nazwa"
-                         class="img-fluid rounded product-details-img" />
+                         class="product-details-img" />
                 }
                 else
                 {
                     <img src="~/content/CA.png"
                          alt="@Model.Nazwa"
-                         class="img-fluid rounded product-details-img" />
+                         class="product-details-img" />
                 }
             </div>
         </div>
-    </div>
 
-    <div class="col-12 col-lg-7">
-        <div class="card page-card shadow-sm h-100">
-            <div class="card-body">
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-secondary">@Model.Rodzaj</span>
-                    <span class="badge bg-light text-dark border">@Model.Producent</span>
+        <div class="col-12 col-lg-7">
+            <div class="product-details-panel">
+                <div class="product-meta mb-3">
+                    <span>@Model.Rodzaj</span>
+                    <span>@Model.Producent</span>
                 </div>
 
-                <h2 class="h4 mb-3">@Model.Nazwa</h2>
+                <h1 class="h2 mb-3">@Model.Nazwa</h1>
 
-                <p class="text-muted">
+                <p class="product-details-description">
                     @Model.Opis
                 </p>
 
-                <div class="mb-4">
-                    <span class="fs-3 fw-bold price-text">
-                        @Model.Cena.ToString("C")
-                    </span>
-                </div>
+                <div class="product-buy-box">
+                    <div>
+                        <div class="small text-muted">Cena</div>
+                        <div class="price-text product-details-price">
+                            @Model.Cena.ToString("C")
+                        </div>
+                    </div>
 
-                <dl class="row details-list">
-                    <dt class="col-sm-4">Kod produktu</dt>
-                    <dd class="col-sm-8">@Model.Kod</dd>
-
-                    <dt class="col-sm-4">Rodzaj</dt>
-                    <dd class="col-sm-8">@Model.Rodzaj</dd>
-
-                    <dt class="col-sm-4">Producent</dt>
-                    <dd class="col-sm-8">@Model.Producent</dd>
-
-                    <dt class="col-sm-4">Kraj producenta</dt>
-                    <dd class="col-sm-8">
-                        @if (!string.IsNullOrWhiteSpace(Model.KrajProducenta))
-                        {
-                            @Model.KrajProducenta
-                        }
-                        else
-                        {
-                            <span class="text-muted">brak danych</span>
-                        }
-                    </dd>
-
-                    <dt class="col-sm-4">Strona producenta</dt>
-                    <dd class="col-sm-8">
-                        @if (!string.IsNullOrWhiteSpace(Model.StronaWWWProducenta))
-                        {
-                            <a href="@Model.StronaWWWProducenta"
-                               target="_blank"
-                               class="btn btn-sm btn-outline-secondary">
-                                Otwórz stronę
-                            </a>
-                        }
-                        else
-                        {
-                            <span class="text-muted">brak danych</span>
-                        }
-                    </dd>
-
-                    <dt class="col-sm-4">Dostępność</dt>
-                    <dd class="col-sm-8">
+                    <div>
                         @if (Model.CzyDostepny)
                         {
-                            <span class="badge bg-success">
+                            <span class="availability-badge available">
                                 dostępny: @Model.IloscSztuk szt.
                             </span>
                         }
                         else
                         {
-                            <span class="badge bg-secondary">
+                            <span class="availability-badge unavailable">
                                 brak danych
                             </span>
                         }
-                    </dd>
-
-                    <dt class="col-sm-4">Lokalizacja</dt>
-                    <dd class="col-sm-8">
-                        @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
-                        {
-                            @Model.Lokalizacja
-                        }
-                        else
-                        {
-                            <span class="text-muted">brak danych</span>
-                        }
-                    </dd>
-                </dl>
+                    </div>
+                </div>
 
                 @if (Model.CzyMaloTowaru)
                 {
                     <div class="alert alert-warning mt-3 mb-0">
-                        Ilość produktu jest bliska minimalnemu stanowi magazynowemu.
+                        Niski stan magazynowy.
                     </div>
                 }
+
+                <div class="product-details-actions">
+                    <a asp-controller="Sklep"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do sklepu
+                    </a>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.StronaWWWProducenta))
+                    {
+                        <a href="@Model.StronaWWWProducenta"
+                           target="_blank"
+                           class="btn btn-primary">
+                            Strona producenta
+                        </a>
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="card page-card shadow-sm">
-    <div class="card-body p-4">
-        <h2 class="h5 mb-3">Załączniki</h2>
+<section class="row g-4 mb-4">
+    <div class="col-12 col-lg-7">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Informacje o produkcie</h2>
 
-        @if (Model.Zalaczniki != null && Model.Zalaczniki.Any())
-        {
-            <div class="row g-3">
-                @foreach (var item in Model.Zalaczniki)
-                {
-                    <div class="col-12 col-md-6">
-                        <div class="card border h-100 shadow-sm">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between gap-2 mb-2">
-                                    <div>
-                                        <h3 class="h6 mb-1">@item.NazwaOryginalna</h3>
+            <dl class="details-list details-list-clean">
+                <dt>Kod produktu</dt>
+                <dd>@Model.Kod</dd>
 
-                                        @if (!string.IsNullOrWhiteSpace(item.Opis))
-                                        {
-                                            <div class="small text-muted">@item.Opis</div>
-                                        }
-                                    </div>
+                <dt>Rodzaj</dt>
+                <dd>@Model.Rodzaj</dd>
 
-                                    <div>
-                                        @if (item.CzyObraz)
-                                        {
-                                            <span class="badge bg-success">obraz</span>
-                                        }
-                                        else if (item.CzyPdf)
-                                        {
-                                            <span class="badge bg-danger">PDF</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-secondary">plik</span>
-                                        }
-                                    </div>
-                                </div>
+                <dt>Producent</dt>
+                <dd>@Model.Producent</dd>
 
-                                <div class="small text-muted mb-3">
-                                    @item.RozmiarTekst · @item.DataDodania.ToString("dd.MM.yyyy")
-                                </div>
+                <dt>Kraj producenta</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.KrajProducenta))
+                    {
+                        @Model.KrajProducenta
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
 
-                                <a href="@item.Sciezka"
-                                   target="_blank"
-                                   class="btn btn-primary w-100">
-                                    Otwórz załącznik
-                                </a>
-                            </div>
+                <dt>Lokalizacja</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
+                    {
+                        @Model.Lokalizacja
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="details-card">
+            <h2 class="h5 mb-3">Dostępność</h2>
+
+            @if (Model.CzyDostepny)
+            {
+                <div class="stock-box stock-box-ok">
+                    <strong>@Model.IloscSztuk szt.</strong>
+                    <span>Aktualna ilość w magazynie.</span>
+                </div>
+            }
+            else
+            {
+                <div class="stock-box">
+                    <strong>Brak danych</strong>
+                    <span>Dostępność nie została jeszcze uzupełniona.</span>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="details-card">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h2 class="h5 mb-1">Załączniki</h2>
+            <p class="text-muted mb-0">
+                Pliki powiązane z produktem.
+            </p>
+        </div>
+    </div>
+
+    @if (Model.Zalaczniki != null && Model.Zalaczniki.Any())
+    {
+        <div class="attachment-grid">
+            @foreach (var item in Model.Zalaczniki)
+            {
+                <article class="attachment-card">
+                    <div>
+                        <div class="d-flex justify-content-between gap-2 mb-2">
+                            <h3 class="h6 mb-0">@item.NazwaOryginalna</h3>
+
+                            @if (item.CzyObraz)
+                            {
+                                <span class="badge bg-success">obraz</span>
+                            }
+                            else if (item.CzyPdf)
+                            {
+                                <span class="badge bg-danger">PDF</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">plik</span>
+                            }
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(item.Opis))
+                        {
+                            <p class="small text-muted mb-2">@item.Opis</p>
+                        }
+
+                        <div class="small text-muted">
+                            @item.RozmiarTekst · @item.DataDodania.ToString("dd.MM.yyyy")
                         </div>
                     </div>
-                }
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-info mb-0">
-                Ten produkt nie ma załączników.
-            </div>
-        }
-    </div>
-</div>
+
+                    <a href="@item.Sciezka"
+                       target="_blank"
+                       class="btn btn-primary w-100">
+                        Otwórz
+                    </a>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state empty-state-small">
+            Ten produkt nie ma załączników.
+        </div>
+    }
+</section>
