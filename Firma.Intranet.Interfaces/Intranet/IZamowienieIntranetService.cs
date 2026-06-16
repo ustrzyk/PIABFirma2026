@@ -5,7 +5,7 @@ namespace Firma.Intranet.Interfaces.Intranet
 {
     public interface IZamowienieIntranetService
     {
-        Task<List<Zamowienie>> PobierzListe();
+        Task<List<Zamowienie>> PobierzListe(string? zrodlo = null, string? status = null);
 
         Task<Zamowienie?> PobierzSzczegoly(int id);
 

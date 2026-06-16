@@ -24,11 +24,40 @@ namespace Firma.Intranet.Services.Intranet
             _context = context;
         }
 
-        public async Task<List<Zamowienie>> PobierzListe()
+        public async Task<List<Zamowienie>> PobierzListe(string? zrodlo = null, string? status = null)
         {
-            return await _context.Zamowienie
+            var zapytanie = _context.Zamowienie
                 .Include(z => z.Klient)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(zrodlo))
+            {
+                var zrodloFiltr = zrodlo.Trim().ToLowerInvariant();
+
+                if (zrodloFiltr == "www")
+                {
+                    zapytanie = zapytanie.Where(z =>
+                        z.NumerZamowienia != null &&
+                        z.NumerZamowienia.StartsWith("WWW"));
+                }
+                else if (zrodloFiltr == "intranet")
+                {
+                    zapytanie = zapytanie.Where(z =>
+                        z.NumerZamowienia == null ||
+                        !z.NumerZamowienia.StartsWith("WWW"));
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                var statusFiltr = status.Trim();
+
+                zapytanie = zapytanie.Where(z => z.Status == statusFiltr);
+            }
+
+            return await zapytanie
                 .OrderByDescending(z => z.DataZamowienia)
+                .ThenByDescending(z => z.IdZamowienia)
                 .ToListAsync();
         }
 
@@ -144,6 +173,7 @@ namespace Firma.Intranet.Services.Intranet
         {
             return await ZapytanieZamowienDoDokumentow()
                 .OrderByDescending(z => z.DataZamowienia)
+                .ThenByDescending(z => z.IdZamowienia)
                 .ToListAsync();
         }
 
@@ -157,6 +187,7 @@ namespace Firma.Intranet.Services.Intranet
             return await ZapytanieZamowienDoDokumentow()
                 .Where(z => ids.Contains(z.IdZamowienia))
                 .OrderByDescending(z => z.DataZamowienia)
+                .ThenByDescending(z => z.IdZamowienia)
                 .ToListAsync();
         }
 

@@ -5,6 +5,10 @@
     ViewData["Title"] = "Zamówienia";
     var czyAdministrator = User.IsInRole("Administrator");
     var zamowienia = Model?.ToList() ?? new List<Zamowienie>();
+
+    var wybraneZrodlo = ViewBag.WybraneZrodlo as string ?? string.Empty;
+    var wybranyStatus = ViewBag.WybranyStatus as string ?? string.Empty;
+
     var liczbaZamowienWWW = zamowienia.Count(z =>
         !string.IsNullOrWhiteSpace(z.NumerZamowienia) &&
         z.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase));
@@ -134,24 +138,65 @@
     </div>
 }
 
+<form asp-action="Index"
+      method="get"
+      class="card crud-karta mb-3">
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+                <label for="zrodlo" class="form-label">Źródło</label>
+                <select id="zrodlo" name="zrodlo" class="form-select">
+                    <option value="" selected="@(string.IsNullOrWhiteSpace(wybraneZrodlo))">Wszystkie</option>
+                    <option value="www" selected="@(wybraneZrodlo == "www")">Portal WWW</option>
+                    <option value="intranet" selected="@(wybraneZrodlo == "intranet")">Intranet</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" name="status" class="form-select">
+                    <option value="" selected="@(string.IsNullOrWhiteSpace(wybranyStatus))">Wszystkie</option>
+                    <option value="Nowe" selected="@(wybranyStatus == "Nowe")">Nowe</option>
+                    <option value="w trakcie" selected="@(wybranyStatus == "w trakcie")">w trakcie</option>
+                    <option value="wysłane" selected="@(wybranyStatus == "wysłane")">wysłane</option>
+                    <option value="zakończone" selected="@(wybranyStatus == "zakończone")">zakończone</option>
+                    <option value="anulowane" selected="@(wybranyStatus == "anulowane")">anulowane</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary">
+                        Filtruj
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        Wyczyść
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
 <div class="row g-3 mb-3">
     <div class="col-12 col-md-4">
         <div class="zamowienie-zrodlo-box">
-            <div class="text-muted small">Wszystkie zamówienia</div>
+            <div class="text-muted small">Widoczne zamówienia</div>
             <div class="h4 mb-0">@zamowienia.Count</div>
         </div>
     </div>
 
     <div class="col-12 col-md-4">
         <div class="zamowienie-zrodlo-box">
-            <div class="text-muted small">Z portalu WWW</div>
+            <div class="text-muted small">Widoczne z portalu WWW</div>
             <div class="h4 mb-0">@liczbaZamowienWWW</div>
         </div>
     </div>
 
     <div class="col-12 col-md-4">
         <div class="zamowienie-zrodlo-box">
-            <div class="text-muted small">Dodane ręcznie / import</div>
+            <div class="text-muted small">Widoczne ręczne / import</div>
             <div class="h4 mb-0">@(zamowienia.Count - liczbaZamowienWWW)</div>
         </div>
     </div>
@@ -476,7 +521,7 @@
         {
             <div class="p-4">
                 <div class="alert alert-info mb-0">
-                    Brak zamówień do wyświetlenia.
+                    Brak zamówień dla wybranych filtrów.
                 </div>
             </div>
         }

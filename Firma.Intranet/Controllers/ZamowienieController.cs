@@ -30,9 +30,12 @@ namespace Firma.Intranet.Controllers
             _zamowienieExcelImporter = zamowienieExcelImporter;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? zrodlo = null, string? status = null)
         {
-            var zamowienia = await _zamowienieIntranetService.PobierzListe();
+            var zamowienia = await _zamowienieIntranetService.PobierzListe(zrodlo, status);
+
+            ViewBag.WybraneZrodlo = zrodlo ?? string.Empty;
+            ViewBag.WybranyStatus = status ?? string.Empty;
 
             return View(zamowienia);
         }
