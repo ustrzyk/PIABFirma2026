@@ -8,7 +8,7 @@
 <section class="portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">Promocja</span>
+            <span class="portal-badge">🏷️ Promocja</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 @Model.Tytul
@@ -21,6 +21,7 @@
             <div class="hero-actions">
                 <a href="/Sklep/Index"
                    class="btn btn-primary btn-lg">
+                    <span class="btn-icon">🛒</span>
                     Przejdź do sklepu
                 </a>
 
@@ -38,7 +39,7 @@
 
                 <div class="hero-feature">
                     <strong>-@Model.RabatProcentowy%</strong>
-                    <span>Wartość rabatu.</span>
+                    <span>Rabat promocyjny.</span>
                 </div>
 
                 <div class="hero-feature">
@@ -52,7 +53,7 @@
                             <text>Poza terminem</text>
                         }
                     </strong>
-                    <span>Status promocji według dat.</span>
+                    <span>Status według dat.</span>
                 </div>
 
                 <div class="hero-feature">
@@ -73,63 +74,65 @@
     </div>
 </section>
 
-<section class="row g-4">
-    <div class="col-12 col-lg-7">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Opis promocji</h2>
+<section class="promo-details-grid">
+    <div class="details-card">
+        <span class="home-quick-icon">ℹ️</span>
+        <h2 class="h5 mb-3">Opis promocji</h2>
 
-            <p class="tekst-strony text-muted mb-0">
-                @Model.Opis
-            </p>
-        </div>
+        <p class="tekst-strony text-muted mb-0">
+            @Model.Opis
+        </p>
     </div>
 
-    <div class="col-12 col-lg-5">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Parametry</h2>
+    <div class="details-card">
+        <span class="home-quick-icon">📅</span>
+        <h2 class="h5 mb-3">Parametry</h2>
 
-            <dl class="details-list-clean mb-0">
-                <dt>Status</dt>
-                <dd>
-                    @if (Model.CzyAktualna)
-                    {
-                        <span class="availability-badge available">aktywna</span>
-                    }
-                    else
-                    {
-                        <span class="availability-badge unavailable">poza terminem</span>
-                    }
-                </dd>
+        <dl class="details-list-clean mb-0">
+            <dt>Status</dt>
+            <dd>
+                @if (Model.CzyAktualna)
+                {
+                    <span class="availability-badge available">aktywna</span>
+                }
+                else
+                {
+                    <span class="availability-badge unavailable">poza terminem</span>
+                }
+            </dd>
 
-                <dt>Rabat</dt>
-                <dd>
-                    <strong class="price-text">@Model.RabatProcentowy%</strong>
-                </dd>
+            <dt>Rabat</dt>
+            <dd>
+                <strong class="price-text">@Model.RabatProcentowy%</strong>
+            </dd>
 
-                <dt>Data od</dt>
-                <dd>
-                    @if (Model.DataOd != null)
-                    {
-                        @Model.DataOd.Value.ToString("dd.MM.yyyy")
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak danych</span>
-                    }
-                </dd>
+            <dt>Data od</dt>
+            <dd>
+                @if (Model.DataOd != null)
+                {
+                    @Model.DataOd.Value.ToString("dd.MM.yyyy")
+                }
+                else
+                {
+                    <span class="text-muted">brak danych</span>
+                }
+            </dd>
 
-                <dt>Data do</dt>
-                <dd>
-                    @if (Model.DataDo != null)
-                    {
-                        @Model.DataDo.Value.ToString("dd.MM.yyyy")
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak danych</span>
-                    }
-                </dd>
-            </dl>
+            <dt>Data do</dt>
+            <dd>
+                @if (Model.DataDo != null)
+                {
+                    @Model.DataDo.Value.ToString("dd.MM.yyyy")
+                }
+                else
+                {
+                    <span class="text-muted">brak danych</span>
+                }
+            </dd>
+        </dl>
+
+        <div class="simple-note mt-3">
+            Rabat jest informacją handlową widoczną dla klienta w portalu.
         </div>
     </div>
 </section>

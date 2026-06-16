@@ -41,8 +41,9 @@
         <div class="col-12 col-lg-7">
             <div class="product-details-panel">
                 <div class="product-meta mb-3">
-                    <span>@Model.Rodzaj</span>
-                    <span>@Model.Producent</span>
+                    <span>🧩 @Model.Rodzaj</span>
+                    <span>🏭 @Model.Producent</span>
+                    <span>🔖 @Model.Kod</span>
                 </div>
 
                 <h1 class="h2 mb-3">@Model.Nazwa</h1>
@@ -53,7 +54,7 @@
 
                 <div class="product-buy-box">
                     <div>
-                        <div class="small text-muted">Cena</div>
+                        <div class="small text-muted">Cena produktu</div>
                         <div class="price-text product-details-price">
                             @Model.Cena.ToString("C")
                         </div>
@@ -63,13 +64,13 @@
                         @if (Model.CzyDostepny)
                         {
                             <span class="availability-badge available">
-                                dostępny: @Model.IloscSztuk szt.
+                                📦 dostępny: @Model.IloscSztuk szt.
                             </span>
                         }
                         else
                         {
                             <span class="availability-badge unavailable">
-                                brak danych
+                                📦 brak danych
                             </span>
                         }
                     </div>
@@ -83,17 +84,12 @@
                 }
 
                 <div class="product-details-actions">
-                    <a href="/Sklep/Index"
-                       class="btn btn-outline-secondary">
-                        Wróć do sklepu
-                    </a>
-
                     @if (Model.CzyDostepny)
                     {
                         <form asp-controller="Koszyk"
                               asp-action="Dodaj"
                               method="post"
-                              class="d-flex flex-wrap gap-2">
+                              class="product-buy-form">
                             <input type="hidden" name="idTowaru" value="@Model.IdTowaru" />
                             <input type="hidden" name="returnUrl" value="@returnUrl" />
 
@@ -102,14 +98,19 @@
                                    value="1"
                                    min="1"
                                    max="20"
-                                   class="form-control"
-                                   style="width: 110px;" />
+                                   class="form-control" />
 
                             <button type="submit" class="btn btn-primary">
-                                Do koszyka
+                                <span class="btn-icon">🛒</span>
+                                Dodaj do koszyka
                             </button>
                         </form>
                     }
+
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do sklepu
+                    </a>
 
                     @if (!string.IsNullOrWhiteSpace(Model.StronaWWWProducenta))
                     {
@@ -125,66 +126,68 @@
     </div>
 </section>
 
-<section class="row g-4 mb-4">
-    <div class="col-12 col-lg-7">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Informacje o produkcie</h2>
+<section class="product-info-panels mb-4">
+    <div class="details-card">
+        <span class="home-quick-icon">ℹ️</span>
+        <h2 class="h5 mb-3">Najważniejsze informacje</h2>
 
-            <dl class="details-list details-list-clean">
-                <dt>Kod produktu</dt>
-                <dd>@Model.Kod</dd>
+        <dl class="details-list details-list-clean mb-0">
+            <dt>Kod produktu</dt>
+            <dd>@Model.Kod</dd>
 
-                <dt>Rodzaj</dt>
-                <dd>@Model.Rodzaj</dd>
+            <dt>Rodzaj</dt>
+            <dd>@Model.Rodzaj</dd>
 
-                <dt>Producent</dt>
-                <dd>@Model.Producent</dd>
+            <dt>Producent</dt>
+            <dd>@Model.Producent</dd>
 
-                <dt>Kraj producenta</dt>
-                <dd>
-                    @if (!string.IsNullOrWhiteSpace(Model.KrajProducenta))
-                    {
-                        @Model.KrajProducenta
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak danych</span>
-                    }
-                </dd>
+            <dt>Kraj producenta</dt>
+            <dd>
+                @if (!string.IsNullOrWhiteSpace(Model.KrajProducenta))
+                {
+                    @Model.KrajProducenta
+                }
+                else
+                {
+                    <span class="text-muted">brak danych</span>
+                }
+            </dd>
 
-                <dt>Lokalizacja</dt>
-                <dd>
-                    @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
-                    {
-                        @Model.Lokalizacja
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak danych</span>
-                    }
-                </dd>
-            </dl>
-        </div>
+            <dt>Lokalizacja</dt>
+            <dd>
+                @if (!string.IsNullOrWhiteSpace(Model.Lokalizacja))
+                {
+                    @Model.Lokalizacja
+                }
+                else
+                {
+                    <span class="text-muted">brak danych</span>
+                }
+            </dd>
+        </dl>
     </div>
 
-    <div class="col-12 col-lg-5">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Dostępność</h2>
+    <div class="details-card">
+        <span class="home-quick-icon">📦</span>
+        <h2 class="h5 mb-3">Dostępność</h2>
 
-            @if (Model.CzyDostepny)
-            {
-                <div class="stock-box stock-box-ok">
-                    <strong>@Model.IloscSztuk szt.</strong>
-                    <span>Aktualna ilość w magazynie.</span>
-                </div>
-            }
-            else
-            {
-                <div class="stock-box">
-                    <strong>Brak danych</strong>
-                    <span>Dostępność nie została jeszcze uzupełniona.</span>
-                </div>
-            }
+        @if (Model.CzyDostepny)
+        {
+            <div class="stock-box stock-box-ok">
+                <strong>@Model.IloscSztuk szt.</strong>
+                <span>Produkt jest dostępny do zamówienia.</span>
+            </div>
+        }
+        else
+        {
+            <div class="stock-box">
+                <strong>Brak danych</strong>
+                <span>Dostępność nie została jeszcze uzupełniona.</span>
+            </div>
+        }
+
+        <div class="simple-note mt-3">
+            Po dodaniu produktu do koszyka możesz zmienić ilość przed potwierdzeniem zamówienia.
         </div>
     </div>
 </section>
@@ -192,9 +195,10 @@
 <section class="details-card">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
         <div>
-            <h2 class="h5 mb-1">Załączniki</h2>
+            <span class="portal-badge">Pliki</span>
+            <h2 class="h5 mt-2 mb-1">Załączniki do produktu</h2>
             <p class="text-muted mb-0">
-                Pliki powiązane z produktem.
+                Instrukcje, karty produktu lub dodatkowe materiały.
             </p>
         </div>
     </div>

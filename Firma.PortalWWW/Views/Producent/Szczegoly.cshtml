@@ -9,7 +9,7 @@
 <section class="portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">Producent</span>
+            <span class="portal-badge">🏭 Producent</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 @Model.Nazwa
@@ -52,7 +52,7 @@
 
                 <div class="hero-feature">
                     <strong>@Model.IloscTowarow</strong>
-                    <span>Liczba aktywnych towarów.</span>
+                    <span>Liczba produktów.</span>
                 </div>
 
                 <div class="hero-feature">
@@ -88,6 +88,7 @@
 </section>
 
 <section class="details-card mb-4">
+    <span class="home-quick-icon">ℹ️</span>
     <h2 class="h5 mb-3">Dane producenta</h2>
 
     <dl class="details-list-clean mb-0">
@@ -118,14 +119,14 @@
             }
         </dd>
 
-        <dt>Liczba towarów</dt>
+        <dt>Liczba produktów</dt>
         <dd>@Model.IloscTowarow</dd>
     </dl>
 </section>
 
 <section class="section-heading mb-4">
     <div>
-        <span class="portal-badge">Towary</span>
+        <span class="portal-badge">🧩 Produkty</span>
         <h2 class="h3 mt-2 mb-2">Produkty producenta</h2>
         <p class="text-muted mb-0">
             Aktywne towary powiązane z tym producentem.
@@ -143,7 +144,7 @@
     <section class="product-grid">
         @foreach (var item in towary)
         {
-            <article class="product-card">
+            <article class="product-card product-card-clear">
                 <a asp-controller="Sklep"
                    asp-action="Szczegoly"
                    asp-route-id="@item.IdTowaru"
@@ -184,31 +185,37 @@
                         @item.Opis
                     </p>
 
-                    <div class="product-card-footer">
+                    <div class="product-info-row">
                         <div>
-                            <div class="price-text product-price">
-                                @item.Cena.ToString("C")
-                            </div>
+                            <span>💰 Cena</span>
+                            <strong class="price-text">@item.Cena.ToString("C")</strong>
+                        </div>
+
+                        <div>
+                            <span>📦 Dostępność</span>
 
                             @if (item.CzyDostepny)
                             {
-                                <span class="availability-badge available">
-                                    @item.IloscSztuk szt.
-                                </span>
+                                <strong>@item.IloscSztuk szt.</strong>
                             }
                             else
                             {
-                                <span class="availability-badge unavailable">
-                                    brak danych
-                                </span>
+                                <strong>brak danych</strong>
                             }
                         </div>
+                    </div>
 
+                    <div class="product-card-actions">
                         <a class="btn btn-primary"
                            asp-controller="Sklep"
                            asp-action="Szczegoly"
                            asp-route-id="@item.IdTowaru">
-                            Zobacz
+                            Zobacz produkt
+                        </a>
+
+                        <a href="/Sklep/Index"
+                           class="btn btn-outline-secondary">
+                            Sklep
                         </a>
                     </div>
                 </div>
@@ -219,11 +226,15 @@
 else
 {
     <div class="empty-state">
-        <h2 class="h4">Brak produktów</h2>
-        <p>Ten producent nie ma aktualnie aktywnych towarów.</p>
+        <span class="portal-badge">Brak produktów</span>
 
-        <a asp-controller="Sklep"
-           asp-action="Index"
+        <h2 class="h4 mt-3">Ten producent nie ma aktualnie aktywnych towarów</h2>
+
+        <p>
+            Możesz wrócić do pełnej oferty sklepu i sprawdzić produkty innych producentów.
+        </p>
+
+        <a href="/Sklep/Index"
            class="btn btn-primary">
             Przejdź do sklepu
         </a>

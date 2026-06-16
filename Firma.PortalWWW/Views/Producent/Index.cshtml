@@ -8,10 +8,10 @@
 
 <section class="section-heading mb-4">
     <div>
-        <span class="portal-badge">Producenci</span>
+        <span class="portal-badge">🏭 Producenci</span>
         <h1 class="h2 mt-2 mb-2">Marki dostępne w sklepie</h1>
         <p class="text-muted mb-0">
-            Wybierz producenta i zobacz powiązane produkty.
+            Wybierz producenta, żeby zobaczyć jego produkty.
         </p>
     </div>
 
@@ -23,69 +23,60 @@
 
 @if (producenci.Any())
 {
-    <section class="product-grid">
+    <section class="producer-grid">
         @foreach (var item in producenci)
         {
-            <article class="product-card">
-                <div class="product-card-body">
-                    <div class="product-meta mb-3">
-                        @if (!string.IsNullOrWhiteSpace(item.Kraj))
-                        {
-                            <span>@item.Kraj</span>
-                        }
-                        else
-                        {
-                            <span>brak kraju</span>
-                        }
+            <article class="producer-card">
+                <div class="producer-card-icon">🏭</div>
 
-                        <span>@item.IloscTowarow produktów</span>
-                    </div>
+                <div class="product-meta mb-3">
+                    @if (!string.IsNullOrWhiteSpace(item.Kraj))
+                    {
+                        <span>@item.Kraj</span>
+                    }
+                    else
+                    {
+                        <span>brak kraju</span>
+                    }
 
-                    <h2 class="product-title">
-                        <a asp-controller="Producent"
-                           asp-action="Szczegoly"
-                           asp-route-id="@item.IdProducenta">
-                            @item.Nazwa
+                    <span>@item.IloscTowarow produktów</span>
+                </div>
+
+                <h2 class="h4 mb-2">
+                    <a asp-controller="Producent"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdProducenta">
+                        @item.Nazwa
+                    </a>
+                </h2>
+
+                <p class="text-muted tekst-skrot">
+                    @if (!string.IsNullOrWhiteSpace(item.Opis))
+                    {
+                        @item.Opis
+                    }
+                    else
+                    {
+                        <text>Brak opisu producenta.</text>
+                    }
+                </p>
+
+                <div class="producer-card-actions">
+                    <a class="btn btn-primary"
+                       asp-controller="Producent"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdProducenta">
+                        Produkty
+                    </a>
+
+                    @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
+                    {
+                        <a href="@item.StronaWWW"
+                           target="_blank"
+                           class="btn btn-outline-secondary">
+                            WWW
                         </a>
-                    </h2>
-
-                    <p class="product-description tekst-skrot">
-                        @if (!string.IsNullOrWhiteSpace(item.Opis))
-                        {
-                            @item.Opis
-                        }
-                        else
-                        {
-                            <text>Brak opisu producenta.</text>
-                        }
-                    </p>
-
-                    <div class="product-card-footer">
-                        <div>
-                            <div class="small text-muted">Towary</div>
-                            <div class="price-text product-price">
-                                @item.IloscTowarow
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-2">
-                            @if (!string.IsNullOrWhiteSpace(item.StronaWWW))
-                            {
-                                <a href="@item.StronaWWW"
-                                   target="_blank"
-                                   class="btn btn-outline-secondary">
-                                    WWW
-                                </a>
-                            }
-
-                            <a class="btn btn-primary"
-                               asp-controller="Producent"
-                               asp-action="Szczegoly"
-                               asp-route-id="@item.IdProducenta">
-                                Szczegóły
-                            </a>
-                        </div>
-                    </div>
+                    }
                 </div>
             </article>
         }
@@ -94,11 +85,15 @@
 else
 {
     <div class="empty-state">
-        <h2 class="h4">Brak producentów</h2>
-        <p>Nie ma aktywnych producentów do wyświetlenia.</p>
+        <span class="portal-badge">Brak producentów</span>
 
-        <a asp-controller="Sklep"
-           asp-action="Index"
+        <h2 class="h4 mt-3">Nie ma aktywnych producentów</h2>
+
+        <p>
+            Po dodaniu producentów w Intranecie będą widoczni w tym miejscu.
+        </p>
+
+        <a href="/Sklep/Index"
            class="btn btn-primary">
             Przejdź do sklepu
         </a>

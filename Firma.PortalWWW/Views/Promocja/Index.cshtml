@@ -8,10 +8,10 @@
 
 <section class="section-heading mb-4">
     <div>
-        <span class="portal-badge">Promocje</span>
+        <span class="portal-badge">🏷️ Promocje</span>
         <h1 class="h2 mt-2 mb-2">Aktualne oferty specjalne</h1>
         <p class="text-muted mb-0">
-            Sprawdź rabaty i informacje handlowe dostępne w portalu.
+            Sprawdź rabaty i przejdź do sklepu, żeby dobrać produkty do zamówienia.
         </p>
     </div>
 
@@ -23,74 +23,74 @@
 
 @if (promocje.Any())
 {
-    <section class="product-grid">
+    <section class="promo-grid">
         @foreach (var item in promocje)
         {
-            <article class="product-card">
-                <div class="product-card-body">
-                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
-                        <span class="promo-badge">
-                            -@item.RabatProcentowy%
-                        </span>
+            <article class="promo-card">
+                <div class="promo-card-top">
+                    <span class="promo-big-badge">
+                        -@item.RabatProcentowy%
+                    </span>
 
-                        <span class="availability-badge available">
-                            oferta
-                        </span>
-                    </div>
+                    <span class="availability-badge available">
+                        oferta
+                    </span>
+                </div>
 
-                    <h2 class="product-title">
-                        <a asp-controller="Promocja"
-                           asp-action="Szczegoly"
-                           asp-route-id="@item.IdPromocji">
-                            @item.Tytul
-                        </a>
-                    </h2>
+                <h2 class="h4 mb-2">
+                    <a asp-controller="Promocja"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdPromocji">
+                        @item.Tytul
+                    </a>
+                </h2>
 
-                    <p class="product-description tekst-skrot">
-                        @item.Opis
-                    </p>
+                <p class="text-muted tekst-skrot">
+                    @item.Opis
+                </p>
 
-                    <dl class="details-list-clean mb-3">
-                        <dt>Od</dt>
-                        <dd>
+                <div class="promo-dates">
+                    <div>
+                        <span>Od</span>
+                        <strong>
                             @if (item.DataOd != null)
                             {
                                 @item.DataOd.Value.ToString("dd.MM.yyyy")
                             }
                             else
                             {
-                                <span class="text-muted">bez daty</span>
+                                <text>bez daty</text>
                             }
-                        </dd>
+                        </strong>
+                    </div>
 
-                        <dt>Do</dt>
-                        <dd>
+                    <div>
+                        <span>Do</span>
+                        <strong>
                             @if (item.DataDo != null)
                             {
                                 @item.DataDo.Value.ToString("dd.MM.yyyy")
                             }
                             else
                             {
-                                <span class="text-muted">bez daty</span>
+                                <text>bez daty</text>
                             }
-                        </dd>
-                    </dl>
-
-                    <div class="product-card-footer">
-                        <div>
-                            <div class="small text-muted">Rabat</div>
-                            <div class="price-text product-price">
-                                @item.RabatProcentowy%
-                            </div>
-                        </div>
-
-                        <a class="btn btn-primary"
-                           asp-controller="Promocja"
-                           asp-action="Szczegoly"
-                           asp-route-id="@item.IdPromocji">
-                            Szczegóły
-                        </a>
+                        </strong>
                     </div>
+                </div>
+
+                <div class="promo-card-actions">
+                    <a class="btn btn-primary"
+                       asp-controller="Promocja"
+                       asp-action="Szczegoly"
+                       asp-route-id="@item.IdPromocji">
+                        Szczegóły promocji
+                    </a>
+
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary">
+                        Produkty
+                    </a>
                 </div>
             </article>
         }
@@ -109,8 +109,7 @@ else
         </p>
 
         <div class="empty-state-actions">
-            <a asp-controller="Sklep"
-               asp-action="Index"
+            <a href="/Sklep/Index"
                class="btn btn-primary">
                 Przejdź do sklepu
             </a>

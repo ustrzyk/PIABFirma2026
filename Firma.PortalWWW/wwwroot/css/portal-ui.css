@@ -55,12 +55,7 @@
     }
 
 .product-card-actions .btn,
-.product-card-actions button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
+.product-card-actions button,
 .portal-navbar-actions .btn {
     display: inline-flex;
     align-items: center;
@@ -75,6 +70,145 @@
     color: #475569;
 }
 
+/* Dodatkowe układy dla bardziej intuicyjnych widoków */
+
+.product-info-panels,
+.promo-details-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: 1.25rem;
+    align-items: stretch;
+}
+
+.product-buy-form {
+    display: grid;
+    grid-template-columns: 110px auto;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+    .product-buy-form .form-control {
+        width: 110px;
+    }
+
+.promo-grid,
+.producer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.promo-card,
+.producer-card {
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: var(--portal-radius);
+    padding: 1.25rem;
+    box-shadow: var(--portal-shadow-soft);
+    transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+    .promo-card:hover,
+    .producer-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(13, 110, 253, 0.25);
+        box-shadow: var(--portal-shadow);
+    }
+
+    .promo-card h2 a,
+    .producer-card h2 a {
+        color: #111827;
+        text-decoration: none;
+    }
+
+        .promo-card h2 a:hover,
+        .producer-card h2 a:hover {
+            color: var(--portal-button-color);
+        }
+
+.promo-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.promo-big-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.25rem;
+    height: 4.25rem;
+    border-radius: 1.1rem;
+    background-color: var(--portal-button-color);
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 900;
+}
+
+.promo-dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+    .promo-dates div {
+        background-color: #f8fafc;
+        border-radius: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .promo-dates span {
+        display: block;
+        color: #64748b;
+        font-size: 0.82rem;
+        font-weight: 700;
+    }
+
+    .promo-dates strong {
+        display: block;
+    }
+
+.promo-card-actions,
+.producer-card-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+    .promo-card-actions .btn,
+    .producer-card-actions .btn {
+        width: 100%;
+    }
+
+.producer-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    background-color: #eef5ff;
+    color: var(--portal-button-color);
+    font-size: 1.45rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 1199.98px) {
+    .promo-grid,
+    .producer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .product-info-panels,
+    .promo-details-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 767.98px) {
     .shop-stat-card {
         grid-template-columns: auto minmax(0, 1fr);
@@ -85,4 +219,23 @@
         width: 2.2rem;
         height: 2.2rem;
     }
+
+    .promo-grid,
+    .producer-grid,
+    .promo-card-actions,
+    .producer-card-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .promo-dates {
+        grid-template-columns: 1fr;
+    }
+
+    .product-buy-form {
+        grid-template-columns: 1fr;
+    }
+
+        .product-buy-form .form-control {
+            width: 100%;
+        }
 }
