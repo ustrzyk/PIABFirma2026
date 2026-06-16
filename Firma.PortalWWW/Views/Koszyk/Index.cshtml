@@ -29,119 +29,94 @@
 
 @if (Model.Pozycje.Any())
 {
-    <section class="details-card mb-4">
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>Produkt</th>
-                        <th>Cena</th>
-                        <th>Ilość</th>
-                        <th>Wartość</th>
-                        <th class="text-end">Akcje</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Pozycje)
-                    {
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center gap-3">
-                                    @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
-                                    {
-                                        <img src="@item.FotoUrl"
-                                             alt="@item.Nazwa"
-                                             class="product-mini-img" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/content/CA.png"
-                                             alt="@item.Nazwa"
-                                             class="product-mini-img" />
-                                    }
+    <section class="cart-layout">
+        <div class="cart-items">
+            @foreach (var item in Model.Pozycje)
+            {
+                <article class="cart-item-card">
+                    <div class="cart-item-image-wrap">
+                        @if (!string.IsNullOrWhiteSpace(item.FotoUrl))
+                        {
+                            <img src="@item.FotoUrl"
+                                 alt="@item.Nazwa"
+                                 class="cart-item-image" />
+                        }
+                        else
+                        {
+                            <img src="~/content/CA.png"
+                                 alt="@item.Nazwa"
+                                 class="cart-item-image" />
+                        }
+                    </div>
 
-                                    <div>
-                                        <strong>@item.Nazwa</strong>
-                                        <div class="small text-muted">
-                                            @item.Kod · @item.Producent · @item.Rodzaj
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
+                    <div class="cart-item-main">
+                        <div class="product-meta mb-2">
+                            <span>@item.Rodzaj</span>
+                            <span>@item.Producent</span>
+                        </div>
 
-                            <td>@item.Cena.ToString("C")</td>
+                        <h2 class="h5 mb-1">@item.Nazwa</h2>
 
-                            <td>
-                                <form asp-controller="Koszyk"
-                                      asp-action="ZmienIlosc"
-                                      method="post"
-                                      class="d-flex gap-2">
-                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+                        <div class="text-muted small mb-2">
+                            Kod: @item.Kod
+                        </div>
 
-                                    <input type="number"
-                                           name="ilosc"
-                                           value="@item.Ilosc"
-                                           min="1"
-                                           max="20"
-                                           class="form-control"
-                                           style="width: 90px;" />
+                        <div class="cart-item-values">
+                            <div>
+                                <span>Cena</span>
+                                <strong>@item.Cena.ToString("C")</strong>
+                            </div>
 
-                                    <button type="submit" class="btn btn-outline-secondary">
-                                        Zmień
-                                    </button>
-                                </form>
-                            </td>
+                            <div>
+                                <span>Ilość</span>
+                                <strong>@item.Ilosc</strong>
+                            </div>
 
-                            <td>
-                                <strong>@item.Wartosc.ToString("C")</strong>
-                            </td>
+                            <div>
+                                <span>Wartość</span>
+                                <strong class="price-text">@item.Wartosc.ToString("C")</strong>
+                            </div>
+                        </div>
+                    </div>
 
-                            <td class="text-end">
-                                <form asp-controller="Koszyk"
-                                      asp-action="Usun"
-                                      method="post">
-                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+                    <div class="cart-item-actions">
+                        <form asp-controller="Koszyk"
+                              asp-action="ZmienIlosc"
+                              method="post"
+                              class="cart-quantity-form">
+                            <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
 
-                                    <button type="submit" class="btn btn-outline-danger">
-                                        Usuń
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </section>
+                            <label class="form-label small text-muted mb-1">Ilość</label>
 
-    <section class="row g-4">
-        <div class="col-12 col-lg-7">
-            <div class="details-card">
-                <h2 class="h5 mb-3">Co dalej?</h2>
+                            <div class="d-flex gap-2">
+                                <input type="number"
+                                       name="ilosc"
+                                       value="@item.Ilosc"
+                                       min="1"
+                                       max="20"
+                                       class="form-control" />
 
-                <p class="text-muted">
-                    Po kliknięciu „Złóż zamówienie” wpiszesz dane kontaktowe i adres dostawy.
-                    Zamówienie trafi do panelu Intranet do dalszej obsługi.
-                </p>
+                                <button type="submit" class="btn btn-outline-secondary">
+                                    Zmień
+                                </button>
+                            </div>
+                        </form>
 
-                <div class="d-flex flex-wrap gap-2">
-                    <a href="/Sklep/Index"
-                       class="btn btn-outline-secondary">
-                        Kontynuuj zakupy
-                    </a>
+                        <form asp-controller="Koszyk"
+                              asp-action="Usun"
+                              method="post">
+                            <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
 
-                    <form asp-controller="Koszyk"
-                          asp-action="Wyczysc"
-                          method="post">
-                        <button type="submit" class="btn btn-outline-danger">
-                            Wyczyść koszyk
-                        </button>
-                    </form>
-                </div>
-            </div>
+                            <button type="submit" class="btn btn-outline-danger w-100">
+                                Usuń
+                            </button>
+                        </form>
+                    </div>
+                </article>
+            }
         </div>
 
-        <div class="col-12 col-lg-5">
+        <aside class="cart-summary">
             <div class="details-card">
                 <h2 class="h5 mb-3">Podsumowanie</h2>
 
@@ -157,11 +132,24 @@
 
                 <a asp-controller="Koszyk"
                    asp-action="Zamowienie"
-                   class="btn btn-primary w-100">
+                   class="btn btn-primary w-100 mb-2">
                     Złóż zamówienie
                 </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary w-100 mb-2">
+                    Kontynuuj zakupy
+                </a>
+
+                <form asp-controller="Koszyk"
+                      asp-action="Wyczysc"
+                      method="post">
+                    <button type="submit" class="btn btn-outline-danger w-100">
+                        Wyczyść koszyk
+                    </button>
+                </form>
             </div>
-        </div>
+        </aside>
     </section>
 }
 else

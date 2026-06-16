@@ -22,117 +22,115 @@
     </div>
 </section>
 
-<section class="row g-4">
-    <div class="col-12 col-lg-7">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Dane klienta</h2>
+<section class="checkout-layout">
+    <div class="details-card checkout-form-card">
+        <h2 class="h5 mb-3">Dane klienta i dostawy</h2>
 
-            <form asp-controller="Koszyk"
-                  asp-action="Zamowienie"
-                  method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <form asp-controller="Koszyk"
+              asp-action="Zamowienie"
+              method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="row g-3">
-                    <div class="col-12 col-md-6">
-                        <label asp-for="Imie" class="form-label"></label>
-                        <input asp-for="Imie" class="form-control" />
-                        <span asp-validation-for="Imie" class="text-danger"></span>
-                    </div>
+            <div class="checkout-section-title">Dane kontaktowe</div>
 
-                    <div class="col-12 col-md-6">
-                        <label asp-for="Nazwisko" class="form-label"></label>
-                        <input asp-for="Nazwisko" class="form-control" />
-                        <span asp-validation-for="Nazwisko" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="Telefon" class="form-label"></label>
-                        <input asp-for="Telefon" class="form-control" />
-                        <span asp-validation-for="Telefon" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12">
-                        <hr />
-                    </div>
-
-                    <div class="col-12">
-                        <label asp-for="Ulica" class="form-label"></label>
-                        <input asp-for="Ulica" class="form-control" />
-                        <span asp-validation-for="Ulica" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="NumerDomu" class="form-label"></label>
-                        <input asp-for="NumerDomu" class="form-control" />
-                        <span asp-validation-for="NumerDomu" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="NumerLokalu" class="form-label"></label>
-                        <input asp-for="NumerLokalu" class="form-control" />
-                        <span asp-validation-for="NumerLokalu" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="KodPocztowy" class="form-label"></label>
-                        <input asp-for="KodPocztowy" class="form-control" />
-                        <span asp-validation-for="KodPocztowy" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <label asp-for="Miasto" class="form-label"></label>
-                        <input asp-for="Miasto" class="form-control" />
-                        <span asp-validation-for="Miasto" class="text-danger"></span>
-                    </div>
+            <div class="row g-3">
+                <div class="col-12 col-md-6">
+                    <label asp-for="Imie" class="form-label"></label>
+                    <input asp-for="Imie" class="form-control" />
+                    <span asp-validation-for="Imie" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-wrap gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">
-                        Potwierdź zamówienie
-                    </button>
-
-                    <a asp-controller="Koszyk"
-                       asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Wróć do koszyka
-                    </a>
+                <div class="col-12 col-md-6">
+                    <label asp-for="Nazwisko" class="form-label"></label>
+                    <input asp-for="Nazwisko" class="form-control" />
+                    <span asp-validation-for="Nazwisko" class="text-danger"></span>
                 </div>
-            </form>
-        </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="Telefon" class="form-label"></label>
+                    <input asp-for="Telefon" class="form-control" />
+                    <span asp-validation-for="Telefon" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="checkout-section-title mt-4">Adres dostawy</div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="Ulica" class="form-label"></label>
+                    <input asp-for="Ulica" class="form-control" />
+                    <span asp-validation-for="Ulica" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="NumerDomu" class="form-label"></label>
+                    <input asp-for="NumerDomu" class="form-control" />
+                    <span asp-validation-for="NumerDomu" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="NumerLokalu" class="form-label"></label>
+                    <input asp-for="NumerLokalu" class="form-control" />
+                    <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="KodPocztowy" class="form-label"></label>
+                    <input asp-for="KodPocztowy" class="form-control" />
+                    <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="Miasto" class="form-label"></label>
+                    <input asp-for="Miasto" class="form-control" />
+                    <span asp-validation-for="Miasto" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="checkout-actions">
+                <button type="submit" class="btn btn-primary">
+                    Potwierdź zamówienie
+                </button>
+
+                <a asp-controller="Koszyk"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Wróć do koszyka
+                </a>
+            </div>
+        </form>
     </div>
 
-    <div class="col-12 col-lg-5">
+    <aside class="checkout-summary">
         <div class="details-card">
             <h2 class="h5 mb-3">Podsumowanie koszyka</h2>
 
-            @foreach (var item in koszyk.Pozycje)
-            {
-                <div class="d-flex justify-content-between gap-3 border-bottom py-2">
-                    <div>
-                        <strong>@item.Nazwa</strong>
-                        <div class="small text-muted">
-                            @item.Ilosc x @item.Cena.ToString("C")
+            <div class="checkout-items">
+                @foreach (var item in koszyk.Pozycje)
+                {
+                    <div class="checkout-item">
+                        <div>
+                            <strong>@item.Nazwa</strong>
+                            <span>@item.Ilosc x @item.Cena.ToString("C")</span>
                         </div>
-                    </div>
 
-                    <div class="text-end">
                         <strong>@item.Wartosc.ToString("C")</strong>
                     </div>
-                </div>
-            }
+                }
+            </div>
 
-            <div class="d-flex justify-content-between gap-3 mt-3">
-                <strong>Razem</strong>
+            <div class="checkout-total">
+                <span>Razem</span>
                 <strong class="price-text">@koszyk.Suma.ToString("C")</strong>
             </div>
         </div>
-    </div>
+    </aside>
 </section>
 
 @section Scripts {
