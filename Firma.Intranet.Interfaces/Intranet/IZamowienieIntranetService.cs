@@ -15,6 +15,8 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task<bool> Aktualizuj(int id, Zamowienie zamowienie);
 
+        Task<bool> ZmienStatus(int id, string status);
+
         Task<Zamowienie?> PobierzDoUsuniecia(int id);
 
         Task Usun(int id);

@@ -10,6 +10,15 @@ namespace Firma.Intranet.Services.Intranet
     {
         private readonly FirmaContext _context;
 
+        private static readonly HashSet<string> DozwoloneStatusy = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Nowe",
+            "w trakcie",
+            "wysłane",
+            "zakończone",
+            "anulowane"
+        };
+
         public ZamowienieIntranetService(FirmaContext context)
         {
             _context = context;
@@ -79,6 +88,30 @@ namespace Firma.Intranet.Services.Intranet
 
                 throw;
             }
+        }
+
+        public async Task<bool> ZmienStatus(int id, string status)
+        {
+            var nowyStatus = status.Trim();
+
+            if (!DozwoloneStatusy.Contains(nowyStatus))
+            {
+                return false;
+            }
+
+            var zamowienie = await _context.Zamowienie
+                .FirstOrDefaultAsync(z => z.IdZamowienia == id);
+
+            if (zamowienie == null)
+            {
+                return false;
+            }
+
+            zamowienie.Status = nowyStatus;
+
+            await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<Zamowienie?> PobierzDoUsuniecia(int id)

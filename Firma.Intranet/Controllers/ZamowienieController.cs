@@ -122,6 +122,19 @@ namespace Firma.Intranet.Controllers
             return View(zamowienie);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ZmienStatus(int id, string status)
+        {
+            var zapisano = await _zamowienieIntranetService.ZmienStatus(id, status);
+
+            TempData["Komunikat"] = zapisano
+                ? $"Zmieniono status zamówienia na: {status}."
+                : "Nie udało się zmienić statusu zamówienia.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

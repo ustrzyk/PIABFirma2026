@@ -127,6 +127,13 @@
     </div>
 </div>
 
+@if (TempData["Komunikat"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Komunikat"]
+    </div>
+}
+
 <div class="row g-3 mb-3">
     <div class="col-12 col-md-4">
         <div class="zamowienie-zrodlo-box">
@@ -206,6 +213,9 @@
                                     !string.IsNullOrWhiteSpace(item.NumerZamowienia) &&
                                     item.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase);
 
+                                var nastepnyStatus = PobierzNastepnyStatus(item.Status);
+                                var tekstPrzyciskuStatusu = PobierzTekstPrzyciskuStatusu(item.Status);
+
                                 <tr class="@(czyZamowienieWWW ? "zamowienie-www-row" : string.Empty)">
                                     <td>
                                         <input type="checkbox"
@@ -279,6 +289,15 @@
 
                                     <td class="text-end">
                                         <div class="btn-group btn-group-sm">
+                                            @if (!string.IsNullOrWhiteSpace(nastepnyStatus))
+                                            {
+                                                <button type="submit"
+                                                        formaction="@Url.Action("ZmienStatus", "Zamowienie", new { id = item.IdZamowienia, status = nastepnyStatus })"
+                                                        class="btn btn-outline-success">
+                                                    @tekstPrzyciskuStatusu
+                                                </button>
+                                            }
+
                                             <a asp-action="PobierzFakturePdf"
                                                asp-route-id="@item.IdZamowienia"
                                                class="btn btn-outline-dark">
@@ -319,6 +338,9 @@
                         var czyZamowienieWWW =
                             !string.IsNullOrWhiteSpace(item.NumerZamowienia) &&
                             item.NumerZamowienia.StartsWith("WWW", StringComparison.OrdinalIgnoreCase);
+
+                        var nastepnyStatus = PobierzNastepnyStatus(item.Status);
+                        var tekstPrzyciskuStatusu = PobierzTekstPrzyciskuStatusu(item.Status);
 
                         <div class="zamowienie-mobile-card @(czyZamowienieWWW ? "zamowienie-mobile-card-www" : string.Empty)">
                             <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
@@ -409,6 +431,15 @@
                             </dl>
 
                             <div class="zamowienie-mobile-actions">
+                                @if (!string.IsNullOrWhiteSpace(nastepnyStatus))
+                                {
+                                    <button type="submit"
+                                            formaction="@Url.Action("ZmienStatus", "Zamowienie", new { id = item.IdZamowienia, status = nastepnyStatus })"
+                                            class="btn btn-outline-success">
+                                        @tekstPrzyciskuStatusu
+                                    </button>
+                                }
+
                                 <a asp-action="PobierzFakturePdf"
                                    asp-route-id="@item.IdZamowienia"
                                    class="btn btn-outline-dark">
@@ -466,4 +497,34 @@
             });
         }
     </script>
+}
+
+@functions {
+    private static string? PobierzNastepnyStatus(string? status)
+    {
+        var statusTekst = status?.Trim().ToLowerInvariant();
+
+        return statusTekst switch
+        {
+            "nowe" => "w trakcie",
+            "w trakcie" => "wysłane",
+            "wyslane" => "zakończone",
+            "wysłane" => "zakończone",
+            _ => null
+        };
+    }
+
+    private static string PobierzTekstPrzyciskuStatusu(string? status)
+    {
+        var statusTekst = status?.Trim().ToLowerInvariant();
+
+        return statusTekst switch
+        {
+            "nowe" => "Przyjmij",
+            "w trakcie" => "Wyślij",
+            "wyslane" => "Zakończ",
+            "wysłane" => "Zakończ",
+            _ => "Zmień status"
+        };
+    }
 }
