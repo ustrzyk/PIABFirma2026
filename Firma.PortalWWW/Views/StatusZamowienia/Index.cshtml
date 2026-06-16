@@ -1,62 +1,153 @@
 ﻿@model Firma.PortalWWW.Models.StatusZamowieniaViewModel
 
 @{
-    ViewData["Title"] = "Status zamówienia";
+    ViewData["Title"] = "Portal klienta";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+
+    var czyPokazanoZamowienie = Model.Wynik != null;
 }
 
-<section class="portal-hero mb-4">
+@functions {
+    private static int NumerEtapu(string? status)
+    {
+        var tekst = (status ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (tekst == "nowe")
+        {
+            return 1;
+        }
+
+        if (tekst == "w trakcie")
+        {
+            return 2;
+        }
+
+        if (tekst == "wysłane" || tekst == "wyslane")
+        {
+            return 3;
+        }
+
+        if (tekst == "zakończone" || tekst == "zakonczone")
+        {
+            return 4;
+        }
+
+        if (tekst == "anulowane")
+        {
+            return -1;
+        }
+
+        return 0;
+    }
+
+    private static string KlasaEtapu(int numer, int aktywnyEtap)
+    {
+        if (aktywnyEtap == -1)
+        {
+            return "order-step is-cancelled";
+        }
+
+        if (numer < aktywnyEtap)
+        {
+            return "order-step is-done";
+        }
+
+        if (numer == aktywnyEtap)
+        {
+            return "order-step is-current";
+        }
+
+        return "order-step";
+    }
+
+    private static string OpisKolejnegoKroku(string? status)
+    {
+        var tekst = (status ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (tekst == "nowe")
+        {
+            return "Zamówienie zostało przyjęte i czeka na rozpoczęcie obsługi.";
+        }
+
+        if (tekst == "w trakcie")
+        {
+            return "Zamówienie jest przygotowywane do wysyłki lub odbioru.";
+        }
+
+        if (tekst == "wysłane" || tekst == "wyslane")
+        {
+            return "Zamówienie zostało wysłane. Oczekuj dostawy.";
+        }
+
+        if (tekst == "zakończone" || tekst == "zakonczone")
+        {
+            return "Zamówienie zostało zakończone.";
+        }
+
+        if (tekst == "anulowane")
+        {
+            return "Zamówienie zostało anulowane.";
+        }
+
+        return "Status zamówienia zostanie zaktualizowany przez obsługę sklepu.";
+    }
+}
+
+<section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
             <span class="portal-badge">🧾 Portal klienta</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
-                Sprawdź status zamówienia
+                Panel zamówienia po zakupie
             </h1>
 
             <p class="hero-text mb-0">
-                Wpisz numer zamówienia oraz adres e-mail użyty podczas składania zamówienia.
+                Po złożeniu zamówienia wpisz numer zamówienia i e-mail. Portal pokaże status realizacji, dane dostawy i produkty.
             </p>
         </div>
 
         <div class="col-12 col-lg-4">
-            <div class="hero-card">
-                <div class="hero-card-title">Co przygotować?</div>
+            <div class="client-login-card">
+                <strong>Do sprawdzenia potrzebujesz:</strong>
 
-                <div class="hero-feature">
-                    <strong>Numer zamówienia</strong>
-                    <span>Na przykład WWW-20260616-001 albo WWW-DEMO-001.</span>
+                <div>
+                    <span>🧾</span>
+                    <p>Numer zamówienia, na przykład <strong>WWW-DEMO-001</strong>.</p>
                 </div>
 
-                <div class="hero-feature">
-                    <strong>E-mail</strong>
-                    <span>Ten sam adres, który był podany w formularzu zamówienia.</span>
+                <div>
+                    <span>✉️</span>
+                    <p>Adres e-mail podany przy zakupie.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="status-instruction-grid mb-4">
-    <div class="simple-note">
-        <strong>1. Numer zamówienia</strong>
-        <span>Zobaczysz go po złożeniu zamówienia.</span>
-    </div>
+@if (!czyPokazanoZamowienie)
+{
+    <section class="status-instruction-grid mb-4">
+        <div class="simple-note">
+            <strong>1. Złóż zamówienie</strong>
+            <span>Po zakupie otrzymasz numer zamówienia.</span>
+        </div>
 
-    <div class="simple-note">
-        <strong>2. E-mail</strong>
-        <span>Podaj adres użyty w formularzu zamówienia.</span>
-    </div>
+        <div class="simple-note">
+            <strong>2. Wejdź w portal klienta</strong>
+            <span>Nie musisz zakładać konta ani się logować.</span>
+        </div>
 
-    <div class="simple-note">
-        <strong>3. Wynik</strong>
-        <span>Portal pokaże status, dane dostawy i produkty.</span>
-    </div>
-</section>
+        <div class="simple-note">
+            <strong>3. Sprawdź realizację</strong>
+            <span>Zobaczysz status, adres dostawy i listę produktów.</span>
+        </div>
+    </section>
+}
 
 <section class="status-zamowienia-page">
     <div class="details-card mb-4">
-        <h2 class="h5 mb-3">Wyszukaj zamówienie</h2>
+        <h2 class="h5 mb-3">Znajdź swoje zamówienie</h2>
 
         <form asp-controller="StatusZamowienia"
               asp-action="Index"
@@ -91,120 +182,180 @@
 
     @if (Model.Wynik != null)
     {
-        <div class="details-card mb-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
-                <div>
-                    <span class="portal-badge">Zamówienie</span>
+        var etap = NumerEtapu(Model.Wynik.Status);
 
-                    <h2 class="h4 mt-2 mb-1">
-                        @Model.Wynik.NumerZamowienia
-                    </h2>
+        <section class="customer-panel-grid">
+            <div class="customer-panel-main">
+                <div class="details-card mb-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+                        <div>
+                            <span class="portal-badge">Moje zamówienie</span>
 
-                    @if (Model.Wynik.DataZamowienia != null)
-                    {
-                        <div class="text-muted">
-                            Data zamówienia: @Model.Wynik.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                            <h2 class="h4 mt-2 mb-1">
+                                @Model.Wynik.NumerZamowienia
+                            </h2>
+
+                            @if (Model.Wynik.DataZamowienia != null)
+                            {
+                                <div class="text-muted">
+                                    Data zamówienia: @Model.Wynik.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                                </div>
+                            }
                         </div>
-                    }
-                </div>
 
-                <span class="availability-badge available">
-                    @Model.Wynik.Status
-                </span>
-            </div>
-
-            <div class="status-summary-grid">
-                <div class="status-summary-item">
-                    <span>Klient</span>
-                    <strong>@Model.Wynik.ImieNazwisko</strong>
-                </div>
-
-                <div class="status-summary-item">
-                    <span>E-mail</span>
-                    <strong>@Model.Wynik.Email</strong>
-                </div>
-
-                <div class="status-summary-item">
-                    <span>Telefon</span>
-                    <strong>
-                        @if (!string.IsNullOrWhiteSpace(Model.Wynik.Telefon))
+                        @if (Model.Wynik.Status == "anulowane")
                         {
-                            @Model.Wynik.Telefon
+                            <span class="availability-badge unavailable">
+                                @Model.Wynik.Status
+                            </span>
                         }
                         else
                         {
-                            <text>brak danych</text>
+                            <span class="availability-badge available">
+                                @Model.Wynik.Status
+                            </span>
                         }
-                    </strong>
-                </div>
-
-                <div class="status-summary-item">
-                    <span>Wartość</span>
-                    <strong class="price-text">@Model.Wynik.WartoscRazem.ToString("C")</strong>
-                </div>
-            </div>
-
-            <div class="status-address-box mt-3">
-                <span>Adres dostawy</span>
-                <strong>@Model.Wynik.AdresDostawy</strong>
-            </div>
-        </div>
-
-        <div class="details-card">
-            <h2 class="h5 mb-3">Produkty w zamówieniu</h2>
-
-            @if (Model.Wynik.Pozycje.Any())
-            {
-                <div class="client-order-items">
-                    <div class="client-order-row client-order-header">
-                        <div>Produkt</div>
-                        <div>Ilość</div>
-                        <div>Cena</div>
-                        <div>Wartość</div>
                     </div>
 
-                    @foreach (var item in Model.Wynik.Pozycje)
+                    <div class="order-progress">
+                        <div class="@KlasaEtapu(1, etap)">
+                            <span>1</span>
+                            <strong>Nowe</strong>
+                            <small>Zamówienie przyjęte</small>
+                        </div>
+
+                        <div class="@KlasaEtapu(2, etap)">
+                            <span>2</span>
+                            <strong>W trakcie</strong>
+                            <small>Obsługa zamówienia</small>
+                        </div>
+
+                        <div class="@KlasaEtapu(3, etap)">
+                            <span>3</span>
+                            <strong>Wysłane</strong>
+                            <small>Przekazane do dostawy</small>
+                        </div>
+
+                        <div class="@KlasaEtapu(4, etap)">
+                            <span>4</span>
+                            <strong>Zakończone</strong>
+                            <small>Realizacja zakończona</small>
+                        </div>
+                    </div>
+
+                    <div class="next-step-card mt-3">
+                        <strong>Co dalej?</strong>
+                        <span>@OpisKolejnegoKroku(Model.Wynik.Status)</span>
+                    </div>
+                </div>
+
+                <div class="details-card">
+                    <h2 class="h5 mb-3">Produkty w zamówieniu</h2>
+
+                    @if (Model.Wynik.Pozycje.Any())
                     {
-                        <div class="client-order-row">
-                            <div class="client-order-product">
-                                <strong>@item.NazwaTowaru</strong>
-
-                                @if (!string.IsNullOrWhiteSpace(item.KodTowaru))
-                                {
-                                    <span>@item.KodTowaru</span>
-                                }
+                        <div class="client-order-items">
+                            <div class="client-order-row client-order-header">
+                                <div>Produkt</div>
+                                <div>Ilość</div>
+                                <div>Cena</div>
+                                <div>Wartość</div>
                             </div>
 
-                            <div>
-                                <span class="client-order-label">Ilość</span>
-                                @item.Ilosc
-                            </div>
+                            @foreach (var item in Model.Wynik.Pozycje)
+                            {
+                                <div class="client-order-row">
+                                    <div class="client-order-product">
+                                        <strong>@item.NazwaTowaru</strong>
 
-                            <div>
-                                <span class="client-order-label">Cena</span>
-                                @item.CenaJednostkowa.ToString("C")
-                            </div>
+                                        @if (!string.IsNullOrWhiteSpace(item.KodTowaru))
+                                        {
+                                            <span>@item.KodTowaru</span>
+                                        }
+                                    </div>
 
-                            <div>
-                                <span class="client-order-label">Wartość</span>
-                                <strong>@item.Wartosc.ToString("C")</strong>
-                            </div>
+                                    <div>
+                                        <span class="client-order-label">Ilość</span>
+                                        @item.Ilosc
+                                    </div>
+
+                                    <div>
+                                        <span class="client-order-label">Cena</span>
+                                        @item.CenaJednostkowa.ToString("C")
+                                    </div>
+
+                                    <div>
+                                        <span class="client-order-label">Wartość</span>
+                                        <strong>@item.Wartosc.ToString("C")</strong>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-state empty-state-small">
+                            Brak pozycji zamówienia.
                         </div>
                     }
                 </div>
-            }
-            else
-            {
-                <div class="empty-state empty-state-small">
-                    Brak pozycji zamówienia.
+            </div>
+
+            <aside class="customer-order-sidebar">
+                <div class="details-card mb-4">
+                    <h2 class="h5 mb-3">Dane klienta</h2>
+
+                    <div class="status-summary-grid status-summary-grid-side">
+                        <div class="status-summary-item">
+                            <span>Klient</span>
+                            <strong>@Model.Wynik.ImieNazwisko</strong>
+                        </div>
+
+                        <div class="status-summary-item">
+                            <span>E-mail</span>
+                            <strong>@Model.Wynik.Email</strong>
+                        </div>
+
+                        <div class="status-summary-item">
+                            <span>Telefon</span>
+                            <strong>
+                                @if (!string.IsNullOrWhiteSpace(Model.Wynik.Telefon))
+                                {
+                                    @Model.Wynik.Telefon
+                                }
+                                else
+                                {
+                                    <text>brak danych</text>
+                                }
+                            </strong>
+                        </div>
+
+                        <div class="status-summary-item">
+                            <span>Wartość</span>
+                            <strong class="price-text">@Model.Wynik.WartoscRazem.ToString("C")</strong>
+                        </div>
+                    </div>
                 </div>
-            }
-        </div>
+
+                <div class="details-card">
+                    <h2 class="h5 mb-3">Dostawa</h2>
+
+                    <div class="status-address-box">
+                        <span>Adres dostawy</span>
+                        <strong>@Model.Wynik.AdresDostawy</strong>
+                    </div>
+
+                    <div class="simple-note mt-3">
+                        Dane zamówienia są dostępne tylko po podaniu poprawnego numeru zamówienia i e-maila.
+                    </div>
+                </div>
+            </aside>
+        </section>
     }
     else
     {
         <div class="empty-state empty-state-small">
-            Wpisz numer zamówienia i e-mail, aby zobaczyć status realizacji.
+            Wpisz numer zamówienia i e-mail, aby zobaczyć swój panel po zakupie.
         </div>
     }
 </section>

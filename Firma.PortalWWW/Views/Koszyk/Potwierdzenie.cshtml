@@ -17,7 +17,7 @@
             </h1>
 
             <p class="hero-text mb-0">
-                Zamówienie zostało zapisane i trafiło do obsługi w panelu Intranet.
+                Zamówienie zostało zapisane i trafiło do obsługi. Od teraz klient może wrócić do portalu klienta i sprawdzić status.
             </p>
 
             <div class="hero-actions">
@@ -25,7 +25,7 @@
                    asp-action="Index"
                    class="btn btn-primary btn-lg">
                     <span class="btn-icon">🧾</span>
-                    Sprawdź status
+                    Przejdź do portalu klienta
                 </a>
 
                 <a href="/Sklep/Index"
@@ -43,11 +43,11 @@
 
         <div class="col-12 col-lg-4">
             <div class="hero-card">
-                <div class="hero-card-title">Numer zamówienia</div>
+                <div class="hero-card-title">Dane do portalu klienta</div>
 
                 <div class="hero-feature">
                     <strong>@Model.NumerZamowienia</strong>
-                    <span>Zapisz ten numer. Będzie potrzebny do sprawdzenia statusu.</span>
+                    <span>Numer zamówienia potrzebny do sprawdzenia statusu.</span>
                 </div>
 
                 <div class="hero-feature">
@@ -61,7 +61,7 @@
                             <text>E-mail z formularza</text>
                         }
                     </strong>
-                    <span>Ten adres też będzie potrzebny do sprawdzenia statusu.</span>
+                    <span>Adres e-mail użyty przy składaniu zamówienia.</span>
                 </div>
             </div>
         </div>
@@ -72,21 +72,21 @@
     <article class="details-card">
         <span class="home-quick-icon">🧾</span>
 
-        <h2 class="h5 mb-3">Jak sprawdzić status?</h2>
+        <h2 class="h5 mb-3">Co klient widzi po zakupie?</h2>
 
         <div class="confirmation-steps">
             <div class="confirmation-step">
                 <span>1</span>
                 <div>
-                    <strong>Wejdź w Status zamówienia</strong>
-                    <p>Link znajduje się w górnym menu portalu oraz na tej stronie.</p>
+                    <strong>Portal klienta</strong>
+                    <p>Klient wchodzi w menu „Portal klienta”.</p>
                 </div>
             </div>
 
             <div class="confirmation-step">
                 <span>2</span>
                 <div>
-                    <strong>Wpisz numer zamówienia</strong>
+                    <strong>Wpisuje dane zamówienia</strong>
                     <p>Numer zamówienia: <strong>@Model.NumerZamowienia</strong></p>
                 </div>
             </div>
@@ -94,10 +94,8 @@
             <div class="confirmation-step">
                 <span>3</span>
                 <div>
-                    <strong>Wpisz adres e-mail</strong>
-                    <p>
-                        Użyj tego samego adresu, który został podany przy składaniu zamówienia.
-                    </p>
+                    <strong>Otrzymuje podgląd</strong>
+                    <p>Widoczny jest status, etap realizacji, adres dostawy i produkty.</p>
                 </div>
             </div>
         </div>
@@ -106,14 +104,11 @@
     <aside class="details-card">
         <span class="home-quick-icon">✅</span>
 
-        <h2 class="h5 mb-3">Co dalej?</h2>
+        <h2 class="h5 mb-3">Dane do zapamiętania</h2>
 
         <dl class="details-list-clean mb-0">
             <dt>Status startowy</dt>
             <dd>Nowe</dd>
-
-            <dt>Obsługa</dt>
-            <dd>Panel Intranet</dd>
 
             <dt>Numer</dt>
             <dd>
@@ -131,10 +126,13 @@
                     <span class="text-muted">adres podany w formularzu</span>
                 }
             </dd>
+
+            <dt>Logowanie</dt>
+            <dd>Nie jest wymagane</dd>
         </dl>
 
         <div class="simple-note mt-3">
-            Nie potrzebujesz konta klienta. Do sprawdzenia wystarczy numer zamówienia i e-mail.
+            Portal klienta działa bez konta. Wystarczy numer zamówienia i e-mail z formularza.
         </div>
     </aside>
 </section>
