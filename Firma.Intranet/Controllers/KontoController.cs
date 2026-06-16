@@ -1,73 +1,68 @@
-﻿using Firma.Intranet.Models;
+﻿using Firma.Intranet.Interfaces.Intranet;
+using Firma.Intranet.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Firma.Intranet.Controllers
 {
     public class KontoController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IKontoIntranetService _kontoIntranetService;
 
-        public KontoController(SignInManager<IdentityUser> signInManager)
+        public KontoController(IKontoIntranetService kontoIntranetService)
         {
-            _signInManager = signInManager;
+            _kontoIntranetService = kontoIntranetService;
         }
 
         [AllowAnonymous]
+        [HttpGet]
         public IActionResult Logowanie(string? returnUrl = null)
         {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            ViewData["ReturnUrl"] = returnUrl;
 
-            var model = new LogowanieViewModel
-            {
-                ReturnUrl = returnUrl
-            };
-
-            return View(model);
+            return View(new LogowanieViewModel());
         }
 
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logowanie(LogowanieViewModel model, string? returnUrl = null)
+        public async Task<IActionResult> Logowanie(
+            LogowanieViewModel model,
+            string? returnUrl = null)
         {
-            model.ReturnUrl = returnUrl ?? model.ReturnUrl;
+            ViewData["ReturnUrl"] = returnUrl;
 
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var wynik = await _signInManager.PasswordSignInAsync(
+            var wynik = await _kontoIntranetService.Zaloguj(
                 model.Email,
                 model.Haslo,
-                model.ZapamietajMnie,
-                lockoutOnFailure: false);
+                model.ZapamietajMnie);
 
-            if (wynik.Succeeded)
+            if (wynik.CzySukces)
             {
-                if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
                 {
-                    return Redirect(model.ReturnUrl);
+                    return Redirect(returnUrl);
                 }
 
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError(string.Empty, "Niepoprawny e-mail lub hasło");
+            ModelState.AddModelError(string.Empty, wynik.KomunikatBledu);
 
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Wyloguj()
         {
-            await _signInManager.SignOutAsync();
+            await _kontoIntranetService.Wyloguj();
 
             return RedirectToAction(nameof(Logowanie));
         }
