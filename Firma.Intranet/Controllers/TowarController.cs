@@ -18,12 +18,9 @@ namespace Firma.Intranet.Controllers
             _environment = environment;
         }
 
-        public async Task<IActionResult> Index(string? statusAktywnosci)
+        public async Task<IActionResult> Index()
         {
-            var status = PrzygotujStatusAktywnosci(statusAktywnosci);
-            var towary = await _towarIntranetService.PobierzListe(status);
-
-            ViewData["StatusAktywnosci"] = status;
+            var towary = await _towarIntranetService.PobierzListe();
 
             return View(towary);
         }
@@ -201,8 +198,8 @@ namespace Firma.Intranet.Controllers
 
         private async Task PrzygotujListy(int? idRodzaju = null, int? idProducenta = null)
         {
-            var producenci = await _towarIntranetService.PobierzProducentowDoSelectList();
-            var rodzaje = await _towarIntranetService.PobierzRodzajeDoSelectList();
+            var producenci = await _towarIntranetService.PobierzProducentowDoSelectList(idProducenta);
+            var rodzaje = await _towarIntranetService.PobierzRodzajeDoSelectList(idRodzaju);
 
             ViewData["IdProducenta"] = new SelectList(
                 producenci,
@@ -226,18 +223,6 @@ namespace Firma.Intranet.Controllers
                 "wwwroot",
                 "uploads",
                 "towary"));
-        }
-
-        private static string PrzygotujStatusAktywnosci(string? statusAktywnosci)
-        {
-            var status = statusAktywnosci?.Trim().ToLowerInvariant();
-
-            return status switch
-            {
-                "aktywne" => "aktywne",
-                "nieaktywne" => "nieaktywne",
-                _ => "wszystkie"
-            };
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Firma.Intranet.Interfaces.Intranet
 {
     public interface ITowarIntranetService
     {
-        Task<List<Towar>> PobierzListe(string? statusAktywnosci = null);
+        Task<List<Towar>> PobierzListe();
 
         Task<Towar?> PobierzSzczegoly(int id);
 
@@ -29,8 +29,8 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task AktywujZaznaczone(int[] ids);
 
-        Task<List<ProducentSelectItemDto>> PobierzProducentowDoSelectList();
+        Task<List<ProducentSelectItemDto>> PobierzProducentowDoSelectList(int? idAktualnegoProducenta = null);
 
-        Task<List<RodzajSelectItemDto>> PobierzRodzajeDoSelectList();
+        Task<List<RodzajSelectItemDto>> PobierzRodzajeDoSelectList(int? idAktualnegoRodzaju = null);
     }
 }

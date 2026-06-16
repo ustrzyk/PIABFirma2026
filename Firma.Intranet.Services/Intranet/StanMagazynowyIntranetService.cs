@@ -149,9 +149,11 @@ namespace Firma.Intranet.Services.Intranet
             return await zapytanie.AnyAsync();
         }
 
-        public async Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList()
+        public async Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList(int? idAktualnegoTowaru = null)
         {
             return await _context.Towar
+                .Where(t => t.CzyAktywny
+                    || (idAktualnegoTowaru.HasValue && t.IdTowaru == idAktualnegoTowaru.Value))
                 .OrderBy(t => t.Nazwa)
                 .Select(t => new TowarSelectItemDto
                 {

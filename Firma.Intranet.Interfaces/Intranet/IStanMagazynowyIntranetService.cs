@@ -25,6 +25,6 @@ namespace Firma.Intranet.Interfaces.Intranet
 
         Task<bool> CzyTowarMaStanMagazynowy(int idTowaru, int? idStanuDoPominiecia = null);
 
-        Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList();
+        Task<List<TowarSelectItemDto>> PobierzTowaryDoSelectList(int? idAktualnegoTowaru = null);
     }
 }

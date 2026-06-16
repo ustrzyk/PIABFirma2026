@@ -168,7 +168,7 @@ namespace Firma.Intranet.Controllers
 
         private async Task PrzygotujTowary(int? idTowaru = null)
         {
-            var towary = await _stanMagazynowyIntranetService.PobierzTowaryDoSelectList();
+            var towary = await _stanMagazynowyIntranetService.PobierzTowaryDoSelectList(idTowaru);
 
             ViewData["IdTowaru"] = new SelectList(
                 towary,

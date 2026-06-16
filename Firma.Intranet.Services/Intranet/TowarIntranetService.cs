@@ -15,25 +15,11 @@ namespace Firma.Intranet.Services.Intranet
             _context = context;
         }
 
-        public async Task<List<Towar>> PobierzListe(string? statusAktywnosci = null)
+        public async Task<List<Towar>> PobierzListe()
         {
-            var zapytanie = _context.Towar
+            return await _context.Towar
                 .Include(t => t.Producent)
                 .Include(t => t.Rodzaj)
-                .AsQueryable();
-
-            var status = statusAktywnosci?.Trim().ToLowerInvariant();
-
-            if (status == "aktywne")
-            {
-                zapytanie = zapytanie.Where(t => t.CzyAktywny);
-            }
-            else if (status == "nieaktywne")
-            {
-                zapytanie = zapytanie.Where(t => !t.CzyAktywny);
-            }
-
-            return await zapytanie
                 .OrderBy(t => t.Nazwa)
                 .ToListAsync();
         }
@@ -210,9 +196,11 @@ namespace Firma.Intranet.Services.Intranet
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<ProducentSelectItemDto>> PobierzProducentowDoSelectList()
+        public async Task<List<ProducentSelectItemDto>> PobierzProducentowDoSelectList(int? idAktualnegoProducenta = null)
         {
             return await _context.Producent
+                .Where(p => p.CzyAktywny
+                    || (idAktualnegoProducenta.HasValue && p.IdProducenta == idAktualnegoProducenta.Value))
                 .OrderBy(p => p.Nazwa)
                 .Select(p => new ProducentSelectItemDto
                 {
@@ -222,9 +210,11 @@ namespace Firma.Intranet.Services.Intranet
                 .ToListAsync();
         }
 
-        public async Task<List<RodzajSelectItemDto>> PobierzRodzajeDoSelectList()
+        public async Task<List<RodzajSelectItemDto>> PobierzRodzajeDoSelectList(int? idAktualnegoRodzaju = null)
         {
             return await _context.Rodzaj
+                .Where(r => r.CzyAktywny
+                    || (idAktualnegoRodzaju.HasValue && r.IdRodzaju == idAktualnegoRodzaju.Value))
                 .OrderBy(r => r.Nazwa)
                 .Select(r => new RodzajSelectItemDto
                 {
