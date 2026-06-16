@@ -7,83 +7,118 @@
 
 @if (Model != null)
 {
-    <section class="portal-hero mb-4">
-        <div class="row g-4 align-items-center">
-            <div class="col-12 col-lg-7">
-                <div class="hero-content">
-                    <span class="portal-badge">Sklep 3D</span>
+    <section class="home-hero mb-4">
+        <div class="home-hero-content">
+            <span class="portal-badge">Sklep 3D</span>
 
-                    <h1 class="display-6 fw-bold mt-3 mb-3">
-                        @Model.Tytul
-                    </h1>
+            <h1>
+                @Model.Tytul
+            </h1>
 
-                    <div class="hero-text tekst-strony">
-                        @Model.Tresc
-                    </div>
+            <div class="home-hero-text tekst-strony">
+                @Model.Tresc
+            </div>
 
-                    <div class="hero-actions">
-                        <a href="/Sklep/Index"
-                           class="btn btn-primary btn-lg">
-                            Przejdź do sklepu
-                        </a>
+            <div class="home-hero-actions">
+                <a href="/Sklep/Index"
+                   class="btn btn-primary btn-lg">
+                    Przejdź do sklepu
+                </a>
 
-                        <a asp-controller="Promocja"
-                           asp-action="Index"
-                           class="btn btn-outline-secondary btn-lg">
-                            Sprawdź promocje
-                        </a>
-                    </div>
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Sprawdź zamówienie
+                </a>
+            </div>
+        </div>
+
+        <div class="home-hero-panel">
+            <div class="hero-card-title">Szybki zakup</div>
+
+            <div class="home-step">
+                <span>1</span>
+                <div>
+                    <strong>Wybierz produkt</strong>
+                    <p>Przeglądaj drukarki, akcesoria i materiały.</p>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-5">
-                <div class="hero-card">
-                    <div class="hero-card-title">Oferta portalu</div>
+            <div class="home-step">
+                <span>2</span>
+                <div>
+                    <strong>Dodaj do koszyka</strong>
+                    <p>Ustaw ilość i przejdź do formularza zamówienia.</p>
+                </div>
+            </div>
 
-                    <div class="hero-feature">
-                        <strong>Drukarki 3D</strong>
-                        <span>Modele do domu, szkoły i firmy.</span>
-                    </div>
-
-                    <div class="hero-feature">
-                        <strong>Akcesoria</strong>
-                        <span>Części, dysze, stoły robocze i narzędzia.</span>
-                    </div>
-
-                    <div class="hero-feature">
-                        <strong>Materiały</strong>
-                        <span>Produkty dobrane pod druk i serwis.</span>
-                    </div>
+            <div class="home-step">
+                <span>3</span>
+                <div>
+                    <strong>Sprawdź status</strong>
+                    <p>Po złożeniu zamówienia możesz śledzić jego status.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="info-tile">
-                <span class="info-tile-number">01</span>
-                <h2 class="h5">Produkty</h2>
-                <p>Przejrzysta lista towarów z ceną, producentem i dostępnością.</p>
-                <a href="/Sklep/Index">Zobacz sklep</a>
+    <section class="home-quick-grid mb-4">
+        <a href="/Sklep/Index" class="home-quick-card">
+            <span class="home-quick-number">01</span>
+            <h2>Produkty</h2>
+            <p>Pełna oferta sklepu z cenami i dostępnością.</p>
+        </a>
+
+        <a asp-controller="Promocja"
+           asp-action="Index"
+           class="home-quick-card">
+            <span class="home-quick-number">02</span>
+            <h2>Promocje</h2>
+            <p>Aktywne oferty specjalne i rabaty.</p>
+        </a>
+
+        <a asp-controller="Producent"
+           asp-action="Index"
+           class="home-quick-card">
+            <span class="home-quick-number">03</span>
+            <h2>Producenci</h2>
+            <p>Marki i produkty dostępne w portalu.</p>
+        </a>
+
+        <a asp-controller="StatusZamowienia"
+           asp-action="Index"
+           class="home-quick-card home-quick-card-accent">
+            <span class="home-quick-number">04</span>
+            <h2>Status zamówienia</h2>
+            <p>Sprawdź zamówienie po numerze i adresie e-mail.</p>
+        </a>
+    </section>
+
+    <section class="details-card mb-4">
+        <div class="section-inline-heading">
+            <div>
+                <span class="portal-badge">Dlaczego warto</span>
+                <h2 class="h4 mt-2 mb-1">Przejrzysty zakup w portalu</h2>
+                <p class="text-muted mb-0">
+                    Klient może przejść od produktu do zamówienia bez kontaktu z panelem administracyjnym.
+                </p>
             </div>
         </div>
 
-        <div class="col-12 col-md-4">
-            <div class="info-tile">
-                <span class="info-tile-number">02</span>
-                <h2 class="h5">Kategorie</h2>
-                <p>Szybkie przejście do wybranego rodzaju produktów.</p>
-                <a href="/Sklep/Index">Przeglądaj kategorie</a>
+        <div class="home-benefits-grid mt-3">
+            <div class="home-benefit">
+                <strong>Widoczna dostępność</strong>
+                <span>Przy produkcie pokazuje się aktualna ilość sztuk.</span>
             </div>
-        </div>
 
-        <div class="col-12 col-md-4">
-            <div class="info-tile">
-                <span class="info-tile-number">03</span>
-                <h2 class="h5">Promocje</h2>
-                <p>Osobna sekcja z aktywnymi ofertami specjalnymi.</p>
-                <a asp-controller="Promocja" asp-action="Index">Zobacz promocje</a>
+            <div class="home-benefit">
+                <strong>Koszyk</strong>
+                <span>Klient może zebrać produkty i zmienić ilości przed zakupem.</span>
+            </div>
+
+            <div class="home-benefit">
+                <strong>Zamówienie WWW</strong>
+                <span>Zamówienie trafia do Intranetu i jest oznaczone jako Portal WWW.</span>
             </div>
         </div>
     </section>

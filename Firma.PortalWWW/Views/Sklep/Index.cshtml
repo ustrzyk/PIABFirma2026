@@ -5,20 +5,47 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
     var towary = Model?.ToList() ?? new List<Firma.Services.Data.Dto.Towary.TowarListaItemDto>();
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var dostepneTowary = towary.Count(t => t.CzyDostepny);
 }
 
-<section class="section-heading mb-4">
+<section class="shop-heading mb-4">
     <div>
         <span class="portal-badge">Produkty</span>
-        <h1 class="h2 mt-2 mb-2">Sklep z drukarkami 3D i akcesoriami</h1>
-        <p class="text-muted mb-0">
-            Wybierz produkt i sprawdź szczegóły, cenę oraz dostępność.
+        <h1>Sklep z drukarkami 3D i akcesoriami</h1>
+        <p>
+            Wybierz produkt, sprawdź dostępność i dodaj go do koszyka.
         </p>
     </div>
 
-    <div class="section-summary">
+    <div class="shop-heading-actions">
+        <a asp-controller="Koszyk"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Koszyk
+        </a>
+
+        <a asp-controller="StatusZamowienia"
+           asp-action="Index"
+           class="btn btn-primary">
+            Status zamówienia
+        </a>
+    </div>
+</section>
+
+<section class="shop-stats mb-4">
+    <div class="shop-stat-card">
+        <span>Produkty</span>
         <strong>@towary.Count</strong>
-        <span>produktów</span>
+    </div>
+
+    <div class="shop-stat-card">
+        <span>Dostępne</span>
+        <strong>@dostepneTowary</strong>
+    </div>
+
+    <div class="shop-stat-card">
+        <span>Niedostępne / brak danych</span>
+        <strong>@(towary.Count - dostepneTowary)</strong>
     </div>
 </section>
 
@@ -40,7 +67,7 @@
     <section class="product-grid">
         @foreach (var item in towary)
         {
-            <article class="product-card">
+            <article class="product-card product-card-clear">
                 <a asp-controller="Sklep"
                    asp-action="Szczegoly"
                    asp-route-id="@item.IdTowaru"
@@ -81,49 +108,54 @@
                         @item.Opis
                     </p>
 
-                    <div class="product-card-footer">
+                    <div class="product-info-row">
                         <div>
-                            <div class="price-text product-price">
-                                @item.Cena.ToString("C")
-                            </div>
+                            <span>Cena</span>
+                            <strong class="price-text">@item.Cena.ToString("C")</strong>
+                        </div>
+
+                        <div>
+                            <span>Dostępność</span>
 
                             @if (item.CzyDostepny)
                             {
-                                <span class="availability-badge available">
-                                    @item.IloscSztuk szt.
-                                </span>
+                                <strong>@item.IloscSztuk szt.</strong>
                             }
                             else
                             {
-                                <span class="availability-badge unavailable">
-                                    brak danych
-                                </span>
+                                <strong>brak danych</strong>
                             }
                         </div>
+                    </div>
 
-                        <div class="d-flex flex-wrap gap-2">
-                            <a class="btn btn-outline-secondary"
-                               asp-controller="Sklep"
-                               asp-action="Szczegoly"
-                               asp-route-id="@item.IdTowaru">
-                                Zobacz
-                            </a>
+                    <div class="product-card-actions">
+                        <a class="btn btn-outline-secondary"
+                           asp-controller="Sklep"
+                           asp-action="Szczegoly"
+                           asp-route-id="@item.IdTowaru">
+                            Szczegóły
+                        </a>
 
-                            @if (item.CzyDostepny)
-                            {
-                                <form asp-controller="Koszyk"
-                                      asp-action="Dodaj"
-                                      method="post">
-                                    <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
-                                    <input type="hidden" name="ilosc" value="1" />
-                                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                        @if (item.CzyDostepny)
+                        {
+                            <form asp-controller="Koszyk"
+                                  asp-action="Dodaj"
+                                  method="post">
+                                <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
+                                <input type="hidden" name="ilosc" value="1" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
 
-                                    <button type="submit" class="btn btn-primary">
-                                        Do koszyka
-                                    </button>
-                                </form>
-                            }
-                        </div>
+                                <button type="submit" class="btn btn-primary">
+                                    Do koszyka
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="availability-badge unavailable">
+                                niedostępny
+                            </span>
+                        }
                     </div>
                 </div>
             </article>
