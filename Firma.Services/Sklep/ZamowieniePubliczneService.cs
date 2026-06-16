@@ -93,14 +93,15 @@ namespace Firma.Services.Sklep
                 klient.Telefon = dane.Telefon.Trim();
             }
 
-            var numerZamowienia = $"WWW{DateTime.Now:yyMMddHHmmssfff}";
+            var dataZamowienia = DateTime.Now;
+            var numerZamowienia = await GenerujNumerZamowieniaWWW(dataZamowienia);
 
             var zamowienie = new Zamowienie
             {
                 NumerZamowienia = numerZamowienia,
-                DataZamowienia = DateTime.Now,
+                DataZamowienia = dataZamowienia,
                 Status = "Nowe",
-                WartoscRazem = wartoscRazem,
+                WartoscRazem = decimal.Round(wartoscRazem, 2, MidpointRounding.AwayFromZero),
                 Ulica = dane.Ulica.Trim(),
                 NumerDomu = dane.NumerDomu.Trim(),
                 NumerLokalu = dane.NumerLokalu.Trim(),
@@ -132,6 +133,30 @@ namespace Firma.Services.Sklep
             await transakcja.CommitAsync();
 
             return ZamowieniePubliczneWynikDto.Sukces(numerZamowienia);
+        }
+
+        private async Task<string> GenerujNumerZamowieniaWWW(DateTime dataZamowienia)
+        {
+            var prefiks = $"WWW-{dataZamowienia:yyyyMMdd}-";
+
+            var numeryZDnia = await _context.Zamowienie
+                .Where(z => z.NumerZamowienia.StartsWith(prefiks))
+                .Select(z => z.NumerZamowienia)
+                .ToListAsync();
+
+            var ostatniNumer = 0;
+
+            foreach (var numer in numeryZDnia)
+            {
+                var koncowka = numer.Replace(prefiks, string.Empty);
+
+                if (int.TryParse(koncowka, out var liczba) && liczba > ostatniNumer)
+                {
+                    ostatniNumer = liczba;
+                }
+            }
+
+            return $"{prefiks}{ostatniNumer + 1:000}";
         }
     }
 }
