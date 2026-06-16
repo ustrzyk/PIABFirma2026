@@ -1,12 +1,12 @@
 ﻿using ClosedXML.Excel;
 using Firma.Data.Data;
 using Firma.Data.Data.Sklep;
-using Firma.Intranet.Models;
+using Firma.Intranet.Services.Data.Intranet;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
-namespace Firma.Intranet.Services
+namespace Firma.Intranet.Services.Dokumenty
 {
     public class ZamowienieExcelImporter
     {
@@ -17,9 +17,9 @@ namespace Firma.Intranet.Services
             _context = context;
         }
 
-        public async Task<ImportZamowienExcelViewModel> Importuj(IFormFile? plik)
+        public async Task<ImportZamowienExcelWynikDto> Importuj(IFormFile? plik)
         {
-            var wynik = new ImportZamowienExcelViewModel
+            var wynik = new ImportZamowienExcelWynikDto
             {
                 CzyWykonanoImport = true
             };
@@ -77,7 +77,7 @@ namespace Firma.Intranet.Services
             return wynik;
         }
 
-        private static List<WierszZamowieniaExcel> WczytajWiersze(IXLWorksheet worksheet, ImportZamowienExcelViewModel wynik)
+        private static List<WierszZamowieniaExcel> WczytajWiersze(IXLWorksheet worksheet, ImportZamowienExcelWynikDto wynik)
         {
             var wiersze = new List<WierszZamowieniaExcel>();
             var ostatniWiersz = worksheet.LastRowUsed()?.RowNumber() ?? 1;
@@ -116,7 +116,7 @@ namespace Firma.Intranet.Services
             return wiersze;
         }
 
-        private static void SprawdzWiersz(WierszZamowieniaExcel wiersz, ImportZamowienExcelViewModel wynik)
+        private static void SprawdzWiersz(WierszZamowieniaExcel wiersz, ImportZamowienExcelWynikDto wynik)
         {
             if (string.IsNullOrWhiteSpace(wiersz.NumerZamowienia))
             {
@@ -216,7 +216,7 @@ namespace Firma.Intranet.Services
             }
         }
 
-        private async Task SprawdzDuplikaty(List<WierszZamowieniaExcel> wiersze, ImportZamowienExcelViewModel wynik)
+        private async Task SprawdzDuplikaty(List<WierszZamowieniaExcel> wiersze, ImportZamowienExcelWynikDto wynik)
         {
             var duplikatyWPliku = wiersze
                 .GroupBy(w => w.NumerZamowienia)
@@ -245,7 +245,7 @@ namespace Firma.Intranet.Services
             }
         }
 
-        private async Task ZapiszZamowienia(List<WierszZamowieniaExcel> wiersze, ImportZamowienExcelViewModel wynik)
+        private async Task ZapiszZamowienia(List<WierszZamowieniaExcel> wiersze, ImportZamowienExcelWynikDto wynik)
         {
             var emaile = wiersze
                 .Select(w => w.EmailKlienta)

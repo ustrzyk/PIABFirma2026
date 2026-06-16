@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 
-namespace Firma.Intranet.Services
+namespace Firma.Intranet.Services.Dokumenty
 {
     public class ZamowienieExcelSzablonGenerator
     {

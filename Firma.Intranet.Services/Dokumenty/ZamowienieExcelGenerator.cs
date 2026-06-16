@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using Firma.Data.Data.Sklep;
 
-namespace Firma.Intranet.Services
+namespace Firma.Intranet.Services.Dokumenty
 {
     public class ZamowienieExcelGenerator
     {

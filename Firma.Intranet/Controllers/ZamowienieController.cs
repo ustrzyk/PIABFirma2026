@@ -1,7 +1,7 @@
 using Firma.Data.Data.Sklep;
 using Firma.Intranet.Interfaces.Intranet;
 using Firma.Intranet.Models;
-using Firma.Intranet.Services;
+using Firma.Intranet.Services.Dokumenty;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IO.Compression;
@@ -261,7 +261,12 @@ namespace Firma.Intranet.Controllers
         {
             var wynik = await _zamowienieExcelImporter.Importuj(model.Plik);
 
-            return View(wynik);
+            model.CzyWykonanoImport = wynik.CzyWykonanoImport;
+            model.LiczbaDodanychZamowien = wynik.LiczbaDodanychZamowien;
+            model.LiczbaDodanychKlientow = wynik.LiczbaDodanychKlientow;
+            model.Bledy = wynik.Bledy;
+
+            return View(model);
         }
 
         private async Task PrzygotujKlientow(int? idKlienta = null)

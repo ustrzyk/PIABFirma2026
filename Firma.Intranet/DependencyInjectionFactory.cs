@@ -1,5 +1,5 @@
 ﻿using Firma.Intranet.Interfaces.Intranet;
-using Firma.Intranet.Services;
+using Firma.Intranet.Services.Dokumenty;
 using Firma.Intranet.Services.Intranet;
 
 namespace Firma.Intranet

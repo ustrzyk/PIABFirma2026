@@ -4,7 +4,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using System.Globalization;
 
-namespace Firma.Intranet.Services
+namespace Firma.Intranet.Services.Dokumenty
 {
     public class FakturaPdfGenerator
     {
