@@ -99,13 +99,27 @@
 else
 {
     <div class="empty-state">
-        <h2 class="h4">Brak promocji</h2>
-        <p>Aktualnie nie ma aktywnych promocji do wyświetlenia.</p>
+        <span class="portal-badge">Brak promocji</span>
 
-        <a asp-controller="Sklep"
-           asp-action="Index"
-           class="btn btn-primary">
-            Przejdź do sklepu
-        </a>
+        <h2 class="h4 mt-3">Aktualnie nie ma ofert specjalnych</h2>
+
+        <p>
+            Promocje pojawią się tutaj po ich aktywacji w systemie.
+            Na razie możesz przejść do pełnej oferty sklepu.
+        </p>
+
+        <div class="empty-state-actions">
+            <a asp-controller="Sklep"
+               asp-action="Index"
+               class="btn btn-primary">
+                Przejdź do sklepu
+            </a>
+
+            <a asp-controller="Producent"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Zobacz producentów
+            </a>
+        </div>
     </div>
 }

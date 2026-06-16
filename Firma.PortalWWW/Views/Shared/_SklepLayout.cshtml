@@ -84,8 +84,20 @@
 
         <div class="category-bar">
             <div class="container">
+                <div class="category-header">
+                    <div>
+                        <span class="category-label">Kategorie produktów</span>
+                        <span class="category-hint">Szybki wybór rodzaju asortymentu</span>
+                    </div>
+
+                    <a asp-controller="Sklep"
+                       asp-action="Index"
+                       class="category-all-link">
+                        Pełna oferta
+                    </a>
+                </div>
+
                 <div class="category-scroller">
-                    <span class="category-label">Kategorie</span>
                     @await Component.InvokeAsync("RodzajeMenuComponent")
                 </div>
             </div>

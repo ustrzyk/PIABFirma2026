@@ -102,13 +102,33 @@
 else
 {
     <div class="empty-state">
-        <h2 class="h4">Brak produktów</h2>
-        <p>W tej kategorii nie ma aktualnie aktywnych towarów.</p>
+        <span class="portal-badge">Brak wyników</span>
 
-        <a asp-controller="Sklep"
-           asp-action="Index"
-           class="btn btn-primary">
-            Wróć do sklepu
-        </a>
+        <h2 class="h4 mt-3">Nie znaleziono aktywnych produktów</h2>
+
+        <p>
+            W tej kategorii nie ma aktualnie produktów do wyświetlenia.
+            Możesz wrócić do pełnej oferty albo sprawdzić inne sekcje portalu.
+        </p>
+
+        <div class="empty-state-actions">
+            <a asp-controller="Sklep"
+               asp-action="Index"
+               class="btn btn-primary">
+                Pokaż wszystkie produkty
+            </a>
+
+            <a asp-controller="Promocja"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Zobacz promocje
+            </a>
+
+            <a asp-controller="Producent"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Producenci
+            </a>
+        </div>
     </div>
 }

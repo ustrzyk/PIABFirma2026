@@ -1,15 +1,21 @@
 ﻿@model IEnumerable<Firma.Services.Data.Dto.Rodzaje.RodzajMenuItemDto>
 
-<a class="btn btn-sm btn-outline-secondary category-link"
-   href="@Url.Content("~/Sklep")">
-    Wszystkie
+@{
+    var rodzaje = Model?.ToList() ?? new List<Firma.Services.Data.Dto.Rodzaje.RodzajMenuItemDto>();
+}
+
+<a class="category-link category-link-main"
+   asp-area=""
+   asp-controller="Sklep"
+   asp-action="Index">
+    Wszystkie produkty
 </a>
 
-@if (Model != null)
+@if (rodzaje.Any())
 {
-    foreach (var item in Model)
+    foreach (var item in rodzaje)
     {
-        <a class="btn btn-sm btn-outline-secondary category-link"
+        <a class="category-link"
            asp-area=""
            asp-controller="Sklep"
            asp-action="Index"
@@ -17,4 +23,10 @@
             @item.Nazwa
         </a>
     }
+}
+else
+{
+    <span class="category-empty">
+        Brak aktywnych kategorii
+    </span>
 }
