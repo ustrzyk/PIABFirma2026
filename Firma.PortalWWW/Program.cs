@@ -15,15 +15,12 @@ var connectionString = builder.Configuration.GetConnectionString("FirmaContext")
 builder.Services.AddDbContext<FirmaContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Rejestracja własnych serwisów 
 DependencyInjectionFactory.Resolve(builder.Services, builder.Configuration);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
