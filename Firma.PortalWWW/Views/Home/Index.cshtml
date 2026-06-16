@@ -22,25 +22,27 @@
             <div class="home-hero-actions">
                 <a href="/Sklep/Index"
                    class="btn btn-primary btn-lg">
+                    <span class="btn-icon">🛒</span>
                     Przejdź do sklepu
                 </a>
 
                 <a asp-controller="StatusZamowienia"
                    asp-action="Index"
                    class="btn btn-outline-secondary btn-lg">
+                    <span class="btn-icon">🧾</span>
                     Sprawdź zamówienie
                 </a>
             </div>
         </div>
 
         <div class="home-hero-panel">
-            <div class="hero-card-title">Szybki zakup</div>
+            <div class="hero-card-title">Jak kupić?</div>
 
             <div class="home-step">
                 <span>1</span>
                 <div>
                     <strong>Wybierz produkt</strong>
-                    <p>Przeglądaj drukarki, akcesoria i materiały.</p>
+                    <p>Przejdź do sklepu i wybierz drukarkę, filament lub akcesoria.</p>
                 </div>
             </div>
 
@@ -48,7 +50,7 @@
                 <span>2</span>
                 <div>
                     <strong>Dodaj do koszyka</strong>
-                    <p>Ustaw ilość i przejdź do formularza zamówienia.</p>
+                    <p>Ustaw ilość, sprawdź dostępność i potwierdź zamówienie.</p>
                 </div>
             </div>
 
@@ -56,7 +58,7 @@
                 <span>3</span>
                 <div>
                     <strong>Sprawdź status</strong>
-                    <p>Po złożeniu zamówienia możesz śledzić jego status.</p>
+                    <p>Po zakupie użyj numeru zamówienia i adresu e-mail.</p>
                 </div>
             </div>
         </div>
@@ -64,14 +66,16 @@
 
     <section class="home-quick-grid mb-4">
         <a href="/Sklep/Index" class="home-quick-card">
+            <span class="home-quick-icon">🧩</span>
             <span class="home-quick-number">01</span>
             <h2>Produkty</h2>
-            <p>Pełna oferta sklepu z cenami i dostępnością.</p>
+            <p>Pełna oferta sklepu z cenami, opisami i dostępnością.</p>
         </a>
 
         <a asp-controller="Promocja"
            asp-action="Index"
            class="home-quick-card">
+            <span class="home-quick-icon">🏷️</span>
             <span class="home-quick-number">02</span>
             <h2>Promocje</h2>
             <p>Aktywne oferty specjalne i rabaty.</p>
@@ -80,6 +84,7 @@
         <a asp-controller="Producent"
            asp-action="Index"
            class="home-quick-card">
+            <span class="home-quick-icon">🏭</span>
             <span class="home-quick-number">03</span>
             <h2>Producenci</h2>
             <p>Marki i produkty dostępne w portalu.</p>
@@ -88,6 +93,7 @@
         <a asp-controller="StatusZamowienia"
            asp-action="Index"
            class="home-quick-card home-quick-card-accent">
+            <span class="home-quick-icon">🧾</span>
             <span class="home-quick-number">04</span>
             <h2>Status zamówienia</h2>
             <p>Sprawdź zamówienie po numerze i adresie e-mail.</p>
@@ -98,27 +104,27 @@
         <div class="section-inline-heading">
             <div>
                 <span class="portal-badge">Dlaczego warto</span>
-                <h2 class="h4 mt-2 mb-1">Przejrzysty zakup w portalu</h2>
+                <h2 class="h4 mt-2 mb-1">Prosty zakup w portalu</h2>
                 <p class="text-muted mb-0">
-                    Klient może przejść od produktu do zamówienia bez kontaktu z panelem administracyjnym.
+                    Portal prowadzi klienta od produktu do zamówienia bez zbędnych technicznych ekranów.
                 </p>
             </div>
         </div>
 
         <div class="home-benefits-grid mt-3">
             <div class="home-benefit">
-                <strong>Widoczna dostępność</strong>
+                <strong>📦 Widoczna dostępność</strong>
                 <span>Przy produkcie pokazuje się aktualna ilość sztuk.</span>
             </div>
 
             <div class="home-benefit">
-                <strong>Koszyk</strong>
+                <strong>🛒 Koszyk</strong>
                 <span>Klient może zebrać produkty i zmienić ilości przed zakupem.</span>
             </div>
 
             <div class="home-benefit">
-                <strong>Zamówienie WWW</strong>
-                <span>Zamówienie trafia do Intranetu i jest oznaczone jako Portal WWW.</span>
+                <strong>🧾 Status zamówienia</strong>
+                <span>Po zakupie klient może sprawdzić status zamówienia.</span>
             </div>
         </div>
     </section>

@@ -6,6 +6,7 @@
            asp-area=""
            asp-controller="Home"
            asp-action="Index">
+            <span class="nav-icon">🏠</span>
             Start
         </a>
     </li>
@@ -13,6 +14,7 @@
     <li class="nav-item">
         <a class="nav-link"
            href="/Sklep/Index">
+            <span class="nav-icon">🧩</span>
             Sklep
         </a>
     </li>
@@ -22,6 +24,7 @@
            asp-area=""
            asp-controller="Promocja"
            asp-action="Index">
+            <span class="nav-icon">🏷️</span>
             Promocje
         </a>
     </li>
@@ -31,6 +34,7 @@
            asp-area=""
            asp-controller="Producent"
            asp-action="Index">
+            <span class="nav-icon">🏭</span>
             Producenci
         </a>
     </li>
@@ -45,6 +49,7 @@
                    asp-controller="Home"
                    asp-action="Index"
                    asp-route-id="@item.IdStrony">
+                    <span class="nav-icon">ℹ️</span>
                     @item.LinkTytul
                 </a>
             </li>
@@ -56,6 +61,7 @@
            asp-area=""
            asp-controller="StanMagazynowy"
            asp-action="Index">
+            <span class="nav-icon">📦</span>
             Dostępność
         </a>
     </li>
@@ -65,7 +71,8 @@
            asp-area=""
            asp-controller="StatusZamowienia"
            asp-action="Index">
-            Status zamówienia
+            <span class="nav-icon">🧾</span>
+            Status
         </a>
     </li>
 </ul>

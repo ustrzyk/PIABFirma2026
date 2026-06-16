@@ -21,12 +21,14 @@
         <a asp-controller="Koszyk"
            asp-action="Index"
            class="btn btn-outline-secondary">
+            <span class="btn-icon">🛒</span>
             Koszyk
         </a>
 
         <a asp-controller="StatusZamowienia"
            asp-action="Index"
            class="btn btn-primary">
+            <span class="btn-icon">🧾</span>
             Status zamówienia
         </a>
     </div>
@@ -34,18 +36,27 @@
 
 <section class="shop-stats mb-4">
     <div class="shop-stat-card">
-        <span>Produkty</span>
-        <strong>@towary.Count</strong>
+        <span class="shop-stat-icon">🧩</span>
+        <div>
+            <span>Produkty</span>
+            <strong>@towary.Count</strong>
+        </div>
     </div>
 
     <div class="shop-stat-card">
-        <span>Dostępne</span>
-        <strong>@dostepneTowary</strong>
+        <span class="shop-stat-icon">📦</span>
+        <div>
+            <span>Dostępne</span>
+            <strong>@dostepneTowary</strong>
+        </div>
     </div>
 
     <div class="shop-stat-card">
-        <span>Niedostępne / brak danych</span>
-        <strong>@(towary.Count - dostepneTowary)</strong>
+        <span class="shop-stat-icon">ℹ️</span>
+        <div>
+            <span>Brak danych</span>
+            <strong>@(towary.Count - dostepneTowary)</strong>
+        </div>
     </div>
 </section>
 
@@ -110,12 +121,12 @@
 
                     <div class="product-info-row">
                         <div>
-                            <span>Cena</span>
+                            <span>💰 Cena</span>
                             <strong class="price-text">@item.Cena.ToString("C")</strong>
                         </div>
 
                         <div>
-                            <span>Dostępność</span>
+                            <span>📦 Dostępność</span>
 
                             @if (item.CzyDostepny)
                             {
@@ -146,6 +157,7 @@
                                 <input type="hidden" name="returnUrl" value="@returnUrl" />
 
                                 <button type="submit" class="btn btn-primary">
+                                    <span class="btn-icon">🛒</span>
                                     Do koszyka
                                 </button>
                             </form>

@@ -49,6 +49,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/portal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/portal-ui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Firma.PortalWWW.styles.css" asp-append-version="true" />
 </head>
 
@@ -56,17 +57,17 @@
     <header class="portal-site-header">
         <div class="portal-topbar">
             <div class="container d-flex flex-wrap align-items-center justify-content-between gap-2">
-                <span>Drukarki 3D, akcesoria i materiały</span>
+                <span>Drukarki 3D, filamenty, części i akcesoria</span>
 
                 <span class="portal-topbar-contact">
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
                     {
-                        <span>@wyglad.StopkaTelefon</span>
+                        <span>☎ @wyglad.StopkaTelefon</span>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
                     {
-                        <a href="mailto:@wyglad.StopkaEmail">@wyglad.StopkaEmail</a>
+                        <a href="mailto:@wyglad.StopkaEmail">✉ @wyglad.StopkaEmail</a>
                     }
                 </span>
             </div>
@@ -96,6 +97,7 @@
                         <a asp-controller="Koszyk"
                            asp-action="Index"
                            class="btn btn-outline-secondary">
+                            <span class="btn-icon">🛒</span>
                             Koszyk
                             @if (koszykLiczbaSztuk > 0)
                             {
@@ -105,7 +107,8 @@
 
                         <a href="/Sklep/Index"
                            class="btn btn-primary">
-                            Zobacz produkty
+                            <span class="btn-icon">🧩</span>
+                            Produkty
                         </a>
                     </div>
                 </div>
@@ -117,7 +120,7 @@
                 <div class="category-header">
                     <div>
                         <span class="category-label">Kategorie produktów</span>
-                        <span class="category-hint">Szybki wybór rodzaju asortymentu</span>
+                        <span class="category-hint">Wybierz rodzaj asortymentu</span>
                     </div>
 
                     <a href="/Sklep/Index"
@@ -157,7 +160,7 @@
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaAdres))
                     {
-                        <div class="small mt-2">@wyglad.StopkaAdres</div>
+                        <div class="small mt-2">📍 @wyglad.StopkaAdres</div>
                     }
                 </div>
 
@@ -166,12 +169,12 @@
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
                     {
-                        <a href="mailto:@wyglad.StopkaEmail">@wyglad.StopkaEmail</a>
+                        <a href="mailto:@wyglad.StopkaEmail">✉ @wyglad.StopkaEmail</a>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
                     {
-                        <span>@wyglad.StopkaTelefon</span>
+                        <span>☎ @wyglad.StopkaTelefon</span>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaFacebook))
