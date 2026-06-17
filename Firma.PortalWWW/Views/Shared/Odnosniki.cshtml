@@ -65,9 +65,22 @@
             || tekst == "status zamowienia"
             || tekst == "portal klienta"
             || tekst == "koszyk"
+            || tekst == "moje konto"
+            || tekst == "konto klienta"
+            || tekst == "logowanie"
+            || tekst == "rejestracja"
+            || tekst == "produkty"
             || tekst == "prywatność"
             || tekst == "prywatnosc";
     }
+}
+
+@{
+    var stronyInformacyjne = Model?
+        .Where(s => !CzyUkrycStroneZCms(s.LinkTytul))
+        .OrderBy(s => s.LinkTytul)
+        .ToList()
+        ?? new List<Firma.Services.Data.Dto.CMS.StronaMenuItemDto>();
 }
 
 <ul class="navbar-nav me-auto mb-2 mb-lg-0 portal-nav">
@@ -99,41 +112,59 @@
         </a>
     </li>
 
-    <li class="nav-item">
-        <a class="nav-link"
-           asp-area=""
-           asp-controller="Producent"
-           asp-action="Index">
-            <span class="nav-icon">🏭</span>
-            Producenci
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle"
+           href="#"
+           id="menuInformacje"
+           role="button"
+           data-bs-toggle="dropdown"
+           aria-expanded="false">
+            <span class="nav-icon">ℹ️</span>
+            Informacje
         </a>
-    </li>
 
-    @if (Model != null)
-    {
-        foreach (var item in Model.Where(s => !CzyUkrycStroneZCms(s.LinkTytul)))
-        {
-            <li class="nav-item">
-                <a class="nav-link"
+        <ul class="dropdown-menu portal-info-dropdown" aria-labelledby="menuInformacje">
+            <li>
+                <a class="dropdown-item"
                    asp-area=""
-                   asp-controller="Home"
-                   asp-action="Index"
-                   asp-route-id="@item.IdStrony">
-                    <span class="nav-icon">@IkonaStrony(item.LinkTytul)</span>
-                    @item.LinkTytul
+                   asp-controller="Producent"
+                   asp-action="Index">
+                    <span class="nav-icon">🏭</span>
+                    Producenci
                 </a>
             </li>
-        }
-    }
 
-    <li class="nav-item">
-        <a class="nav-link"
-           asp-area=""
-           asp-controller="StanMagazynowy"
-           asp-action="Index">
-            <span class="nav-icon">📦</span>
-            Dostępność
-        </a>
+            <li>
+                <a class="dropdown-item"
+                   asp-area=""
+                   asp-controller="StanMagazynowy"
+                   asp-action="Index">
+                    <span class="nav-icon">📦</span>
+                    Dostępność
+                </a>
+            </li>
+
+            @if (stronyInformacyjne.Any())
+            {
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+
+                foreach (var item in stronyInformacyjne)
+                {
+                    <li>
+                        <a class="dropdown-item"
+                           asp-area=""
+                           asp-controller="Home"
+                           asp-action="Index"
+                           asp-route-id="@item.IdStrony">
+                            <span class="nav-icon">@IkonaStrony(item.LinkTytul)</span>
+                            @item.LinkTytul
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
     </li>
 
     <li class="nav-item">

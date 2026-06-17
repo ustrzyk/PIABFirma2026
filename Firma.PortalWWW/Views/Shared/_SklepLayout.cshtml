@@ -128,19 +128,13 @@
 
                         <a asp-controller="Koszyk"
                            asp-action="Index"
-                           class="btn btn-outline-secondary">
+                           class="btn btn-primary">
                             <span class="btn-icon">🛒</span>
                             Koszyk
                             @if (koszykLiczbaSztuk > 0)
                             {
-                                <span class="badge bg-primary ms-1">@koszykLiczbaSztuk</span>
+                                <span class="badge bg-light text-primary ms-1">@koszykLiczbaSztuk</span>
                             }
-                        </a>
-
-                        <a href="/Sklep/Index"
-                           class="btn btn-primary">
-                            <span class="btn-icon">🧩</span>
-                            Produkty
                         </a>
                     </div>
                 </div>
@@ -220,6 +214,8 @@
 
                     <a href="/Sklep/Index">Sklep</a>
                     <a asp-area="" asp-controller="Promocja" asp-action="Index">Promocje</a>
+                    <a asp-area="" asp-controller="Producent" asp-action="Index">Producenci</a>
+                    <a asp-area="" asp-controller="StanMagazynowy" asp-action="Index">Dostępność</a>
                     <a asp-area="" asp-controller="Koszyk" asp-action="Index">Koszyk</a>
                     <a asp-area="" asp-controller="StatusZamowienia" asp-action="Index">Portal klienta</a>
                     <a asp-area="" asp-controller="KontoKlienta" asp-action="Panel">Moje konto</a>

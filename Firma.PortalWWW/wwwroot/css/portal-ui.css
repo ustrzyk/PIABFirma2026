@@ -85,14 +85,49 @@
 
 /* Menu */
 
-.portal-nav .nav-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.1rem;
+.portal-navbar .navbar-collapse {
+    gap: 1rem;
 }
+
+.portal-nav {
+    align-items: center;
+}
+
+    .portal-nav .nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.1rem;
+        white-space: nowrap;
+    }
+
+.portal-info-dropdown {
+    min-width: 15rem;
+    max-height: 70vh;
+    overflow-y: auto;
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 0.9rem;
+    box-shadow: var(--portal-shadow);
+    padding: 0.5rem;
+}
+
+    .portal-info-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.15rem;
+        border-radius: 0.65rem;
+        padding: 0.55rem 0.75rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+        .portal-info-dropdown .dropdown-item:hover {
+            background-color: #eef5ff;
+            color: var(--portal-button-color);
+        }
 
 .portal-navbar-actions {
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .category-link,
@@ -258,57 +293,9 @@
     justify-content: space-between;
     gap: 1rem;
     align-items: flex-start;
-    margin-bottom: 1rem;
 }
 
-    .stock-card-header h2 a {
-        color: #111827;
-        text-decoration: none;
-    }
-
-        .stock-card-header h2 a:hover {
-            color: var(--portal-button-color);
-        }
-
-.stock-card-values {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-}
-
-    .stock-card-values div {
-        background-color: #f8fafc;
-        border-radius: 0.85rem;
-        padding: 0.75rem;
-    }
-
-    .stock-card-values span {
-        display: block;
-        color: #64748b;
-        font-size: 0.82rem;
-        font-weight: 700;
-        margin-bottom: 0.2rem;
-    }
-
-    .stock-card-values strong {
-        display: block;
-    }
-
-.stock-card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.65rem;
-    margin-top: 1rem;
-}
-
-.stock-details-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 380px;
-    gap: 1.25rem;
-    align-items: stretch;
-}
-
-/* Aktualności */
+/* Wiadomości, prywatność i responsywność */
 
 .news-grid {
     display: grid;
@@ -316,228 +303,77 @@
     gap: 1.25rem;
 }
 
-.news-card-portal {
+.news-card {
     background-color: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: var(--portal-radius);
     padding: 1.25rem;
     box-shadow: var(--portal-shadow-soft);
-    transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
 }
 
-    .news-card-portal:hover {
-        transform: translateY(-3px);
-        border-color: rgba(13, 110, 253, 0.25);
-        box-shadow: var(--portal-shadow);
+    .news-card h2 {
+        font-size: 1.1rem;
     }
-
-.news-card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
-    background-color: #eef5ff;
-    color: var(--portal-button-color);
-    font-size: 1.45rem;
-    margin-bottom: 1rem;
-}
-
-.news-card-portal h3 a {
-    color: #111827;
-    text-decoration: none;
-}
-
-    .news-card-portal h3 a:hover {
-        color: var(--portal-button-color);
-    }
-
-.news-details-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 360px;
-    gap: 1.25rem;
-    align-items: start;
-}
-
-.news-content {
-    font-size: 1.02rem;
-    line-height: 1.75;
-}
-
-.quick-link-grid {
-    display: grid;
-    gap: 0.75rem;
-}
-
-.quick-link-card {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.75rem;
-    align-items: center;
-    background-color: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 0.9rem;
-    padding: 0.85rem;
-    color: #111827;
-    text-decoration: none;
-}
-
-    .quick-link-card:hover {
-        border-color: rgba(13, 110, 253, 0.25);
-        color: #111827;
-        text-decoration: none;
-    }
-
-    .quick-link-card span {
-        font-size: 1.35rem;
-    }
-
-    .quick-link-card strong,
-    .quick-link-card small {
-        display: block;
-    }
-
-    .quick-link-card small {
-        color: #64748b;
-    }
-
-/* Prywatność */
-
-.privacy-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.25rem;
-}
 
 .privacy-card {
     background-color: #ffffff;
     border: 1px solid rgba(15, 23, 42, 0.08);
     border-radius: var(--portal-radius);
-    padding: 1.25rem;
+    padding: 1.5rem;
     box-shadow: var(--portal-shadow-soft);
 }
 
-    .privacy-card p {
-        color: #64748b;
-        margin-bottom: 0;
-    }
-
-/* Status i potwierdzenie zamówienia */
-
-.status-instruction-grid,
-.confirmation-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.confirmation-grid {
-    grid-template-columns: minmax(0, 1fr) 380px;
-    align-items: stretch;
-}
-
-.confirmation-steps {
-    display: grid;
-    gap: 1rem;
-}
-
-.confirmation-step {
-    display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 0.85rem;
-    align-items: flex-start;
-    background-color: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 0.9rem;
-    padding: 1rem;
-}
-
-    .confirmation-step > span {
-        display: inline-flex;
-        width: 42px;
-        height: 42px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 999px;
-        background-color: var(--portal-button-color);
-        color: #ffffff;
-        font-weight: 900;
-    }
-
-    .confirmation-step strong,
-    .confirmation-step p {
-        margin: 0;
-    }
-
-    .confirmation-step p {
-        color: #64748b;
-        margin-top: 0.2rem;
-    }
-
-/* Responsywność */
-
 @media (max-width: 1199.98px) {
-    .promo-grid,
-    .producer-grid,
-    .news-grid,
-    .privacy-grid,
-    .status-instruction-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .portal-navbar .navbar-collapse {
+        align-items: flex-start;
     }
+
+    .portal-nav {
+        align-items: flex-start;
+        width: 100%;
+    }
+
+        .portal-nav .nav-link {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+    .portal-info-dropdown {
+        width: 100%;
+        max-height: 18rem;
+        box-shadow: none;
+    }
+
+    .portal-navbar-actions {
+        width: 100%;
+        margin-left: 0;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+        .portal-navbar-actions .btn,
+        .portal-navbar-actions form,
+        .portal-navbar-actions form button {
+            width: 100%;
+        }
 
     .product-info-panels,
-    .promo-details-grid,
-    .stock-details-grid,
-    .news-details-layout,
-    .confirmation-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 991.98px) {
-    .stock-grid {
+    .promo-details-grid {
         grid-template-columns: 1fr;
     }
 
-    .stock-card-values {
+    .promo-grid,
+    .producer-grid,
+    .news-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .portal-nav .nav-link {
-        width: 100%;
     }
 }
 
 @media (max-width: 767.98px) {
-    .shop-stat-card {
-        grid-template-columns: auto minmax(0, 1fr);
-    }
-
-    .home-quick-icon,
-    .shop-stat-icon {
-        width: 2.2rem;
-        height: 2.2rem;
-    }
-
     .promo-grid,
     .producer-grid,
-    .promo-card-actions,
-    .producer-card-actions,
-    .stock-card-actions,
     .news-grid,
-    .privacy-grid,
-    .status-instruction-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .promo-dates,
-    .stock-card-values {
-        grid-template-columns: 1fr;
-    }
-
-    .stock-card-header {
-        display: grid;
+    .stock-grid {
         grid-template-columns: 1fr;
     }
 
@@ -549,7 +385,8 @@
             width: 100%;
         }
 
-    .confirmation-step {
+    .promo-card-actions,
+    .producer-card-actions {
         grid-template-columns: 1fr;
     }
 }
