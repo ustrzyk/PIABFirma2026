@@ -423,6 +423,23 @@
     align-items: flex-start;
 }
 
+.stock-card-info {
+    display: grid;
+    gap: 0.35rem;
+    margin-top: 1rem;
+}
+
+    .stock-card-info span {
+        color: #64748b;
+    }
+
+.stock-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
 /* Wiadomości, prywatność i responsywność */
 
 .news-grid {
