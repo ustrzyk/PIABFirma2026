@@ -85,10 +85,15 @@
     background-color: #eef5ff;
 }
 
-.account-summary-grid {
+.account-summary-grid,
+.order-detail-summary-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
+}
+
+.order-detail-summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .account-summary-card {
@@ -112,6 +117,7 @@
     color: #0f172a;
     font-size: 1.5rem;
     line-height: 1.2;
+    word-break: break-word;
 }
 
 .account-summary-card p {
@@ -274,6 +280,33 @@
             color: #ffffff;
         }
 
+.order-detail-note {
+    display: grid;
+    gap: 0.25rem;
+    background-color: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.95rem;
+    padding: 1rem;
+}
+
+    .order-detail-note strong,
+    .order-detail-note span {
+        display: block;
+    }
+
+    .order-detail-note span {
+        color: #64748b;
+    }
+
+.order-detail-note-danger {
+    background-color: #fff1f2;
+    border-color: rgba(220, 38, 38, 0.25);
+}
+
+    .order-detail-note-danger span {
+        color: #991b1b;
+    }
+
 .next-step-card {
     display: grid;
     gap: 0.25rem;
@@ -291,6 +324,99 @@
     grid-template-columns: 1fr;
 }
 
+.client-order-items {
+    display: grid;
+    gap: 0.65rem;
+}
+
+.client-order-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 90px 130px 130px;
+    gap: 0.75rem;
+    align-items: center;
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.9rem;
+    padding: 0.85rem;
+}
+
+.client-order-header {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.client-order-product {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+    .client-order-product strong {
+        color: #111827;
+    }
+
+    .client-order-product span {
+        color: #64748b;
+        font-size: 0.88rem;
+    }
+
+.client-order-label {
+    display: none;
+    color: #64748b;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.client-order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background-color: #eef5ff;
+    border: 1px solid rgba(13, 110, 253, 0.16);
+    border-radius: 0.95rem;
+    padding: 1rem;
+}
+
+    .client-order-total span {
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .client-order-total strong {
+        color: #0f172a;
+        font-size: 1.25rem;
+    }
+
+.status-address-box {
+    display: grid;
+    gap: 0.35rem;
+    background-color: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 0.95rem;
+    padding: 1rem;
+}
+
+    .status-address-box span {
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .status-address-box strong {
+        color: #111827;
+        line-height: 1.45;
+    }
+
+.order-detail-actions {
+    display: grid;
+    gap: 0.65rem;
+}
+
 @media (max-width: 1199.98px) {
     .customer-panel-grid {
         grid-template-columns: 1fr;
@@ -301,8 +427,13 @@
     }
 
     .account-tabs,
-    .account-summary-grid {
+    .account-summary-grid,
+    .order-detail-summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .client-order-row {
+        grid-template-columns: minmax(0, 1fr) 80px 120px 120px;
     }
 }
 
@@ -321,6 +452,22 @@
         .customer-orders-heading .btn {
             width: 100%;
         }
+
+    .client-order-header {
+        display: none;
+    }
+
+    .client-order-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .client-order-product {
+        grid-column: 1 / -1;
+    }
+
+    .client-order-label {
+        display: block;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -330,9 +477,11 @@
 
     .account-tabs,
     .account-summary-grid,
+    .order-detail-summary-grid,
     .order-progress,
     .customer-orders-grid,
-    .customer-order-card-body {
+    .customer-order-card-body,
+    .client-order-row {
         grid-template-columns: 1fr;
     }
 
@@ -345,4 +494,9 @@
         .account-section-header .btn {
             width: 100%;
         }
+
+    .client-order-total {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
 }

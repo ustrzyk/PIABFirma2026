@@ -57,34 +57,83 @@
 
         return "order-step";
     }
+
+    private static string OpisAktualnegoStatusu(string? status)
+    {
+        var tekst = (status ?? string.Empty).Trim().ToLowerInvariant();
+
+        if (tekst == "nowe")
+        {
+            return "Zamówienie zostało przyjęte i czeka na obsługę.";
+        }
+
+        if (tekst == "w trakcie")
+        {
+            return "Zamówienie jest obecnie przygotowywane.";
+        }
+
+        if (tekst == "wysłane" || tekst == "wyslane")
+        {
+            return "Zamówienie zostało przekazane do dostawy.";
+        }
+
+        if (tekst == "zakończone" || tekst == "zakonczone")
+        {
+            return "Zamówienie zostało zakończone.";
+        }
+
+        if (tekst == "anulowane")
+        {
+            return "Zamówienie zostało anulowane.";
+        }
+
+        return "Status zamówienia został zapisany w systemie.";
+    }
 }
 
 @{
     var etap = NumerEtapu(Model.Status);
+    var opisStatusu = OpisAktualnegoStatusu(Model.Status);
+    var liczbaPozycji = Model.Pozycje?.Count ?? 0;
+    var czyAnulowane = Model.Status == "anulowane";
 }
 
-<section class="client-portal-hero mb-4">
+<section class="client-portal-hero order-detail-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">👤 Moje konto</span>
+            <span class="portal-badge">Moje konto</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 Zamówienie @Model.NumerZamowienia
             </h1>
 
             <p class="hero-text mb-0">
-                Szczegóły zamówienia przypisanego do Twojego konta klienta.
+                @opisStatusu
             </p>
+
+            <div class="hero-actions">
+                <a asp-controller="KontoKlienta"
+                   asp-action="Panel"
+                   class="btn btn-primary btn-lg">
+                    Wróć do panelu
+                </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Przejdź do sklepu
+                </a>
+            </div>
         </div>
 
         <div class="col-12 col-lg-4">
             <div class="client-login-card">
-                <strong>Status</strong>
+                <strong>Podsumowanie</strong>
 
                 <div>
                     <span>🧾</span>
                     <p>
-                        @if (Model.Status == "anulowane")
+                        Status:
+                        @if (czyAnulowane)
                         {
                             <span class="availability-badge unavailable">@Model.Status</span>
                         }
@@ -99,15 +148,91 @@
                     <span>💰</span>
                     <p>Wartość: <strong>@Model.WartoscRazem.ToString("C")</strong></p>
                 </div>
+
+                <div>
+                    <span>📦</span>
+                    <p>Pozycje: <strong>@liczbaPozycji</strong></p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
+<section class="account-tabs mb-4">
+    <a asp-controller="KontoKlienta"
+       asp-action="Panel"
+       class="account-tab-card">
+        <span>Panel</span>
+        <strong>Moje konto</strong>
+    </a>
+
+    <a asp-controller="KontoKlienta"
+       asp-action="Dane"
+       class="account-tab-card">
+        <span>Dane</span>
+        <strong>Kontakt i adres</strong>
+    </a>
+
+    <a asp-controller="KontoKlienta"
+       asp-action="Panel"
+       fragment="moje-zamowienia"
+       class="account-tab-card account-tab-card-active">
+        <span>Zamówienia</span>
+        <strong>Szczegóły</strong>
+    </a>
+
+    <a asp-controller="StatusZamowienia"
+       asp-action="Index"
+       class="account-tab-card">
+        <span>Status</span>
+        <strong>Bez logowania</strong>
+    </a>
+</section>
+
+<section class="order-detail-summary-grid mb-4">
+    <article class="account-summary-card">
+        <span class="account-summary-label">Numer zamówienia</span>
+        <strong>@Model.NumerZamowienia</strong>
+        <p>Identyfikator zamówienia w portalu.</p>
+    </article>
+
+    <article class="account-summary-card">
+        <span class="account-summary-label">Data zamówienia</span>
+
+        @if (Model.DataZamowienia != null)
+        {
+            <strong>@Model.DataZamowienia.Value.ToString("dd.MM.yyyy")</strong>
+        }
+        else
+        {
+            <strong>brak</strong>
+        }
+
+        <p>Data przyjęcia zamówienia.</p>
+    </article>
+
+    <article class="account-summary-card">
+        <span class="account-summary-label">Wartość</span>
+        <strong>@Model.WartoscRazem.ToString("C")</strong>
+        <p>Łączna wartość produktów.</p>
+    </article>
+
+    <article class="account-summary-card">
+        <span class="account-summary-label">Status</span>
+        <strong>@Model.Status</strong>
+        <p>@opisStatusu</p>
+    </article>
+</section>
+
 <section class="customer-panel-grid">
     <div class="customer-panel-main">
         <div class="details-card mb-4">
-            <h2 class="h5 mb-3">Etap realizacji</h2>
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Realizacja</span>
+                    <h2 class="h5 mt-2 mb-0">Etap zamówienia</h2>
+                </div>
+            </div>
 
             <div class="order-progress">
                 <div class="@KlasaEtapu(1, etap)">
@@ -134,10 +259,34 @@
                     <small>Realizacja zakończona</small>
                 </div>
             </div>
+
+            @if (czyAnulowane)
+            {
+                <div class="order-detail-note order-detail-note-danger mt-3">
+                    <strong>Zamówienie anulowane</strong>
+                    <span>To zamówienie nie będzie dalej realizowane.</span>
+                </div>
+            }
+            else
+            {
+                <div class="order-detail-note mt-3">
+                    <strong>Aktualny status</strong>
+                    <span>@opisStatusu</span>
+                </div>
+            }
         </div>
 
         <div class="details-card">
-            <h2 class="h5 mb-3">Produkty</h2>
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Produkty</span>
+                    <h2 class="h5 mt-2 mb-0">Pozycje zamówienia</h2>
+                </div>
+
+                <span class="availability-badge available">
+                    @liczbaPozycji pozycji
+                </span>
+            </div>
 
             @if (Model.Pozycje.Any())
             {
@@ -177,6 +326,11 @@
                             </div>
                         </div>
                     }
+
+                    <div class="client-order-total">
+                        <span>Razem</span>
+                        <strong>@Model.WartoscRazem.ToString("C")</strong>
+                    </div>
                 </div>
             }
             else
@@ -190,7 +344,12 @@
 
     <aside class="customer-order-sidebar">
         <div class="details-card mb-4">
-            <h2 class="h5 mb-3">Dane zamówienia</h2>
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Dane</span>
+                    <h2 class="h5 mt-2 mb-0">Dane zamówienia</h2>
+                </div>
+            </div>
 
             <dl class="details-list-clean mb-0">
                 <dt>Numer</dt>
@@ -233,19 +392,54 @@
             </dl>
         </div>
 
-        <div class="details-card">
-            <h2 class="h5 mb-3">Dostawa</h2>
-
-            <div class="status-address-box">
-                <span>Adres dostawy</span>
-                <strong>@Model.AdresDostawy</strong>
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Dostawa</span>
+                    <h2 class="h5 mt-2 mb-0">Adres dostawy</h2>
+                </div>
             </div>
 
-            <a asp-controller="KontoKlienta"
-               asp-action="Panel"
-               class="btn btn-outline-secondary w-100 mt-3">
-                Wróć do moich zamówień
-            </a>
+            <div class="status-address-box">
+                <span>Adres</span>
+
+                @if (!string.IsNullOrWhiteSpace(Model.AdresDostawy))
+                {
+                    <strong>@Model.AdresDostawy</strong>
+                }
+                else
+                {
+                    <strong>brak danych</strong>
+                }
+            </div>
+        </div>
+
+        <div class="details-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Akcje</span>
+                    <h2 class="h5 mt-2 mb-0">Co dalej?</h2>
+                </div>
+            </div>
+
+            <div class="order-detail-actions">
+                <a asp-controller="KontoKlienta"
+                   asp-action="Panel"
+                   class="btn btn-primary w-100">
+                    Wróć do moich zamówień
+                </a>
+
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary w-100">
+                    Sprawdź status bez logowania
+                </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary w-100">
+                    Przejdź do sklepu
+                </a>
+            </div>
         </div>
     </aside>
 </section>
