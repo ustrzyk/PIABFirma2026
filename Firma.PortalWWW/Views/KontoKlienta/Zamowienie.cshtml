@@ -1,4 +1,5 @@
-﻿@model Firma.Services.Data.Dto.ZamowieniaPubliczne.StatusZamowieniaDto
+﻿@using Firma.Services.Data.Dto.ZamowieniaPubliczne
+@model StatusZamowieniaDto
 
 @{
     ViewData["Title"] = "Szczegóły zamówienia";
@@ -92,9 +93,11 @@
 }
 
 @{
+    var pozycje = Model.Pozycje?.ToList() ?? new List<StatusZamowieniaPozycjaDto>();
+
     var etap = NumerEtapu(Model.Status);
     var opisStatusu = OpisAktualnegoStatusu(Model.Status);
-    var liczbaPozycji = Model.Pozycje?.Count ?? 0;
+    var liczbaPozycji = pozycje.Count;
     var czyAnulowane = Model.Status == "anulowane";
 }
 
@@ -288,7 +291,7 @@
                 </span>
             </div>
 
-            @if (Model.Pozycje.Any())
+            @if (pozycje.Any())
             {
                 <div class="client-order-items">
                     <div class="client-order-row client-order-header">
@@ -298,7 +301,7 @@
                         <div>Wartość</div>
                     </div>
 
-                    @foreach (var item in Model.Pozycje)
+                    @foreach (var item in pozycje)
                     {
                         <div class="client-order-row">
                             <div class="client-order-product">
