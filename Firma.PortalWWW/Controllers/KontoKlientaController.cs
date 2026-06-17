@@ -1,6 +1,7 @@
 ﻿using Firma.Interfaces.CMS;
 using Firma.Interfaces.Sklep;
 using Firma.PortalWWW.Models;
+using Firma.Services.Data.Dto.ZamowieniaPubliczne;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -36,8 +37,77 @@ namespace Firma.PortalWWW.Controllers
             var email = PobierzEmailZalogowanegoKlienta();
 
             var zamowienia = await _kontoKlientaService.PobierzZamowieniaKlienta(email);
+            var daneKlienta = await _kontoKlientaService.PobierzDaneKlienta(email);
+
+            ViewBag.DaneKlienta = daneKlienta;
 
             return View(zamowienia);
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Dane()
+        {
+            await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
+
+            var email = PobierzEmailZalogowanegoKlienta();
+
+            var daneKlienta = await _kontoKlientaService.PobierzDaneKlienta(email);
+
+            if (daneKlienta == null)
+            {
+                return View(new KontoKlientaDaneViewModel
+                {
+                    Email = email
+                });
+            }
+
+            return View(new KontoKlientaDaneViewModel
+            {
+                Imie = daneKlienta.Imie,
+                Nazwisko = daneKlienta.Nazwisko,
+                Email = daneKlienta.Email,
+                Telefon = daneKlienta.Telefon,
+                Ulica = daneKlienta.Ulica,
+                NumerDomu = daneKlienta.NumerDomu,
+                NumerLokalu = daneKlienta.NumerLokalu,
+                KodPocztowy = daneKlienta.KodPocztowy,
+                Miasto = daneKlienta.Miasto
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Dane(KontoKlientaDaneViewModel model)
+        {
+            await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
+
+            model.Email = PobierzEmailZalogowanegoKlienta();
+            ModelState.Remove(nameof(KontoKlientaDaneViewModel.Email));
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            await _kontoKlientaService.AktualizujDaneKlienta(new KontoKlientaDaneDto
+            {
+                Imie = model.Imie,
+                Nazwisko = model.Nazwisko,
+                Email = model.Email,
+                Telefon = model.Telefon,
+                Ulica = model.Ulica,
+                NumerDomu = model.NumerDomu,
+                NumerLokalu = model.NumerLokalu,
+                KodPocztowy = model.KodPocztowy,
+                Miasto = model.Miasto
+            });
+
+            TempData["KomunikatKontaKlienta"] = "Dane konta zostały zapisane.";
+
+            return RedirectToAction(nameof(Panel));
         }
 
         [Authorize]

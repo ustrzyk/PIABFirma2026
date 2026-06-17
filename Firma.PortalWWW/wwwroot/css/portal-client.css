@@ -55,6 +55,12 @@
     min-width: 0;
 }
 
+.customer-account-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
 .customer-orders-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -199,8 +205,9 @@
 }
 
 @media (max-width: 991.98px) {
-    .order-progress {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .order-progress,
+    .customer-account-grid {
+        grid-template-columns: 1fr;
     }
 }
 

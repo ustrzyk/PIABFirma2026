@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 
     var zamowienia = Model?.ToList() ?? new List<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>();
+    var daneKlienta = ViewBag.DaneKlienta as Firma.Services.Data.Dto.ZamowieniaPubliczne.KontoKlientaDaneDto;
 }
 
 <section class="client-portal-hero mb-4">
@@ -17,8 +18,21 @@
             </h1>
 
             <p class="hero-text mb-0">
-                Tutaj widzisz swoje zamówienia złożone w portalu oraz ich aktualny status.
+                Tutaj widzisz swoje zamówienia, zapisane dane kontaktowe i domyślny adres dostawy.
             </p>
+
+            <div class="hero-actions">
+                <a asp-controller="KontoKlienta"
+                   asp-action="Dane"
+                   class="btn btn-primary btn-lg">
+                    Edytuj dane i adres
+                </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary btn-lg">
+                    Przejdź do sklepu
+                </a>
+            </div>
         </div>
 
         <div class="col-12 col-lg-4">
@@ -31,12 +45,97 @@
                 </div>
 
                 <div>
-                    <span>🛒</span>
-                    <p>Możesz wrócić do sklepu i złożyć kolejne zamówienie.</p>
+                    <span>📍</span>
+                    <p>
+                        @if (daneKlienta != null && !string.IsNullOrWhiteSpace(daneKlienta.Ulica))
+                        {
+                            <span>@daneKlienta.Ulica @daneKlienta.NumerDomu, @daneKlienta.Miasto</span>
+                        }
+                        else
+                        {
+                            <span>Adres dostawy nie został jeszcze zapisany.</span>
+                        }
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+</section>
+
+@if (TempData["KomunikatKontaKlienta"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["KomunikatKontaKlienta"]
+    </div>
+}
+
+<section class="customer-account-grid mb-4">
+    <article class="details-card">
+        <h2 class="h5 mb-3">Dane kontaktowe</h2>
+
+        @if (daneKlienta != null)
+        {
+            <dl class="details-list-clean mb-0">
+                <dt>Imię i nazwisko</dt>
+                <dd>@daneKlienta.Imie @daneKlienta.Nazwisko</dd>
+
+                <dt>E-mail</dt>
+                <dd>@daneKlienta.Email</dd>
+
+                <dt>Telefon</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(daneKlienta.Telefon))
+                    {
+                        @daneKlienta.Telefon
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak</span>
+                    }
+                </dd>
+            </dl>
+        }
+        else
+        {
+            <div class="empty-state empty-state-small">
+                Brak danych klienta.
+            </div>
+        }
+    </article>
+
+    <article class="details-card">
+        <h2 class="h5 mb-3">Domyślny adres dostawy</h2>
+
+        @if (daneKlienta != null && !string.IsNullOrWhiteSpace(daneKlienta.Ulica))
+        {
+            <dl class="details-list-clean mb-0">
+                <dt>Ulica</dt>
+                <dd>@daneKlienta.Ulica @daneKlienta.NumerDomu</dd>
+
+                <dt>Numer lokalu</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(daneKlienta.NumerLokalu))
+                    {
+                        @daneKlienta.NumerLokalu
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak</span>
+                    }
+                </dd>
+
+                <dt>Kod i miasto</dt>
+                <dd>@daneKlienta.KodPocztowy @daneKlienta.Miasto</dd>
+            </dl>
+        }
+        else
+        {
+            <div class="simple-note">
+                <strong>Adres nie jest zapisany</strong>
+                <span>Uzupełnij dane, aby formularz zamówienia wypełniał się automatycznie.</span>
+            </div>
+        }
+    </article>
 </section>
 
 @if (zamowienia.Any())

@@ -1,0 +1,133 @@
+﻿@model Firma.PortalWWW.Models.KontoKlientaDaneViewModel
+
+@{
+    ViewData["Title"] = "Dane klienta";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="client-portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">👤 Moje konto</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Dane klienta i adres dostawy
+            </h1>
+
+            <p class="hero-text mb-0">
+                Te dane będą automatycznie wpisywane podczas składania kolejnych zamówień.
+            </p>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="client-login-card">
+                <strong>Adres konta</strong>
+
+                <div>
+                    <span>✉️</span>
+                    <p>@Model.Email</p>
+                </div>
+
+                <div>
+                    <span>🛒</span>
+                    <p>Po zapisaniu danych formularz zamówienia będzie krótszy do wypełnienia.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="details-card">
+    <h2 class="h5 mb-3">Edytuj dane</h2>
+
+    <form asp-controller="KontoKlienta"
+          asp-action="Dane"
+          method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="checkout-section-title">Dane kontaktowe</div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <label asp-for="Imie" class="form-label"></label>
+                <input asp-for="Imie" class="form-control" />
+                <span asp-validation-for="Imie" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Nazwisko" class="form-label"></label>
+                <input asp-for="Nazwisko" class="form-control" />
+                <span asp-validation-for="Nazwisko" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email"
+                       class="form-control"
+                       readonly />
+                <span asp-validation-for="Email" class="text-danger"></span>
+                <div class="form-text">
+                    E-mail jest loginem konta klienta.
+                </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Telefon" class="form-label"></label>
+                <input asp-for="Telefon" class="form-control" />
+                <span asp-validation-for="Telefon" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="checkout-section-title mt-4">Domyślny adres dostawy</div>
+
+        <div class="row g-3">
+            <div class="col-12">
+                <label asp-for="Ulica" class="form-label"></label>
+                <input asp-for="Ulica" class="form-control" />
+                <span asp-validation-for="Ulica" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="NumerDomu" class="form-label"></label>
+                <input asp-for="NumerDomu" class="form-control" />
+                <span asp-validation-for="NumerDomu" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="NumerLokalu" class="form-label"></label>
+                <input asp-for="NumerLokalu" class="form-control" />
+                <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="KodPocztowy" class="form-label"></label>
+                <input asp-for="KodPocztowy" class="form-control" />
+                <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Miasto" class="form-label"></label>
+                <input asp-for="Miasto" class="form-control" />
+                <span asp-validation-for="Miasto" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="checkout-actions">
+            <button type="submit" class="btn btn-primary">
+                Zapisz dane
+            </button>
+
+            <a asp-controller="KontoKlienta"
+               asp-action="Panel"
+               class="btn btn-outline-secondary">
+                Wróć do konta
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

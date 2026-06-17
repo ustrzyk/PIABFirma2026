@@ -1,27 +1,23 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Firma.Data.Data.Sklep
+namespace Firma.PortalWWW.Models
 {
-    public class Klient
+    public class KontoKlientaDaneViewModel
     {
-        [Key]
-        public int IdKlienta { get; set; }
-
         [Required(ErrorMessage = "Imię jest wymagane")]
         [MaxLength(20, ErrorMessage = "Imię może zawierać maksymalnie 20 znaków")]
         [Display(Name = "Imię")]
-        public required string Imie { get; set; }
+        public string Imie { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nazwisko jest wymagane")]
         [MaxLength(30, ErrorMessage = "Nazwisko może zawierać maksymalnie 30 znaków")]
         [Display(Name = "Nazwisko")]
-        public required string Nazwisko { get; set; }
+        public string Nazwisko { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Adres e-mail jest wymagany")]
+        [Required(ErrorMessage = "E-mail jest wymagany")]
         [EmailAddress(ErrorMessage = "Podaj poprawny adres e-mail")]
-        [MaxLength(256, ErrorMessage = "E-mail może zawierać maksymalnie 256 znaków")]
         [Display(Name = "E-mail")]
-        public required string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [MaxLength(15, ErrorMessage = "Telefon może zawierać maksymalnie 15 znaków")]
         [Display(Name = "Telefon")]
@@ -46,8 +42,5 @@ namespace Firma.Data.Data.Sklep
         [MaxLength(40, ErrorMessage = "Miasto może zawierać maksymalnie 40 znaków")]
         [Display(Name = "Miasto")]
         public string Miasto { get; set; } = string.Empty;
-
-        // Powiązanie 1:N - jeden klient może mieć wiele zamówień
-        public ICollection<Zamowienie> Zamowienie { get; } = new List<Zamowienie>();
     }
 }

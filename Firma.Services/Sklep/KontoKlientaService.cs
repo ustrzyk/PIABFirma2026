@@ -59,9 +59,53 @@ namespace Firma.Services.Sklep
                     Imie = k.Imie,
                     Nazwisko = k.Nazwisko,
                     Email = k.Email,
-                    Telefon = k.Telefon
+                    Telefon = k.Telefon,
+                    Ulica = k.Ulica,
+                    NumerDomu = k.NumerDomu,
+                    NumerLokalu = k.NumerLokalu,
+                    KodPocztowy = k.KodPocztowy,
+                    Miasto = k.Miasto
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task AktualizujDaneKlienta(KontoKlientaDaneDto daneKlienta)
+        {
+            var emailKlienta = daneKlienta.Email.Trim().ToLowerInvariant();
+
+            var klient = await _context.Klient
+                .FirstOrDefaultAsync(k => k.Email.ToLower() == emailKlienta);
+
+            if (klient == null)
+            {
+                _context.Klient.Add(new Klient
+                {
+                    Imie = daneKlienta.Imie.Trim(),
+                    Nazwisko = daneKlienta.Nazwisko.Trim(),
+                    Email = emailKlienta,
+                    Telefon = daneKlienta.Telefon?.Trim() ?? string.Empty,
+                    Ulica = daneKlienta.Ulica?.Trim() ?? string.Empty,
+                    NumerDomu = daneKlienta.NumerDomu?.Trim() ?? string.Empty,
+                    NumerLokalu = daneKlienta.NumerLokalu?.Trim() ?? string.Empty,
+                    KodPocztowy = daneKlienta.KodPocztowy?.Trim() ?? string.Empty,
+                    Miasto = daneKlienta.Miasto?.Trim() ?? string.Empty
+                });
+
+                await _context.SaveChangesAsync();
+
+                return;
+            }
+
+            klient.Imie = daneKlienta.Imie.Trim();
+            klient.Nazwisko = daneKlienta.Nazwisko.Trim();
+            klient.Telefon = daneKlienta.Telefon?.Trim() ?? string.Empty;
+            klient.Ulica = daneKlienta.Ulica?.Trim() ?? string.Empty;
+            klient.NumerDomu = daneKlienta.NumerDomu?.Trim() ?? string.Empty;
+            klient.NumerLokalu = daneKlienta.NumerLokalu?.Trim() ?? string.Empty;
+            klient.KodPocztowy = daneKlienta.KodPocztowy?.Trim() ?? string.Empty;
+            klient.Miasto = daneKlienta.Miasto?.Trim() ?? string.Empty;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<ZamowienieKlientaListaItemDto>> PobierzZamowieniaKlienta(string email)

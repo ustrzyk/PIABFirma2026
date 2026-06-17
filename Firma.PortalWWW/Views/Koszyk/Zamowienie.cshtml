@@ -15,7 +15,7 @@
         <p class="text-muted mb-0">
             @if (czyZalogowanyKlient)
             {
-                <span>Dane kontaktowe zostały uzupełnione z konta klienta. Uzupełnij adres dostawy.</span>
+                <span>Dane zostały uzupełnione z konta klienta. Możesz je poprawić przed złożeniem zamówienia.</span>
             }
             else
             {
@@ -39,7 +39,7 @@
             <div class="simple-note mb-4">
                 <strong>Zalogowany klient</strong>
                 <span>
-                    Zamówienie zostanie przypisane do Twojego konta. Po zakupie zobaczysz je w panelu „Moje konto”.
+                    Zamówienie zostanie przypisane do Twojego konta. Dane kontaktowe i adres zostaną zapisane jako domyślne.
                 </span>
             </div>
         }
@@ -154,9 +154,9 @@
                 @if (czyZalogowanyKlient)
                 {
                     <a asp-controller="KontoKlienta"
-                       asp-action="Panel"
+                       asp-action="Dane"
                        class="btn btn-outline-secondary">
-                        Moje konto
+                        Edytuj dane konta
                     </a>
                 }
             </div>

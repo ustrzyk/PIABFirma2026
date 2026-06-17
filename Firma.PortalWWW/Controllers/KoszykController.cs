@@ -195,11 +195,18 @@ namespace Firma.PortalWWW.Controllers
 
             if (CzyKlientZalogowany())
             {
-                await _kontoKlientaService.UtworzLubAktualizujKlienta(
-                    model.Email,
-                    model.Imie,
-                    model.Nazwisko,
-                    model.Telefon);
+                await _kontoKlientaService.AktualizujDaneKlienta(new KontoKlientaDaneDto
+                {
+                    Imie = model.Imie,
+                    Nazwisko = model.Nazwisko,
+                    Email = model.Email,
+                    Telefon = model.Telefon,
+                    Ulica = model.Ulica,
+                    NumerDomu = model.NumerDomu,
+                    NumerLokalu = model.NumerLokalu,
+                    KodPocztowy = model.KodPocztowy,
+                    Miasto = model.Miasto
+                });
             }
 
             var wynik = await _zamowieniePubliczneService.ZlozZamowienie(new DaneZamowieniaPublicznegoDto
@@ -259,7 +266,12 @@ namespace Firma.PortalWWW.Controllers
                 Imie = daneKlienta.Imie,
                 Nazwisko = daneKlienta.Nazwisko,
                 Email = daneKlienta.Email,
-                Telefon = daneKlienta.Telefon
+                Telefon = daneKlienta.Telefon,
+                Ulica = daneKlienta.Ulica,
+                NumerDomu = daneKlienta.NumerDomu,
+                NumerLokalu = daneKlienta.NumerLokalu,
+                KodPocztowy = daneKlienta.KodPocztowy,
+                Miasto = daneKlienta.Miasto
             };
         }
 
