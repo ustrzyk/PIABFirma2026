@@ -133,7 +133,8 @@
     margin-bottom: 1rem;
 }
 
-.customer-panel-grid {
+.customer-panel-grid,
+.account-edit-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 360px;
     gap: 1.25rem;
@@ -141,7 +142,9 @@
 }
 
 .customer-panel-main,
-.customer-order-sidebar {
+.customer-order-sidebar,
+.account-edit-main,
+.account-edit-sidebar {
     min-width: 0;
 }
 
@@ -209,6 +212,28 @@
         font-size: 0.85rem;
         font-weight: 700;
     }
+
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.profile-form-wide {
+    grid-column: 1 / -1;
+}
+
+.profile-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.readonly-control {
+    background-color: #f8fafc;
+    color: #64748b;
+}
 
 .order-progress {
     display: grid;
@@ -418,7 +443,8 @@
 }
 
 @media (max-width: 1199.98px) {
-    .customer-panel-grid {
+    .customer-panel-grid,
+    .account-edit-layout {
         grid-template-columns: 1fr;
     }
 
@@ -439,7 +465,8 @@
 
 @media (max-width: 991.98px) {
     .order-progress,
-    .customer-account-grid {
+    .customer-account-grid,
+    .profile-form-grid {
         grid-template-columns: 1fr;
     }
 
@@ -468,6 +495,10 @@
     .client-order-label {
         display: block;
     }
+
+    .profile-form-wide {
+        grid-column: auto;
+    }
 }
 
 @media (max-width: 575.98px) {
@@ -491,11 +522,13 @@
         grid-template-columns: 1fr;
     }
 
-        .account-section-header .btn {
+        .account-section-header .btn,
+        .profile-form-actions .btn {
             width: 100%;
         }
 
-    .client-order-total {
+    .client-order-total,
+    .profile-form-actions {
         display: grid;
         grid-template-columns: 1fr;
     }
