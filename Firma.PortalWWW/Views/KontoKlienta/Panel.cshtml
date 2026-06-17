@@ -6,19 +6,36 @@
 
     var zamowienia = Model?.ToList() ?? new List<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>();
     var daneKlienta = ViewBag.DaneKlienta as Firma.Services.Data.Dto.ZamowieniaPubliczne.KontoKlientaDaneDto;
+
+    var liczbaZamowien = zamowienia.Count;
+    var liczbaAktywnychZamowien = zamowienia.Count(z =>
+        z.Status != "zakończone" &&
+        z.Status != "zakonczone" &&
+        z.Status != "anulowane");
+
+    var ostatnieZamowienie = zamowienia
+        .OrderByDescending(z => z.DataZamowienia)
+        .ThenByDescending(z => z.IdZamowienia)
+        .FirstOrDefault();
+
+    var czyMaAdres = daneKlienta != null
+        && !string.IsNullOrWhiteSpace(daneKlienta.Ulica)
+        && !string.IsNullOrWhiteSpace(daneKlienta.NumerDomu)
+        && !string.IsNullOrWhiteSpace(daneKlienta.KodPocztowy)
+        && !string.IsNullOrWhiteSpace(daneKlienta.Miasto);
 }
 
 <section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">👤 Moje konto</span>
+            <span class="portal-badge">Moje konto</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 Panel klienta
             </h1>
 
             <p class="hero-text mb-0">
-                Tutaj widzisz swoje zamówienia, zapisane dane kontaktowe i domyślny adres dostawy.
+                Zarządzaj danymi, adresem dostawy i sprawdzaj swoje zamówienia w jednym miejscu.
             </p>
 
             <div class="hero-actions">
@@ -41,19 +58,19 @@
 
                 <div>
                     <span>🧾</span>
-                    <p>Zamówienia: <strong>@zamowienia.Count</strong></p>
+                    <p>Zamówienia: <strong>@liczbaZamowien</strong></p>
                 </div>
 
                 <div>
                     <span>📍</span>
                     <p>
-                        @if (daneKlienta != null && !string.IsNullOrWhiteSpace(daneKlienta.Ulica))
+                        @if (czyMaAdres && daneKlienta != null)
                         {
                             <span>@daneKlienta.Ulica @daneKlienta.NumerDomu, @daneKlienta.Miasto</span>
                         }
                         else
                         {
-                            <span>Adres dostawy nie został jeszcze zapisany.</span>
+                            <span>Uzupełnij domyślny adres dostawy.</span>
                         }
                     </p>
                 </div>
@@ -69,9 +86,77 @@
     </div>
 }
 
+<section class="account-tabs mb-4">
+    <a asp-controller="KontoKlienta"
+       asp-action="Panel"
+       class="account-tab-card account-tab-card-active">
+        <span>Podsumowanie</span>
+        <strong>Konto klienta</strong>
+    </a>
+
+    <a asp-controller="KontoKlienta"
+       asp-action="Dane"
+       class="account-tab-card">
+        <span>Dane</span>
+        <strong>Kontakt i adres</strong>
+    </a>
+
+    <a href="#moje-zamowienia"
+       class="account-tab-card">
+        <span>Zamówienia</span>
+        <strong>Historia zakupów</strong>
+    </a>
+
+    <a href="/Sklep/Index"
+       class="account-tab-card">
+        <span>Sklep</span>
+        <strong>Nowe zakupy</strong>
+    </a>
+</section>
+
+<section class="account-summary-grid mb-4">
+    <article class="account-summary-card">
+        <span class="account-summary-label">Wszystkie zamówienia</span>
+        <strong>@liczbaZamowien</strong>
+        <p>Liczba zamówień przypisanych do Twojego konta.</p>
+    </article>
+
+    <article class="account-summary-card">
+        <span class="account-summary-label">W realizacji</span>
+        <strong>@liczbaAktywnychZamowien</strong>
+        <p>Zamówienia, które nie są zakończone ani anulowane.</p>
+    </article>
+
+    <article class="account-summary-card">
+        <span class="account-summary-label">Ostatnie zamówienie</span>
+
+        @if (ostatnieZamowienie != null)
+        {
+            <strong>@ostatnieZamowienie.NumerZamowienia</strong>
+            <p>Status: @ostatnieZamowienie.Status</p>
+        }
+        else
+        {
+            <strong>brak</strong>
+            <p>Nie masz jeszcze zamówień na tym koncie.</p>
+        }
+    </article>
+</section>
+
 <section class="customer-account-grid mb-4">
     <article class="details-card">
-        <h2 class="h5 mb-3">Dane kontaktowe</h2>
+        <div class="account-section-header">
+            <div>
+                <span class="portal-badge">Dane</span>
+                <h2 class="h5 mt-2 mb-0">Dane kontaktowe</h2>
+            </div>
+
+            <a asp-controller="KontoKlienta"
+               asp-action="Dane"
+               class="btn btn-sm btn-outline-primary">
+                Edytuj
+            </a>
+        </div>
 
         @if (daneKlienta != null)
         {
@@ -104,9 +189,20 @@
     </article>
 
     <article class="details-card">
-        <h2 class="h5 mb-3">Domyślny adres dostawy</h2>
+        <div class="account-section-header">
+            <div>
+                <span class="portal-badge">Dostawa</span>
+                <h2 class="h5 mt-2 mb-0">Domyślny adres</h2>
+            </div>
 
-        @if (daneKlienta != null && !string.IsNullOrWhiteSpace(daneKlienta.Ulica))
+            <a asp-controller="KontoKlienta"
+               asp-action="Dane"
+               class="btn btn-sm btn-outline-primary">
+                Edytuj
+            </a>
+        </div>
+
+        @if (czyMaAdres && daneKlienta != null)
         {
             <dl class="details-list-clean mb-0">
                 <dt>Ulica</dt>
@@ -132,87 +228,112 @@
         {
             <div class="simple-note">
                 <strong>Adres nie jest zapisany</strong>
-                <span>Uzupełnij dane, aby formularz zamówienia wypełniał się automatycznie.</span>
+                <span>Uzupełnij adres, aby formularz zamówienia wypełniał się automatycznie.</span>
             </div>
         }
     </article>
 </section>
 
-@if (zamowienia.Any())
-{
-    <section class="customer-orders-grid">
-        @foreach (var item in zamowienia)
-        {
-            <article class="customer-order-card">
-                <div class="customer-order-card-header">
-                    <div>
-                        <span class="portal-badge">Zamówienie</span>
-                        <h2 class="h5 mt-2 mb-1">@item.NumerZamowienia</h2>
+<section id="moje-zamowienia" class="customer-orders-section">
+    <div class="customer-orders-heading">
+        <div>
+            <span class="portal-badge">Zamówienia</span>
 
-                        @if (item.DataZamowienia != null)
+            <h2 class="h4 mt-2 mb-1">
+                Moje zamówienia
+            </h2>
+
+            <p class="text-muted mb-0">
+                Lista zamówień powiązanych z adresem e-mail Twojego konta.
+            </p>
+        </div>
+
+        <a asp-controller="StatusZamowienia"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Sprawdź zamówienie bez logowania
+        </a>
+    </div>
+
+    @if (zamowienia.Any())
+    {
+        <div class="customer-orders-grid">
+            @foreach (var item in zamowienia)
+            {
+                <article class="customer-order-card">
+                    <div class="customer-order-card-header">
+                        <div>
+                            <span class="portal-badge">Zamówienie</span>
+
+                            <h3 class="h5 mt-2 mb-1">
+                                @item.NumerZamowienia
+                            </h3>
+
+                            @if (item.DataZamowienia != null)
+                            {
+                                <div class="text-muted small">
+                                    @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
+                                </div>
+                            }
+                        </div>
+
+                        @if (item.Status == "anulowane")
                         {
-                            <div class="text-muted small">
-                                @item.DataZamowienia.Value.ToString("dd.MM.yyyy")
-                            </div>
+                            <span class="availability-badge unavailable">@item.Status</span>
+                        }
+                        else
+                        {
+                            <span class="availability-badge available">@item.Status</span>
                         }
                     </div>
 
-                    @if (item.Status == "anulowane")
-                    {
-                        <span class="availability-badge unavailable">@item.Status</span>
-                    }
-                    else
-                    {
-                        <span class="availability-badge available">@item.Status</span>
-                    }
-                </div>
+                    <div class="customer-order-card-body">
+                        <div>
+                            <span>Pozycje</span>
+                            <strong>@item.LiczbaPozycji</strong>
+                        </div>
 
-                <div class="customer-order-card-body">
-                    <div>
-                        <span>Pozycje</span>
-                        <strong>@item.LiczbaPozycji</strong>
+                        <div>
+                            <span>Wartość</span>
+                            <strong>@item.WartoscRazem.ToString("C")</strong>
+                        </div>
                     </div>
 
-                    <div>
-                        <span>Wartość</span>
-                        <strong>@item.WartoscRazem.ToString("C")</strong>
-                    </div>
-                </div>
-
-                <a asp-controller="KontoKlienta"
-                   asp-action="Zamowienie"
-                   asp-route-id="@item.IdZamowienia"
-                   class="btn btn-primary w-100">
-                    Zobacz szczegóły
-                </a>
-            </article>
-        }
-    </section>
-}
-else
-{
-    <section class="empty-state">
-        <span class="portal-badge">Moje zamówienia</span>
-
-        <h2 class="h4 mt-3">
-            Nie masz jeszcze zamówień na tym koncie
-        </h2>
-
-        <p>
-            Zamówienia pojawią się tutaj, jeżeli przy zakupie użyjesz tego samego adresu e-mail,
-            którym logujesz się do konta klienta.
-        </p>
-
-        <div class="empty-state-actions">
-            <a href="/Sklep/Index" class="btn btn-primary">
-                Przejdź do sklepu
-            </a>
-
-            <a asp-controller="StatusZamowienia"
-               asp-action="Index"
-               class="btn btn-outline-secondary">
-                Sprawdź zamówienie bez logowania
-            </a>
+                    <a asp-controller="KontoKlienta"
+                       asp-action="Zamowienie"
+                       asp-route-id="@item.IdZamowienia"
+                       class="btn btn-primary w-100">
+                        Zobacz szczegóły
+                    </a>
+                </article>
+            }
         </div>
-    </section>
-}
+    }
+    else
+    {
+        <section class="empty-state">
+            <span class="portal-badge">Moje zamówienia</span>
+
+            <h3 class="h4 mt-3">
+                Nie masz jeszcze zamówień na tym koncie
+            </h3>
+
+            <p>
+                Zamówienia pojawią się tutaj, jeżeli przy zakupie użyjesz tego samego adresu e-mail,
+                którym logujesz się do konta klienta.
+            </p>
+
+            <div class="empty-state-actions">
+                <a href="/Sklep/Index" class="btn btn-primary">
+                    Przejdź do sklepu
+                </a>
+
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary">
+                    Sprawdź zamówienie bez logowania
+                </a>
+            </div>
+        </section>
+    }
+</section>

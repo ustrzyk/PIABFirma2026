@@ -43,6 +43,90 @@
         color: #64748b;
     }
 
+.account-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+}
+
+.account-tab-card {
+    display: grid;
+    gap: 0.2rem;
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 1rem;
+    padding: 1rem;
+    color: #111827;
+    text-decoration: none;
+    box-shadow: var(--portal-shadow-soft);
+    transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+    .account-tab-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(13, 110, 253, 0.25);
+        box-shadow: var(--portal-shadow);
+        color: #111827;
+        text-decoration: none;
+    }
+
+    .account-tab-card span {
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+
+    .account-tab-card strong {
+        font-size: 1rem;
+    }
+
+.account-tab-card-active {
+    border-color: rgba(13, 110, 253, 0.3);
+    background-color: #eef5ff;
+}
+
+.account-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.account-summary-card {
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 1rem;
+    padding: 1.15rem;
+    box-shadow: var(--portal-shadow-soft);
+}
+
+.account-summary-label {
+    display: block;
+    color: #64748b;
+    font-size: 0.86rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.account-summary-card strong {
+    display: block;
+    color: #0f172a;
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
+.account-summary-card p {
+    margin: 0.5rem 0 0 0;
+    color: #64748b;
+}
+
+.account-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .customer-panel-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 360px;
@@ -59,6 +143,19 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.25rem;
+}
+
+.customer-orders-section {
+    display: grid;
+    gap: 1rem;
+}
+
+.customer-orders-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 0.25rem;
 }
 
 .customer-orders-grid {
@@ -202,6 +299,11 @@
     .customer-orders-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .account-tabs,
+    .account-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 991.98px) {
@@ -209,6 +311,16 @@
     .customer-account-grid {
         grid-template-columns: 1fr;
     }
+
+    .customer-orders-heading {
+        display: grid;
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+        .customer-orders-heading .btn {
+            width: 100%;
+        }
 }
 
 @media (max-width: 575.98px) {
@@ -216,14 +328,21 @@
         padding: 1rem;
     }
 
+    .account-tabs,
+    .account-summary-grid,
     .order-progress,
     .customer-orders-grid,
     .customer-order-card-body {
         grid-template-columns: 1fr;
     }
 
-    .customer-order-card-header {
+    .customer-order-card-header,
+    .account-section-header {
         display: grid;
         grid-template-columns: 1fr;
     }
+
+        .account-section-header .btn {
+            width: 100%;
+        }
 }
