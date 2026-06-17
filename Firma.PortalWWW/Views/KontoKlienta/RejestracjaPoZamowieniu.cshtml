@@ -1,0 +1,115 @@
+﻿@model Firma.PortalWWW.Models.KontoKlientaPoZamowieniuViewModel
+
+@{
+    ViewData["Title"] = "Utwórz konto z zamówienia";
+    Layout = "~/Views/Shared/_SklepLayout.cshtml";
+}
+
+<section class="client-portal-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-7">
+            <span class="portal-badge">👤 Konto klienta</span>
+
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Utwórz konto z zamówienia
+            </h1>
+
+            <p class="hero-text mb-0">
+                Konto zostanie połączone z adresem e-mail użytym przy zakupie. Po utworzeniu konta zobaczysz to zamówienie w panelu „Moje konto”.
+            </p>
+        </div>
+
+        <div class="col-12 col-lg-5">
+            <div class="client-login-card">
+                <strong>Zamówienie</strong>
+
+                <div>
+                    <span>🧾</span>
+                    <p>@Model.NumerZamowienia</p>
+                </div>
+
+                <div>
+                    <span>✉️</span>
+                    <p>@Model.Email</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="details-card">
+    <h2 class="h5 mb-3">Dane konta</h2>
+
+    <form asp-controller="KontoKlienta"
+          asp-action="RejestracjaPoZamowieniu"
+          method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <input asp-for="NumerZamowienia" type="hidden" />
+        <input asp-for="Email" type="hidden" />
+
+        <div class="simple-note mb-4">
+            <strong>Adres e-mail</strong>
+            <span>@Model.Email — ten adres będzie loginem i połączy konto z zamówieniem.</span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-6">
+                <label asp-for="Imie" class="form-label"></label>
+                <input asp-for="Imie" class="form-control" />
+                <span asp-validation-for="Imie" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 col-md-6">
+                <label asp-for="Nazwisko" class="form-label"></label>
+                <input asp-for="Nazwisko" class="form-control" />
+                <span asp-validation-for="Nazwisko" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Telefon" class="form-label"></label>
+                <input asp-for="Telefon" class="form-control" />
+                <span asp-validation-for="Telefon" class="text-danger"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Haslo" class="form-label"></label>
+                <input asp-for="Haslo" class="form-control" />
+                <span asp-validation-for="Haslo" class="text-danger"></span>
+                <div class="form-text">
+                    Minimum 8 znaków, duża litera, mała litera, cyfra i znak specjalny.
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="PowtorzHaslo" class="form-label"></label>
+                <input asp-for="PowtorzHaslo" class="form-control" />
+                <span asp-validation-for="PowtorzHaslo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="checkout-actions">
+            <button type="submit" class="btn btn-primary">
+                Utwórz konto
+            </button>
+
+            <a asp-controller="KontoKlienta"
+               asp-action="Logowanie"
+               class="btn btn-outline-secondary">
+                Mam już konto
+            </a>
+
+            <a asp-controller="StatusZamowienia"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Portal klienta
+            </a>
+        </div>
+    </form>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

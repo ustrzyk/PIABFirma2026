@@ -240,6 +240,117 @@ namespace Firma.PortalWWW.Controllers
             return RedirectToAction(nameof(Panel));
         }
 
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> RejestracjaPoZamowieniu(string numerZamowienia, string email)
+        {
+            await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction(nameof(Panel));
+            }
+
+            var daneZamowienia = await _kontoKlientaService.PobierzDaneKlientaPoZamowieniu(
+                numerZamowienia,
+                email);
+
+            if (daneZamowienia == null)
+            {
+                TempData["KomunikatKontaKlienta"] = "Nie znaleziono zamówienia dla podanych danych.";
+
+                return RedirectToAction("Index", "StatusZamowienia");
+            }
+
+            return View(new KontoKlientaPoZamowieniuViewModel
+            {
+                NumerZamowienia = numerZamowienia.Trim().ToUpperInvariant(),
+                Email = daneZamowienia.Email,
+                Imie = daneZamowienia.Imie,
+                Nazwisko = daneZamowienia.Nazwisko,
+                Telefon = daneZamowienia.Telefon
+            });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RejestracjaPoZamowieniu(KontoKlientaPoZamowieniuViewModel model)
+        {
+            await PrzygotujDaneDoLayoutu();
+            ViewBag.UkryjAktualnosci = true;
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = model.Email.Trim().ToLowerInvariant();
+
+            var daneZamowienia = await _kontoKlientaService.PobierzDaneKlientaPoZamowieniu(
+                model.NumerZamowienia,
+                email);
+
+            if (daneZamowienia == null)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Nie znaleziono zamówienia dla podanego numeru i adresu e-mail.");
+
+                return View(model);
+            }
+
+            var istniejeUzytkownik = await _userManager.FindByEmailAsync(email);
+
+            if (istniejeUzytkownik != null)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Konto dla tego adresu e-mail już istnieje. Zaloguj się do panelu klienta.");
+
+                return View(model);
+            }
+
+            var uzytkownik = new IdentityUser
+            {
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var wynik = await _userManager.CreateAsync(uzytkownik, model.Haslo);
+
+            if (!wynik.Succeeded)
+            {
+                foreach (var blad in wynik.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, blad.Description);
+                }
+
+                return View(model);
+            }
+
+            await _kontoKlientaService.AktualizujDaneKlienta(new KontoKlientaDaneDto
+            {
+                Imie = model.Imie,
+                Nazwisko = model.Nazwisko,
+                Email = email,
+                Telefon = model.Telefon,
+                Ulica = daneZamowienia.Ulica,
+                NumerDomu = daneZamowienia.NumerDomu,
+                NumerLokalu = daneZamowienia.NumerLokalu,
+                KodPocztowy = daneZamowienia.KodPocztowy,
+                Miasto = daneZamowienia.Miasto
+            });
+
+            await _signInManager.SignInAsync(uzytkownik, isPersistent: false);
+
+            TempData["KomunikatKontaKlienta"] = "Konto zostało utworzone i połączone z zamówieniem.";
+
+            return RedirectToAction(nameof(Panel));
+        }
+
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]

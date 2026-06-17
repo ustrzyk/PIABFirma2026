@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 
     var emailZamowienia = ViewBag.EmailZamowienia as string ?? string.Empty;
+    var czyZalogowanyKlient = User.Identity?.IsAuthenticated == true;
 }
 
 <section class="portal-hero mb-4">
@@ -17,33 +18,48 @@
             </h1>
 
             <p class="hero-text mb-0">
-                Zamówienie zostało zapisane i trafiło do obsługi. Od teraz klient może wrócić do portalu klienta i sprawdzić status.
+                Zamówienie zostało zapisane i trafiło do obsługi. Klient może wrócić do portalu klienta i sprawdzić status.
             </p>
 
             <div class="hero-actions">
+                @if (czyZalogowanyKlient)
+                {
+                    <a asp-controller="KontoKlienta"
+                       asp-action="Panel"
+                       class="btn btn-primary btn-lg">
+                        <span class="btn-icon">👤</span>
+                        Moje konto
+                    </a>
+                }
+                else if (!string.IsNullOrWhiteSpace(emailZamowienia))
+                {
+                    <a asp-controller="KontoKlienta"
+                       asp-action="RejestracjaPoZamowieniu"
+                       asp-route-numerZamowienia="@Model.NumerZamowienia"
+                       asp-route-email="@emailZamowienia"
+                       class="btn btn-primary btn-lg">
+                        <span class="btn-icon">👤</span>
+                        Utwórz konto z zamówienia
+                    </a>
+                }
+
                 <a asp-controller="StatusZamowienia"
                    asp-action="Index"
-                   class="btn btn-primary btn-lg">
+                   class="btn btn-outline-secondary btn-lg">
                     <span class="btn-icon">🧾</span>
-                    Przejdź do portalu klienta
+                    Portal klienta
                 </a>
 
                 <a href="/Sklep/Index"
                    class="btn btn-outline-secondary btn-lg">
                     Wróć do sklepu
                 </a>
-
-                <a asp-controller="Home"
-                   asp-action="Index"
-                   class="btn btn-outline-secondary btn-lg">
-                    Strona główna
-                </a>
             </div>
         </div>
 
         <div class="col-12 col-lg-4">
             <div class="hero-card">
-                <div class="hero-card-title">Dane do portalu klienta</div>
+                <div class="hero-card-title">Dane zamówienia</div>
 
                 <div class="hero-feature">
                     <strong>@Model.NumerZamowienia</strong>
@@ -102,37 +118,51 @@
     </article>
 
     <aside class="details-card">
-        <span class="home-quick-icon">✅</span>
+        <span class="home-quick-icon">👤</span>
 
-        <h2 class="h5 mb-3">Dane do zapamiętania</h2>
+        <h2 class="h5 mb-3">Konto klienta</h2>
 
-        <dl class="details-list-clean mb-0">
-            <dt>Status startowy</dt>
-            <dd>Nowe</dd>
+        @if (czyZalogowanyKlient)
+        {
+            <p class="text-muted">
+                Zamówienie zostało przypisane do Twojego konta klienta.
+            </p>
 
-            <dt>Numer</dt>
-            <dd>
-                <strong>@Model.NumerZamowienia</strong>
-            </dd>
+            <a asp-controller="KontoKlienta"
+               asp-action="Panel"
+               class="btn btn-primary w-100">
+                Przejdź do mojego konta
+            </a>
+        }
+        else if (!string.IsNullOrWhiteSpace(emailZamowienia))
+        {
+            <p class="text-muted">
+                Możesz teraz utworzyć konto klienta na podstawie tego zamówienia. Po utworzeniu konta zamówienie pojawi się w panelu „Moje konto”.
+            </p>
 
-            <dt>E-mail</dt>
-            <dd>
-                @if (!string.IsNullOrWhiteSpace(emailZamowienia))
-                {
-                    <strong>@emailZamowienia</strong>
-                }
-                else
-                {
-                    <span class="text-muted">adres podany w formularzu</span>
-                }
-            </dd>
+            <a asp-controller="KontoKlienta"
+               asp-action="RejestracjaPoZamowieniu"
+               asp-route-numerZamowienia="@Model.NumerZamowienia"
+               asp-route-email="@emailZamowienia"
+               class="btn btn-primary w-100">
+                Utwórz konto z zamówienia
+            </a>
 
-            <dt>Logowanie</dt>
-            <dd>Nie jest wymagane</dd>
-        </dl>
+            <div class="simple-note mt-3">
+                Konto zostanie połączone z adresem e-mail użytym w zamówieniu.
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">
+                Portal klienta działa bez konta. Wystarczy numer zamówienia i e-mail z formularza.
+            </p>
 
-        <div class="simple-note mt-3">
-            Portal klienta działa bez konta. Wystarczy numer zamówienia i e-mail z formularza.
-        </div>
+            <a asp-controller="StatusZamowienia"
+               asp-action="Index"
+               class="btn btn-outline-secondary w-100">
+                Sprawdź status
+            </a>
+        }
     </aside>
 </section>

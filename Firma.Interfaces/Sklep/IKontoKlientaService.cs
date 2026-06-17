@@ -8,6 +8,8 @@ namespace Firma.Interfaces.Sklep
 
         Task<KontoKlientaDaneDto?> PobierzDaneKlienta(string email);
 
+        Task<KontoKlientaDaneDto?> PobierzDaneKlientaPoZamowieniu(string numerZamowienia, string email);
+
         Task AktualizujDaneKlienta(KontoKlientaDaneDto daneKlienta);
 
         Task<List<ZamowienieKlientaListaItemDto>> PobierzZamowieniaKlienta(string email);

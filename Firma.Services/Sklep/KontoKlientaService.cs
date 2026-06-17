@@ -69,6 +69,37 @@ namespace Firma.Services.Sklep
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<KontoKlientaDaneDto?> PobierzDaneKlientaPoZamowieniu(string numerZamowienia, string email)
+        {
+            if (string.IsNullOrWhiteSpace(numerZamowienia) || string.IsNullOrWhiteSpace(email))
+            {
+                return null;
+            }
+
+            var numer = numerZamowienia.Trim().ToUpperInvariant();
+            var emailKlienta = email.Trim().ToLowerInvariant();
+
+            return await _context.Zamowienie
+                .Include(z => z.Klient)
+                .Where(z =>
+                    z.NumerZamowienia == numer &&
+                    z.Klient != null &&
+                    z.Klient.Email.ToLower() == emailKlienta)
+                .Select(z => new KontoKlientaDaneDto
+                {
+                    Imie = z.Klient != null ? z.Klient.Imie : string.Empty,
+                    Nazwisko = z.Klient != null ? z.Klient.Nazwisko : string.Empty,
+                    Email = z.Klient != null ? z.Klient.Email : emailKlienta,
+                    Telefon = z.Klient != null ? z.Klient.Telefon : string.Empty,
+                    Ulica = z.Ulica,
+                    NumerDomu = z.NumerDomu,
+                    NumerLokalu = z.NumerLokalu,
+                    KodPocztowy = z.KodPocztowy,
+                    Miasto = z.Miasto
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task AktualizujDaneKlienta(KontoKlientaDaneDto daneKlienta)
         {
             var emailKlienta = daneKlienta.Email.Trim().ToLowerInvariant();
