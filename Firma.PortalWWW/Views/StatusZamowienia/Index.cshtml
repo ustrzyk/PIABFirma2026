@@ -5,6 +5,7 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 
     var czyPokazanoZamowienie = Model.Wynik != null;
+    var czyZalogowanyKlient = User.Identity?.IsAuthenticated == true;
 }
 
 @functions {
@@ -124,6 +125,13 @@
         </div>
     </div>
 </section>
+
+@if (TempData["KomunikatKontaKlienta"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["KomunikatKontaKlienta"]
+    </div>
+}
 
 @if (!czyPokazanoZamowienie)
 {
@@ -337,7 +345,7 @@
                     </div>
                 </div>
 
-                <div class="details-card">
+                <div class="details-card mb-4">
                     <h2 class="h5 mb-3">Dostawa</h2>
 
                     <div class="status-address-box">
@@ -348,6 +356,43 @@
                     <div class="simple-note mt-3">
                         Dane zamówienia są dostępne tylko po podaniu poprawnego numeru zamówienia i e-maila.
                     </div>
+                </div>
+
+                <div class="details-card">
+                    <h2 class="h5 mb-3">Konto klienta</h2>
+
+                    @if (czyZalogowanyKlient)
+                    {
+                        <p class="text-muted">
+                            Jesteś zalogowany. Swoje zamówienia znajdziesz w panelu klienta.
+                        </p>
+
+                        <a asp-controller="KontoKlienta"
+                           asp-action="Panel"
+                           class="btn btn-primary w-100">
+                            Przejdź do mojego konta
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="text-muted">
+                            Możesz utworzyć konto na podstawie tego zamówienia. Po zalogowaniu zamówienie będzie widoczne w panelu „Moje konto”.
+                        </p>
+
+                        <a asp-controller="KontoKlienta"
+                           asp-action="RejestracjaPoZamowieniu"
+                           asp-route-numerZamowienia="@Model.Wynik.NumerZamowienia"
+                           asp-route-email="@Model.Wynik.Email"
+                           class="btn btn-primary w-100">
+                            Utwórz konto z zamówienia
+                        </a>
+
+                        <a asp-controller="KontoKlienta"
+                           asp-action="Logowanie"
+                           class="btn btn-outline-secondary w-100 mt-2">
+                            Mam już konto
+                        </a>
+                    }
                 </div>
             </aside>
         </section>
