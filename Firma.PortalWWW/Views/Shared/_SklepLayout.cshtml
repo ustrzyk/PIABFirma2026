@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <nav class="navbar navbar-expand-lg portal-navbar">
+        <nav class="navbar navbar-expand-xl portal-navbar">
             <div class="container">
                 <a class="navbar-brand portal-brand" asp-area="" asp-controller="Home" asp-action="Index">
                     <span class="brand-mark">3D</span>
@@ -95,36 +95,77 @@
                     @await Html.PartialAsync("Odnosniki", strony)
 
                     <div class="portal-navbar-actions">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <a asp-controller="KontoKlienta"
-                               asp-action="Panel"
-                               class="btn btn-outline-secondary">
+                        <div class="dropdown portal-account-menu">
+                            <button class="btn btn-outline-secondary dropdown-toggle"
+                                    type="button"
+                                    id="kontoKlientaMenu"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                 <span class="btn-icon">👤</span>
-                                Moje konto
-                            </a>
+                                Konto
+                            </button>
 
-                            <form asp-controller="KontoKlienta"
-                                  asp-action="Wyloguj"
-                                  method="post"
-                                  class="d-inline">
-                                @Html.AntiForgeryToken()
+                            <ul class="dropdown-menu dropdown-menu-end portal-account-dropdown" aria-labelledby="kontoKlientaMenu">
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="KontoKlienta"
+                                           asp-action="Panel">
+                                            <span class="nav-icon">👤</span>
+                                            Moje konto
+                                        </a>
+                                    </li>
 
-                                <button type="submit"
-                                        class="btn btn-outline-secondary">
-                                    Wyloguj
-                                </button>
-                            </form>
-                        }
-                        else
-                        {
-                            <a asp-controller="KontoKlienta"
-                               asp-action="Logowanie"
-                               class="btn btn-outline-secondary">
-                                <span class="btn-icon">👤</span>
-                                Zaloguj
-                            </a>
-                        }
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="KontoKlienta"
+                                           asp-action="Dane">
+                                            <span class="nav-icon">📍</span>
+                                            Dane i adres
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+
+                                    <li>
+                                        <form asp-controller="KontoKlienta"
+                                              asp-action="Wyloguj"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="dropdown-item text-danger">
+                                                <span class="nav-icon">🚪</span>
+                                                Wyloguj
+                                            </button>
+                                        </form>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="KontoKlienta"
+                                           asp-action="Logowanie">
+                                            <span class="nav-icon">🔐</span>
+                                            Zaloguj
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="dropdown-item"
+                                           asp-controller="KontoKlienta"
+                                           asp-action="Rejestracja">
+                                            <span class="nav-icon">➕</span>
+                                            Rejestracja
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
 
                         <a asp-controller="Koszyk"
                            asp-action="Index"
