@@ -10,13 +10,17 @@ namespace Firma.PortalWWW.Controllers
 {
     public class KontoKlientaController : PortalControllerBase
     {
+        private const string RolaKlienta = "Klient";
+
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IKontoKlientaService _kontoKlientaService;
 
         public KontoKlientaController(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             IKontoKlientaService kontoKlientaService,
             IStronaService stronaService,
             IAktualnoscService aktualnoscService,
@@ -25,6 +29,7 @@ namespace Firma.PortalWWW.Controllers
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _kontoKlientaService = kontoKlientaService;
         }
 
@@ -33,6 +38,8 @@ namespace Firma.PortalWWW.Controllers
         {
             await PrzygotujDaneDoLayoutu();
             ViewBag.UkryjAktualnosci = true;
+
+            await ZapewnijRoleKlientaDlaZalogowanegoUzytkownika();
 
             var email = PobierzEmailZalogowanegoKlienta();
 
@@ -49,6 +56,8 @@ namespace Firma.PortalWWW.Controllers
         {
             await PrzygotujDaneDoLayoutu();
             ViewBag.UkryjAktualnosci = true;
+
+            await ZapewnijRoleKlientaDlaZalogowanegoUzytkownika();
 
             var email = PobierzEmailZalogowanegoKlienta();
 
@@ -84,6 +93,8 @@ namespace Firma.PortalWWW.Controllers
             await PrzygotujDaneDoLayoutu();
             ViewBag.UkryjAktualnosci = true;
 
+            await ZapewnijRoleKlientaDlaZalogowanegoUzytkownika();
+
             model.Email = PobierzEmailZalogowanegoKlienta();
             ModelState.Remove(nameof(KontoKlientaDaneViewModel.Email));
 
@@ -115,6 +126,8 @@ namespace Firma.PortalWWW.Controllers
         {
             await PrzygotujDaneDoLayoutu();
             ViewBag.UkryjAktualnosci = true;
+
+            await ZapewnijRoleKlientaDlaZalogowanegoUzytkownika();
 
             var email = PobierzEmailZalogowanegoKlienta();
 
@@ -159,14 +172,18 @@ namespace Firma.PortalWWW.Controllers
                 return View(model);
             }
 
+            var email = model.Email.Trim().ToLowerInvariant();
+
             var wynik = await _signInManager.PasswordSignInAsync(
-                model.Email.Trim(),
+                email,
                 model.Haslo,
                 model.ZapamietajMnie,
                 lockoutOnFailure: false);
 
             if (wynik.Succeeded)
             {
+                await PrzypiszRoleKlientaPoEmailu(email);
+
                 if (!string.IsNullOrWhiteSpace(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                 {
                     return LocalRedirect(model.ReturnUrl);
@@ -234,6 +251,8 @@ namespace Firma.PortalWWW.Controllers
                 model.Imie,
                 model.Nazwisko,
                 model.Telefon);
+
+            await DodajRoleKlienta(uzytkownik);
 
             await _signInManager.SignInAsync(uzytkownik, isPersistent: false);
 
@@ -344,6 +363,8 @@ namespace Firma.PortalWWW.Controllers
                 Miasto = daneZamowienia.Miasto
             });
 
+            await DodajRoleKlienta(uzytkownik);
+
             await _signInManager.SignInAsync(uzytkownik, isPersistent: false);
 
             TempData["KomunikatKontaKlienta"] = "Konto zostało utworzone i połączone z zamówieniem.";
@@ -359,6 +380,70 @@ namespace Firma.PortalWWW.Controllers
             await _signInManager.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        private async Task ZapewnijRoleKlientaDlaZalogowanegoUzytkownika()
+        {
+            var uzytkownik = await _userManager.GetUserAsync(User);
+
+            if (uzytkownik == null || string.IsNullOrWhiteSpace(uzytkownik.Email))
+            {
+                return;
+            }
+
+            var daneKlienta = await _kontoKlientaService.PobierzDaneKlienta(uzytkownik.Email);
+
+            if (daneKlienta == null)
+            {
+                return;
+            }
+
+            var czyMaRole = await _userManager.IsInRoleAsync(uzytkownik, RolaKlienta);
+
+            if (czyMaRole)
+            {
+                return;
+            }
+
+            await DodajRoleKlienta(uzytkownik);
+            await _signInManager.RefreshSignInAsync(uzytkownik);
+        }
+
+        private async Task PrzypiszRoleKlientaPoEmailu(string email)
+        {
+            var uzytkownik = await _userManager.FindByEmailAsync(email);
+
+            if (uzytkownik == null)
+            {
+                return;
+            }
+
+            var daneKlienta = await _kontoKlientaService.PobierzDaneKlienta(email);
+
+            if (daneKlienta == null)
+            {
+                return;
+            }
+
+            await DodajRoleKlienta(uzytkownik);
+            await _signInManager.RefreshSignInAsync(uzytkownik);
+        }
+
+        private async Task DodajRoleKlienta(IdentityUser uzytkownik)
+        {
+            var czyRolaIstnieje = await _roleManager.RoleExistsAsync(RolaKlienta);
+
+            if (!czyRolaIstnieje)
+            {
+                await _roleManager.CreateAsync(new IdentityRole(RolaKlienta));
+            }
+
+            var czyMaRole = await _userManager.IsInRoleAsync(uzytkownik, RolaKlienta);
+
+            if (!czyMaRole)
+            {
+                await _userManager.AddToRoleAsync(uzytkownik, RolaKlienta);
+            }
         }
 
         private string PobierzEmailZalogowanegoKlienta()
