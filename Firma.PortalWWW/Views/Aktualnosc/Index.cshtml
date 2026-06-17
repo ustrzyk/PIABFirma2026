@@ -8,7 +8,7 @@
 <section class="portal-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">📰 Aktualność</span>
+            <span class="portal-badge">Aktualność</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 @Model.Tytul
@@ -21,7 +21,6 @@
             <div class="hero-actions">
                 <a href="/Sklep/Index"
                    class="btn btn-primary btn-lg">
-                    <span class="btn-icon">🛒</span>
                     Przejdź do sklepu
                 </a>
 
@@ -74,33 +73,45 @@
         <div class="quick-link-grid">
             <a href="/Sklep/Index"
                class="quick-link-card">
-                <span>🧩</span>
-                <strong>Produkty</strong>
-                <small>Przejdź do oferty sklepu.</small>
+                <span class="quick-link-icon">🧩</span>
+
+                <div>
+                    <strong>Produkty</strong>
+                    <small>Przejdź do oferty sklepu.</small>
+                </div>
             </a>
 
             <a asp-controller="Promocja"
                asp-action="Index"
                class="quick-link-card">
-                <span>🏷️</span>
-                <strong>Promocje</strong>
-                <small>Zobacz aktywne oferty.</small>
+                <span class="quick-link-icon">🏷️</span>
+
+                <div>
+                    <strong>Promocje</strong>
+                    <small>Zobacz aktywne oferty.</small>
+                </div>
             </a>
 
             <a asp-controller="Producent"
                asp-action="Index"
                class="quick-link-card">
-                <span>🏭</span>
-                <strong>Producenci</strong>
-                <small>Sprawdź marki w sklepie.</small>
+                <span class="quick-link-icon">🏭</span>
+
+                <div>
+                    <strong>Producenci</strong>
+                    <small>Sprawdź marki w sklepie.</small>
+                </div>
             </a>
 
             <a asp-controller="StatusZamowienia"
                asp-action="Index"
                class="quick-link-card">
-                <span>🧾</span>
-                <strong>Status</strong>
-                <small>Sprawdź zamówienie.</small>
+                <span class="quick-link-icon">🧾</span>
+
+                <div>
+                    <strong>Portal klienta</strong>
+                    <small>Sprawdź status zamówienia.</small>
+                </div>
             </a>
         </div>
     </aside>
