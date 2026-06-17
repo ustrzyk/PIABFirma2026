@@ -4,168 +4,265 @@
 @{
     ViewData["Title"] = "Złóż zamówienie";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+
     var koszyk = ViewBag.Koszyk as KoszykViewModel ?? new KoszykViewModel();
     var czyZalogowanyKlient = ViewBag.CzyZalogowanyKlient is bool value && value;
+
+    var czyMaAdres = !string.IsNullOrWhiteSpace(Model.Ulica)
+        && !string.IsNullOrWhiteSpace(Model.NumerDomu)
+        && !string.IsNullOrWhiteSpace(Model.KodPocztowy)
+        && !string.IsNullOrWhiteSpace(Model.Miasto);
+
+    var liczbaProduktow = koszyk.Pozycje.Count;
+    var liczbaSztuk = koszyk.LiczbaSztuk;
 }
 
-<section class="section-heading mb-4">
-    <div>
-        <span class="portal-badge">🛒 Zamówienie</span>
-        <h1 class="h2 mt-2 mb-2">Dane do zamówienia</h1>
-        <p class="text-muted mb-0">
-            @if (czyZalogowanyKlient)
-            {
-                <span>Dane zostały uzupełnione z konta klienta. Możesz je poprawić przed złożeniem zamówienia.</span>
-            }
-            else
-            {
-                <span>Podaj dane kontaktowe i adres dostawy. E-mail będzie później potrzebny do sprawdzenia statusu zamówienia.</span>
-            }
-        </p>
-    </div>
+<section class="client-portal-hero checkout-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Zamówienie</span>
 
-    <div class="section-summary">
-        <strong>@koszyk.Suma.ToString("C")</strong>
-        <span>wartość</span>
-    </div>
-</section>
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Dane do zamówienia
+            </h1>
 
-<section class="checkout-layout">
-    <div class="details-card checkout-form-card">
-        <h2 class="h5 mb-3">Dane klienta i dostawy</h2>
+            <p class="hero-text mb-0">
+                @if (czyZalogowanyKlient)
+                {
+                    <span>
+                        Dane zostały pobrane z konta klienta. Możesz je poprawić przed złożeniem zamówienia.
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Podaj dane kontaktowe i adres dostawy. E-mail będzie potrzebny do sprawdzenia statusu zamówienia.
+                    </span>
+                }
+            </p>
 
-        @if (czyZalogowanyKlient)
-        {
-            <div class="simple-note mb-4">
-                <strong>Zalogowany klient</strong>
-                <span>
-                    Zamówienie zostanie przypisane do Twojego konta. Dane kontaktowe i adres zostaną zapisane jako domyślne.
-                </span>
-            </div>
-        }
-        else
-        {
-            <div class="simple-note mb-4">
-                <strong>Ważne:</strong>
-                <span>
-                    Zapamiętaj adres e-mail podany w formularzu. Po złożeniu zamówienia razem z numerem zamówienia pozwoli on sprawdzić status realizacji.
-                </span>
-            </div>
-        }
-
-        <form asp-controller="Koszyk"
-              asp-action="Zamowienie"
-              method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <div class="checkout-section-title">Dane kontaktowe</div>
-
-            <div class="row g-3">
-                <div class="col-12 col-md-6">
-                    <label asp-for="Imie" class="form-label"></label>
-                    <input asp-for="Imie" class="form-control" />
-                    <span asp-validation-for="Imie" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Nazwisko" class="form-label"></label>
-                    <input asp-for="Nazwisko" class="form-control" />
-                    <span asp-validation-for="Nazwisko" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Email" class="form-label"></label>
-
-                    @if (czyZalogowanyKlient)
-                    {
-                        <input asp-for="Email"
-                               class="form-control"
-                               readonly />
-                        <div class="form-text">
-                            E-mail pochodzi z konta klienta i przypisze zamówienie do panelu „Moje konto”.
-                        </div>
-                    }
-                    else
-                    {
-                        <input asp-for="Email"
-                               class="form-control"
-                               placeholder="np. jan.kowalski@example.com" />
-                        <div class="form-text">
-                            Ten adres będzie potrzebny do sprawdzenia statusu zamówienia.
-                        </div>
-                    }
-
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Telefon" class="form-label"></label>
-                    <input asp-for="Telefon" class="form-control" />
-                    <span asp-validation-for="Telefon" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="checkout-section-title mt-4">Adres dostawy</div>
-
-            <div class="row g-3">
-                <div class="col-12">
-                    <label asp-for="Ulica" class="form-label"></label>
-                    <input asp-for="Ulica" class="form-control" />
-                    <span asp-validation-for="Ulica" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="NumerDomu" class="form-label"></label>
-                    <input asp-for="NumerDomu" class="form-control" />
-                    <span asp-validation-for="NumerDomu" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="NumerLokalu" class="form-label"></label>
-                    <input asp-for="NumerLokalu" class="form-control" />
-                    <span asp-validation-for="NumerLokalu" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="KodPocztowy" class="form-label"></label>
-                    <input asp-for="KodPocztowy" class="form-control" />
-                    <span asp-validation-for="KodPocztowy" class="text-danger"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Miasto" class="form-label"></label>
-                    <input asp-for="Miasto" class="form-control" />
-                    <span asp-validation-for="Miasto" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="checkout-actions">
-                <button type="submit" class="btn btn-primary">
-                    <span class="btn-icon">✅</span>
+            <div class="hero-actions">
+                <button form="formularz-zamowienia"
+                        type="submit"
+                        class="btn btn-primary btn-lg">
                     Potwierdź zamówienie
                 </button>
 
                 <a asp-controller="Koszyk"
                    asp-action="Index"
-                   class="btn btn-outline-secondary">
+                   class="btn btn-outline-secondary btn-lg">
                     Wróć do koszyka
                 </a>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="client-login-card">
+                <strong>Podsumowanie koszyka</strong>
+
+                <div>
+                    <span>🧩</span>
+                    <p>Produkty: <strong>@liczbaProduktow</strong></p>
+                </div>
+
+                <div>
+                    <span>📦</span>
+                    <p>Sztuki: <strong>@liczbaSztuk</strong></p>
+                </div>
+
+                <div>
+                    <span>💰</span>
+                    <p>Wartość: <strong>@koszyk.Suma.ToString("C")</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="checkout-steps mb-4">
+    <div class="checkout-step checkout-step-done">
+        <span>1</span>
+        <strong>Koszyk</strong>
+        <small>Produkty dodane</small>
+    </div>
+
+    <div class="checkout-step checkout-step-current">
+        <span>2</span>
+        <strong>Dane</strong>
+        <small>Kontakt i dostawa</small>
+    </div>
+
+    <div class="checkout-step">
+        <span>3</span>
+        <strong>Potwierdzenie</strong>
+        <small>Numer zamówienia</small>
+    </div>
+</section>
+
+<section class="checkout-page-layout">
+    <div class="checkout-main-column">
+        <div class="details-card checkout-form-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Dane</span>
+                    <h2 class="h5 mt-2 mb-0">Dane klienta i dostawy</h2>
+                </div>
 
                 @if (czyZalogowanyKlient)
                 {
                     <a asp-controller="KontoKlienta"
                        asp-action="Dane"
-                       class="btn btn-outline-secondary">
+                       class="btn btn-sm btn-outline-primary">
                         Edytuj dane konta
                     </a>
                 }
             </div>
-        </form>
+
+            @if (czyZalogowanyKlient)
+            {
+                <div class="simple-note mb-4">
+                    <strong>Zalogowany klient</strong>
+                    <span>
+                        Zamówienie zostanie przypisane do Twojego konta. Dane z formularza zostaną zapisane jako aktualne dane klienta.
+                    </span>
+                </div>
+            }
+            else
+            {
+                <div class="simple-note mb-4">
+                    <strong>Zakup bez konta</strong>
+                    <span>
+                        Po złożeniu zamówienia otrzymasz numer zamówienia. Zapisz go razem z adresem e-mail.
+                    </span>
+                </div>
+            }
+
+            <form id="formularz-zamowienia"
+                  asp-controller="Koszyk"
+                  asp-action="Zamowienie"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="checkout-section-box">
+                    <div class="checkout-section-title">Dane kontaktowe</div>
+
+                    <div class="profile-form-grid">
+                        <div>
+                            <label asp-for="Imie" class="form-label"></label>
+                            <input asp-for="Imie" class="form-control" />
+                            <span asp-validation-for="Imie" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Nazwisko" class="form-label"></label>
+                            <input asp-for="Nazwisko" class="form-control" />
+                            <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Email" class="form-label"></label>
+
+                            @if (czyZalogowanyKlient)
+                            {
+                                <input asp-for="Email"
+                                       class="form-control readonly-control"
+                                       readonly />
+
+                                <div class="form-text">
+                                    E-mail pochodzi z konta klienta i przypisze zamówienie do panelu „Moje konto”.
+                                </div>
+                            }
+                            else
+                            {
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       placeholder="np. jan.kowalski@example.com" />
+
+                                <div class="form-text">
+                                    Ten adres będzie potrzebny do sprawdzenia statusu zamówienia.
+                                </div>
+                            }
+
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Telefon" class="form-label"></label>
+                            <input asp-for="Telefon" class="form-control" />
+                            <span asp-validation-for="Telefon" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-section-box mt-4">
+                    <div class="checkout-section-title">Adres dostawy</div>
+
+                    <div class="profile-form-grid">
+                        <div class="profile-form-wide">
+                            <label asp-for="Ulica" class="form-label"></label>
+                            <input asp-for="Ulica" class="form-control" />
+                            <span asp-validation-for="Ulica" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="NumerDomu" class="form-label"></label>
+                            <input asp-for="NumerDomu" class="form-control" />
+                            <span asp-validation-for="NumerDomu" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="NumerLokalu" class="form-label"></label>
+                            <input asp-for="NumerLokalu" class="form-control" />
+                            <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="KodPocztowy" class="form-label"></label>
+                            <input asp-for="KodPocztowy" class="form-control" />
+                            <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+                        </div>
+
+                        <div>
+                            <label asp-for="Miasto" class="form-label"></label>
+                            <input asp-for="Miasto" class="form-control" />
+                            <span asp-validation-for="Miasto" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Potwierdź zamówienie
+                    </button>
+
+                    <a asp-controller="Koszyk"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do koszyka
+                    </a>
+
+                    @if (czyZalogowanyKlient)
+                    {
+                        <a asp-controller="KontoKlienta"
+                           asp-action="Dane"
+                           class="btn btn-outline-secondary">
+                            Edytuj dane konta
+                        </a>
+                    }
+                </div>
+            </form>
+        </div>
     </div>
 
-    <aside class="checkout-summary">
-        <div class="details-card">
-            <h2 class="h5 mb-3">Podsumowanie koszyka</h2>
+    <aside class="checkout-sidebar-column">
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Koszyk</span>
+                    <h2 class="h5 mt-2 mb-0">Podsumowanie</h2>
+                </div>
+            </div>
 
             <div class="checkout-items">
                 @foreach (var item in koszyk.Pozycje)
@@ -173,6 +270,12 @@
                     <div class="checkout-item">
                         <div>
                             <strong>@item.Nazwa</strong>
+
+                            @if (!string.IsNullOrWhiteSpace(item.Kod))
+                            {
+                                <span>@item.Kod</span>
+                            }
+
                             <span>@item.Ilosc x @item.Cena.ToString("C")</span>
                         </div>
 
@@ -185,19 +288,95 @@
                 <span>Razem</span>
                 <strong class="price-text">@koszyk.Suma.ToString("C")</strong>
             </div>
+        </div>
+
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Adres</span>
+                    <h2 class="h5 mt-2 mb-0">Podgląd danych</h2>
+                </div>
+            </div>
+
+            <dl class="details-list-clean mb-0">
+                <dt>Klient</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Imie) || !string.IsNullOrWhiteSpace(Model.Nazwisko))
+                    {
+                        <span>@Model.Imie @Model.Nazwisko</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+
+                <dt>E-mail</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                    {
+                        @Model.Email
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+
+                <dt>Telefon</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(Model.Telefon))
+                    {
+                        @Model.Telefon
+                    }
+                    else
+                    {
+                        <span class="text-muted">brak danych</span>
+                    }
+                </dd>
+
+                <dt>Adres</dt>
+                <dd>
+                    @if (czyMaAdres)
+                    {
+                        <span>@Model.Ulica @Model.NumerDomu</span>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.NumerLokalu))
+                        {
+                            <span>/@Model.NumerLokalu</span>
+                        }
+
+                        <br />
+                        <span>@Model.KodPocztowy @Model.Miasto</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">uzupełnij formularz</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+
+        <div class="details-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Po zakupie</span>
+                    <h2 class="h5 mt-2 mb-0">Co dalej?</h2>
+                </div>
+            </div>
 
             @if (czyZalogowanyKlient)
             {
-                <div class="simple-note mt-3">
-                    <strong>Po zakupie</strong>
-                    <span>Zamówienie pojawi się w panelu „Moje konto”.</span>
+                <div class="simple-note">
+                    <strong>Zamówienie w panelu</strong>
+                    <span>Po złożeniu zamówienia pojawi się ono w zakładce „Moje konto”.</span>
                 </div>
             }
             else
             {
-                <div class="simple-note mt-3">
-                    <strong>Po zakupie</strong>
-                    <span>Zobaczysz numer zamówienia. Zapisz go razem z adresem e-mail.</span>
+                <div class="simple-note">
+                    <strong>Numer zamówienia</strong>
+                    <span>Po złożeniu zamówienia zobaczysz numer, który pozwoli sprawdzić status realizacji.</span>
                 </div>
             }
         </div>
