@@ -67,7 +67,6 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     await UzytkownikStartowySeeder.SeedAsync(scope.ServiceProvider);
-    await DaneDemoSeeder.SeedAsync(scope.ServiceProvider);
 }
 
 if (!app.Environment.IsDevelopment())
