@@ -8,17 +8,17 @@
     var czyZalogowanyKlient = User.Identity?.IsAuthenticated == true;
 }
 
-<section class="portal-hero mb-4">
+<section class="client-portal-hero confirmation-hero mb-4">
     <div class="row g-4 align-items-center">
         <div class="col-12 col-lg-8">
-            <span class="portal-badge">✅ Zamówienie</span>
+            <span class="portal-badge">Zamówienie</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 Dziękujemy za złożenie zamówienia
             </h1>
 
             <p class="hero-text mb-0">
-                Zamówienie zostało zapisane i trafiło do obsługi. Klient może wrócić do portalu klienta i sprawdzić status.
+                Zamówienie zostało zapisane i przekazane do obsługi. Poniżej znajdziesz numer zamówienia oraz skróty do sprawdzenia statusu.
             </p>
 
             <div class="hero-actions">
@@ -27,7 +27,6 @@
                     <a asp-controller="KontoKlienta"
                        asp-action="Panel"
                        class="btn btn-primary btn-lg">
-                        <span class="btn-icon">👤</span>
                         Moje konto
                     </a>
                 }
@@ -38,7 +37,6 @@
                        asp-route-numerZamowienia="@Model.NumerZamowienia"
                        asp-route-email="@emailZamowienia"
                        class="btn btn-primary btn-lg">
-                        <span class="btn-icon">👤</span>
                         Utwórz konto z zamówienia
                     </a>
                 }
@@ -46,8 +44,7 @@
                 <a asp-controller="StatusZamowienia"
                    asp-action="Index"
                    class="btn btn-outline-secondary btn-lg">
-                    <span class="btn-icon">🧾</span>
-                    Portal klienta
+                    Sprawdź status
                 </a>
 
                 <a href="/Sklep/Index"
@@ -58,111 +55,306 @@
         </div>
 
         <div class="col-12 col-lg-4">
-            <div class="hero-card">
-                <div class="hero-card-title">Dane zamówienia</div>
+            <div class="client-login-card">
+                <strong>Najważniejsze dane</strong>
 
-                <div class="hero-feature">
-                    <strong>@Model.NumerZamowienia</strong>
-                    <span>Numer zamówienia potrzebny do sprawdzenia statusu.</span>
+                <div>
+                    <span>🧾</span>
+                    <p>Numer: <strong>@Model.NumerZamowienia</strong></p>
                 </div>
 
-                <div class="hero-feature">
-                    <strong>
+                <div>
+                    <span>✉️</span>
+                    <p>
                         @if (!string.IsNullOrWhiteSpace(emailZamowienia))
                         {
-                            @emailZamowienia
+                            <span>@emailZamowienia</span>
                         }
                         else
                         {
-                            <text>E-mail z formularza</text>
+                            <span>E-mail z formularza</span>
                         }
-                    </strong>
-                    <span>Adres e-mail użyty przy składaniu zamówienia.</span>
+                    </p>
+                </div>
+
+                <div>
+                    <span>📦</span>
+                    <p>Status początkowy: <strong>nowe</strong></p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="confirmation-grid">
-    <article class="details-card">
-        <span class="home-quick-icon">🧾</span>
+<section class="checkout-steps mb-4">
+    <div class="checkout-step checkout-step-done">
+        <span>1</span>
+        <strong>Koszyk</strong>
+        <small>Produkty dodane</small>
+    </div>
 
-        <h2 class="h5 mb-3">Co klient widzi po zakupie?</h2>
+    <div class="checkout-step checkout-step-done">
+        <span>2</span>
+        <strong>Dane</strong>
+        <small>Dane zapisane</small>
+    </div>
 
-        <div class="confirmation-steps">
-            <div class="confirmation-step">
-                <span>1</span>
+    <div class="checkout-step checkout-step-current">
+        <span>3</span>
+        <strong>Potwierdzenie</strong>
+        <small>Zamówienie przyjęte</small>
+    </div>
+</section>
+
+<section class="confirmation-page-layout">
+    <div class="confirmation-main-column">
+        <article class="details-card confirmation-number-card mb-4">
+            <div class="confirmation-success-icon">✓</div>
+
+            <div>
+                <span class="portal-badge">Numer zamówienia</span>
+
+                <h2 class="confirmation-order-number">
+                    @Model.NumerZamowienia
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Zapisz ten numer. Będzie potrzebny do sprawdzenia statusu zamówienia bez logowania.
+                </p>
+            </div>
+        </article>
+
+        <article class="details-card mb-4">
+            <div class="account-section-header">
                 <div>
-                    <strong>Portal klienta</strong>
-                    <p>Klient wchodzi w menu „Portal klienta”.</p>
+                    <span class="portal-badge">Status</span>
+                    <h2 class="h5 mt-2 mb-0">Co dzieje się z zamówieniem?</h2>
+                </div>
+
+                <span class="availability-badge available">
+                    nowe
+                </span>
+            </div>
+
+            <div class="order-progress">
+                <div class="order-step is-current">
+                    <span>1</span>
+                    <strong>Nowe</strong>
+                    <small>Zamówienie przyjęte</small>
+                </div>
+
+                <div class="order-step">
+                    <span>2</span>
+                    <strong>W trakcie</strong>
+                    <small>Obsługa zamówienia</small>
+                </div>
+
+                <div class="order-step">
+                    <span>3</span>
+                    <strong>Wysłane</strong>
+                    <small>Przekazane do dostawy</small>
+                </div>
+
+                <div class="order-step">
+                    <span>4</span>
+                    <strong>Zakończone</strong>
+                    <small>Realizacja zakończona</small>
                 </div>
             </div>
 
-            <div class="confirmation-step">
-                <span>2</span>
+            <div class="order-detail-note mt-3">
+                <strong>Aktualny status: nowe</strong>
+                <span>Zamówienie zostało zapisane i czeka na obsługę w intranecie.</span>
+            </div>
+        </article>
+
+        <article class="details-card">
+            <div class="account-section-header">
                 <div>
-                    <strong>Wpisuje dane zamówienia</strong>
-                    <p>Numer zamówienia: <strong>@Model.NumerZamowienia</strong></p>
+                    <span class="portal-badge">Jak sprawdzić status?</span>
+                    <h2 class="h5 mt-2 mb-0">Dwie możliwości</h2>
                 </div>
             </div>
 
-            <div class="confirmation-step">
-                <span>3</span>
-                <div>
-                    <strong>Otrzymuje podgląd</strong>
-                    <p>Widoczny jest status, etap realizacji, adres dostawy i produkty.</p>
+            <div class="confirmation-help-grid">
+                <div class="confirmation-help-card">
+                    <span>1</span>
+
+                    <div>
+                        <strong>Bez logowania</strong>
+                        <p>
+                            Wejdź w „Portal klienta”, podaj numer zamówienia i adres e-mail użyty podczas zakupu.
+                        </p>
+
+                        <a asp-controller="StatusZamowienia"
+                           asp-action="Index"
+                           class="btn btn-outline-primary btn-sm">
+                            Sprawdź status
+                        </a>
+                    </div>
                 </div>
+
+                <div class="confirmation-help-card">
+                    <span>2</span>
+
+                    <div>
+                        <strong>Przez konto klienta</strong>
+
+                        @if (czyZalogowanyKlient)
+                        {
+                            <p>
+                                Zamówienie zostało przypisane do Twojego konta i będzie widoczne w panelu klienta.
+                            </p>
+
+                            <a asp-controller="KontoKlienta"
+                               asp-action="Panel"
+                               class="btn btn-outline-primary btn-sm">
+                                Przejdź do konta
+                            </a>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(emailZamowienia))
+                        {
+                            <p>
+                                Możesz utworzyć konto na podstawie tego zamówienia. Po rejestracji zamówienie pojawi się w panelu.
+                            </p>
+
+                            <a asp-controller="KontoKlienta"
+                               asp-action="RejestracjaPoZamowieniu"
+                               asp-route-numerZamowienia="@Model.NumerZamowienia"
+                               asp-route-email="@emailZamowienia"
+                               class="btn btn-outline-primary btn-sm">
+                                Utwórz konto
+                            </a>
+                        }
+                        else
+                        {
+                            <p>
+                                Konto klienta możesz założyć przy kolejnym zamówieniu albo wejść w rejestrację z menu konta.
+                            </p>
+
+                            <a asp-controller="KontoKlienta"
+                               asp-action="Rejestracja"
+                               class="btn btn-outline-primary btn-sm">
+                                Rejestracja
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <aside class="confirmation-sidebar-column">
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Dane do statusu</span>
+                    <h2 class="h5 mt-2 mb-0">Zapisz te informacje</h2>
+                </div>
+            </div>
+
+            <dl class="details-list-clean mb-0">
+                <dt>Numer zamówienia</dt>
+                <dd>
+                    <strong>@Model.NumerZamowienia</strong>
+                </dd>
+
+                <dt>Adres e-mail</dt>
+                <dd>
+                    @if (!string.IsNullOrWhiteSpace(emailZamowienia))
+                    {
+                        <strong>@emailZamowienia</strong>
+                    }
+                    else
+                    {
+                        <span class="text-muted">E-mail z formularza zamówienia</span>
+                    }
+                </dd>
+
+                <dt>Status</dt>
+                <dd>
+                    <span class="availability-badge available">nowe</span>
+                </dd>
+            </dl>
+        </div>
+
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Konto klienta</span>
+                    <h2 class="h5 mt-2 mb-0">Panel klienta</h2>
+                </div>
+            </div>
+
+            @if (czyZalogowanyKlient)
+            {
+                <div class="simple-note mb-3">
+                    <strong>Zamówienie w koncie</strong>
+                    <span>To zamówienie będzie widoczne w panelu klienta.</span>
+                </div>
+
+                <a asp-controller="KontoKlienta"
+                   asp-action="Panel"
+                   class="btn btn-primary w-100">
+                    Przejdź do mojego konta
+                </a>
+            }
+            else if (!string.IsNullOrWhiteSpace(emailZamowienia))
+            {
+                <div class="simple-note mb-3">
+                    <strong>Utwórz konto z zamówienia</strong>
+                    <span>Konto zostanie połączone z adresem e-mail użytym w tym zamówieniu.</span>
+                </div>
+
+                <a asp-controller="KontoKlienta"
+                   asp-action="RejestracjaPoZamowieniu"
+                   asp-route-numerZamowienia="@Model.NumerZamowienia"
+                   asp-route-email="@emailZamowienia"
+                   class="btn btn-primary w-100">
+                    Utwórz konto
+                </a>
+            }
+            else
+            {
+                <div class="simple-note mb-3">
+                    <strong>Status bez konta</strong>
+                    <span>Wystarczy numer zamówienia oraz e-mail podany w formularzu.</span>
+                </div>
+
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary w-100">
+                    Sprawdź status
+                </a>
+            }
+        </div>
+
+        <div class="details-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Skróty</span>
+                    <h2 class="h5 mt-2 mb-0">Co dalej?</h2>
+                </div>
+            </div>
+
+            <div class="order-detail-actions">
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-primary w-100">
+                    Sprawdź status
+                </a>
+
+                <a href="/Sklep/Index"
+                   class="btn btn-outline-secondary w-100">
+                    Wróć do sklepu
+                </a>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary w-100">
+                    Strona główna
+                </a>
             </div>
         </div>
-    </article>
-
-    <aside class="details-card">
-        <span class="home-quick-icon">👤</span>
-
-        <h2 class="h5 mb-3">Konto klienta</h2>
-
-        @if (czyZalogowanyKlient)
-        {
-            <p class="text-muted">
-                Zamówienie zostało przypisane do Twojego konta klienta.
-            </p>
-
-            <a asp-controller="KontoKlienta"
-               asp-action="Panel"
-               class="btn btn-primary w-100">
-                Przejdź do mojego konta
-            </a>
-        }
-        else if (!string.IsNullOrWhiteSpace(emailZamowienia))
-        {
-            <p class="text-muted">
-                Możesz teraz utworzyć konto klienta na podstawie tego zamówienia. Po utworzeniu konta zamówienie pojawi się w panelu „Moje konto”.
-            </p>
-
-            <a asp-controller="KontoKlienta"
-               asp-action="RejestracjaPoZamowieniu"
-               asp-route-numerZamowienia="@Model.NumerZamowienia"
-               asp-route-email="@emailZamowienia"
-               class="btn btn-primary w-100">
-                Utwórz konto z zamówienia
-            </a>
-
-            <div class="simple-note mt-3">
-                Konto zostanie połączone z adresem e-mail użytym w zamówieniu.
-            </div>
-        }
-        else
-        {
-            <p class="text-muted">
-                Portal klienta działa bez konta. Wystarczy numer zamówienia i e-mail z formularza.
-            </p>
-
-            <a asp-controller="StatusZamowienia"
-               asp-action="Index"
-               class="btn btn-outline-secondary w-100">
-                Sprawdź status
-            </a>
-        }
     </aside>
 </section>
