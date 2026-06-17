@@ -3,20 +3,83 @@
 @{
     ViewData["Title"] = "Koszyk";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
+
+    var pozycje = Model.Pozycje.ToList();
+    var liczbaProduktow = pozycje.Count;
+    var liczbaSztuk = Model.LiczbaSztuk;
+    var czyKoszykMaProdukty = pozycje.Any();
 }
 
-<section class="section-heading mb-4">
-    <div>
-        <span class="portal-badge">Koszyk</span>
-        <h1 class="h2 mt-2 mb-2">Twoje produkty</h1>
-        <p class="text-muted mb-0">
-            Sprawdź produkty przed złożeniem zamówienia.
-        </p>
-    </div>
+<section class="client-portal-hero checkout-hero mb-4">
+    <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Koszyk</span>
 
-    <div class="section-summary">
-        <strong>@Model.LiczbaSztuk</strong>
-        <span>sztuk</span>
+            <h1 class="display-6 fw-bold mt-3 mb-3">
+                Twój koszyk
+            </h1>
+
+            <p class="hero-text mb-0">
+                @if (czyKoszykMaProdukty)
+                {
+                    <span>Sprawdź produkty, zmień ilości albo przejdź do składania zamówienia.</span>
+                }
+                else
+                {
+                    <span>Koszyk jest pusty. Dodaj produkty z oferty sklepu, aby rozpocząć zamówienie.</span>
+                }
+            </p>
+
+            <div class="hero-actions">
+                @if (czyKoszykMaProdukty)
+                {
+                    <a asp-controller="Koszyk"
+                       asp-action="Zamowienie"
+                       class="btn btn-primary btn-lg">
+                        Złóż zamówienie
+                    </a>
+
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary btn-lg">
+                        Kontynuuj zakupy
+                    </a>
+                }
+                else
+                {
+                    <a href="/Sklep/Index"
+                       class="btn btn-primary btn-lg">
+                        Przejdź do sklepu
+                    </a>
+
+                    <a asp-controller="Promocja"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary btn-lg">
+                        Zobacz promocje
+                    </a>
+                }
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="client-login-card">
+                <strong>Podsumowanie koszyka</strong>
+
+                <div>
+                    <span>🧩</span>
+                    <p>Produkty: <strong>@liczbaProduktow</strong></p>
+                </div>
+
+                <div>
+                    <span>📦</span>
+                    <p>Sztuki: <strong>@liczbaSztuk</strong></p>
+                </div>
+
+                <div>
+                    <span>💰</span>
+                    <p>Wartość: <strong>@Model.Suma.ToString("C")</strong></p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -27,11 +90,52 @@
     </div>
 }
 
-@if (Model.Pozycje.Any())
+<section class="checkout-steps mb-4">
+    <div class="checkout-step checkout-step-current">
+        <span>1</span>
+        <strong>Koszyk</strong>
+        <small>Produkty i ilości</small>
+    </div>
+
+    <div class="checkout-step">
+        <span>2</span>
+        <strong>Dane</strong>
+        <small>Kontakt i dostawa</small>
+    </div>
+
+    <div class="checkout-step">
+        <span>3</span>
+        <strong>Potwierdzenie</strong>
+        <small>Numer zamówienia</small>
+    </div>
+</section>
+
+@if (czyKoszykMaProdukty)
 {
     <section class="cart-layout">
         <div class="cart-items">
-            @foreach (var item in Model.Pozycje)
+            <div class="details-card">
+                <div class="account-section-header">
+                    <div>
+                        <span class="portal-badge">Produkty</span>
+
+                        <h2 class="h5 mt-2 mb-0">
+                            Produkty w koszyku
+                        </h2>
+                    </div>
+
+                    <span class="availability-badge available">
+                        @liczbaSztuk szt.
+                    </span>
+                </div>
+
+                <div class="simple-note">
+                    <strong>Możesz zmienić ilość przed zamówieniem</strong>
+                    <span>Po zmianie ilości kliknij „Zmień”, aby przeliczyć wartość koszyka.</span>
+                </div>
+            </div>
+
+            @foreach (var item in pozycje)
             {
                 <article class="cart-item-card">
                     <div class="cart-item-image-wrap">
@@ -51,11 +155,25 @@
 
                     <div class="cart-item-main">
                         <div class="product-meta mb-2">
-                            <span>@item.Rodzaj</span>
-                            <span>@item.Producent</span>
+                            @if (!string.IsNullOrWhiteSpace(item.Rodzaj))
+                            {
+                                <span>@item.Rodzaj</span>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(item.Producent))
+                            {
+                                <span>@item.Producent</span>
+                            }
+
+                            @if (item.DostepnaIlosc != null)
+                            {
+                                <span>Dostępne: @item.DostepnaIlosc</span>
+                            }
                         </div>
 
-                        <h2 class="h5 mb-1">@item.Nazwa</h2>
+                        <h2 class="h5 mb-1">
+                            @item.Nazwa
+                        </h2>
 
                         <div class="text-muted small mb-2">
                             Kod: @item.Kod
@@ -86,7 +204,9 @@
                               class="cart-quantity-form">
                             <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
 
-                            <label class="form-label small text-muted mb-1">Ilość</label>
+                            <label class="form-label small text-muted mb-1">
+                                Ilość
+                            </label>
 
                             <div class="d-flex gap-2">
                                 <input type="number"
@@ -108,7 +228,7 @@
                             <input type="hidden" name="idTowaru" value="@item.IdTowaru" />
 
                             <button type="submit" class="btn btn-outline-danger w-100">
-                                Usuń
+                                Usuń produkt
                             </button>
                         </form>
                     </div>
@@ -117,12 +237,23 @@
         </div>
 
         <aside class="cart-summary">
-            <div class="details-card">
-                <h2 class="h5 mb-3">Podsumowanie</h2>
+            <div class="details-card mb-4">
+                <div class="account-section-header">
+                    <div>
+                        <span class="portal-badge">Razem</span>
+
+                        <h2 class="h5 mt-2 mb-0">
+                            Podsumowanie
+                        </h2>
+                    </div>
+                </div>
 
                 <dl class="details-list-clean mb-3">
+                    <dt>Produkty</dt>
+                    <dd>@liczbaProduktow</dd>
+
                     <dt>Liczba sztuk</dt>
-                    <dd>@Model.LiczbaSztuk</dd>
+                    <dd>@liczbaSztuk</dd>
 
                     <dt>Wartość razem</dt>
                     <dd>
@@ -130,34 +261,55 @@
                     </dd>
                 </dl>
 
-                <a asp-controller="Koszyk"
-                   asp-action="Zamowienie"
-                   class="btn btn-primary w-100 mb-2">
-                    Złóż zamówienie
-                </a>
+                <div class="order-detail-actions">
+                    <a asp-controller="Koszyk"
+                       asp-action="Zamowienie"
+                       class="btn btn-primary w-100">
+                        Złóż zamówienie
+                    </a>
 
-                <a href="/Sklep/Index"
-                   class="btn btn-outline-secondary w-100 mb-2">
-                    Kontynuuj zakupy
-                </a>
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary w-100">
+                        Kontynuuj zakupy
+                    </a>
 
-                <form asp-controller="Koszyk"
-                      asp-action="Wyczysc"
-                      method="post">
-                    <button type="submit" class="btn btn-outline-danger w-100">
-                        Wyczyść koszyk
-                    </button>
-                </form>
+                    <form asp-controller="Koszyk"
+                          asp-action="Wyczysc"
+                          method="post">
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            Wyczyść koszyk
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="details-card">
+                <div class="account-section-header">
+                    <div>
+                        <span class="portal-badge">Dalej</span>
+
+                        <h2 class="h5 mt-2 mb-0">
+                            Kolejny krok
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="simple-note">
+                    <strong>Dane do zamówienia</strong>
+                    <span>Po kliknięciu „Złóż zamówienie” przejdziesz do formularza danych klienta i adresu dostawy.</span>
+                </div>
             </div>
         </aside>
     </section>
 }
 else
 {
-    <div class="empty-state">
+    <section class="empty-state">
         <span class="portal-badge">Koszyk</span>
 
-        <h2 class="h4 mt-3">Koszyk jest pusty</h2>
+        <h2 class="h4 mt-3">
+            Koszyk jest pusty
+        </h2>
 
         <p>
             Dodaj produkty z oferty sklepu, a następnie wróć tutaj, żeby złożyć zamówienie.
@@ -174,6 +326,12 @@ else
                class="btn btn-outline-secondary">
                 Zobacz promocje
             </a>
+
+            <a asp-controller="Producent"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Zobacz producentów
+            </a>
         </div>
-    </div>
+    </section>
 }
