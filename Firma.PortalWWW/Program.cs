@@ -1,6 +1,7 @@
 using System.Globalization;
 using Firma.Data.Data;
 using Firma.PortalWWW;
+using Firma.PortalWWW.Security;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,7 @@ builder.Services
         options.User.RequireUniqueEmail = true;
         options.SignIn.RequireConfirmedAccount = false;
     })
+    .AddErrorDescriber<PolskiIdentityErrorDescriber>()
     .AddEntityFrameworkStores<FirmaContext>()
     .AddDefaultTokenProviders();
 
