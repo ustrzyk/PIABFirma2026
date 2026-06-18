@@ -7,51 +7,16 @@
 
 <section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
-        <div class="col-12 col-lg-8">
-            <span class="portal-badge">Konto klienta</span>
+        <div class="col-12">
+            <span class="portal-badge">Moje konto</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
-                Zaloguj się do panelu klienta
+                Logowanie klienta
             </h1>
 
             <p class="hero-text mb-0">
-                Po zalogowaniu zobaczysz swoje zamówienia, status realizacji, dane kontaktowe i adres dostawy.
+                Zaloguj się, aby sprawdzić swoje zamówienia i dane konta.
             </p>
-
-            <div class="hero-actions">
-                <button form="formularz-logowania"
-                        type="submit"
-                        class="btn btn-primary btn-lg">
-                    Zaloguj
-                </button>
-
-                <a asp-controller="KontoKlienta"
-                   asp-action="Rejestracja"
-                   class="btn btn-outline-secondary btn-lg">
-                    Utwórz konto
-                </a>
-            </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="client-login-card">
-                <strong>Panel klienta</strong>
-
-                <div>
-                    <span>🧾</span>
-                    <p>Historia zamówień w jednym miejscu.</p>
-                </div>
-
-                <div>
-                    <span>📦</span>
-                    <p>Statusy zamówień bez wpisywania numeru.</p>
-                </div>
-
-                <div>
-                    <span>📍</span>
-                    <p>Adres dostawy zapisany na koncie.</p>
-                </div>
-            </div>
         </div>
     </div>
 </section>
@@ -85,125 +50,63 @@
     </a>
 </section>
 
-<section class="checkout-page-layout">
-    <div class="checkout-main-column">
-        <div class="details-card">
-            <div class="account-section-header">
-                <div>
-                    <span class="portal-badge">Logowanie</span>
-                    <h2 class="h5 mt-2 mb-0">Dane logowania</h2>
-                </div>
-            </div>
-
-            <form id="formularz-logowania"
-                  asp-controller="KontoKlienta"
-                  asp-action="Logowanie"
-                  method="post">
-                <input asp-for="ReturnUrl" type="hidden" />
-
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                <div class="profile-form-grid">
-                    <div class="profile-form-wide">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email"
-                               class="form-control"
-                               placeholder="np. jan.kowalski@example.com" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-
-                    <div class="profile-form-wide">
-                        <label asp-for="Haslo" class="form-label"></label>
-                        <input asp-for="Haslo"
-                               class="form-control"
-                               placeholder="Podaj hasło" />
-                        <span asp-validation-for="Haslo" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-check mt-3">
-                    <input asp-for="ZapamietajMnie" class="form-check-input" />
-                    <label asp-for="ZapamietajMnie" class="form-check-label"></label>
-                </div>
-
-                <div class="checkout-actions">
-                    <button type="submit" class="btn btn-primary">
-                        Zaloguj
-                    </button>
-
-                    <a asp-controller="KontoKlienta"
-                       asp-action="Rejestracja"
-                       class="btn btn-outline-secondary">
-                        Utwórz konto
-                    </a>
-
-                    <a asp-controller="StatusZamowienia"
-                       asp-action="Index"
-                       class="btn btn-outline-secondary">
-                        Sprawdź status bez logowania
-                    </a>
-                </div>
-            </form>
+<section class="details-card">
+    <div class="account-section-header">
+        <div>
+            <span class="portal-badge">Logowanie</span>
+            <h2 class="h5 mt-2 mb-0">Dane logowania</h2>
         </div>
     </div>
 
-    <aside class="checkout-sidebar-column">
-        <div class="details-card mb-4">
-            <div class="account-section-header">
-                <div>
-                    <span class="portal-badge">Korzyści</span>
-                    <h2 class="h5 mt-2 mb-0">Po zalogowaniu</h2>
-                </div>
+    <form id="formularz-logowania"
+          asp-controller="KontoKlienta"
+          asp-action="Logowanie"
+          method="post">
+        <input asp-for="ReturnUrl" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="profile-form-grid">
+            <div class="profile-form-wide">
+                <label asp-for="Email" class="form-label">Login</label>
+                <input asp-for="Email"
+                       class="form-control"
+                       placeholder="Adres e-mail" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <div class="confirmation-help-grid">
-                <div class="confirmation-help-card">
-                    <span>1</span>
-
-                    <div>
-                        <strong>Zamówienia</strong>
-                        <p>Widzisz listę swoich zamówień bez ponownego wpisywania numeru zamówienia.</p>
-                    </div>
-                </div>
-
-                <div class="confirmation-help-card">
-                    <span>2</span>
-
-                    <div>
-                        <strong>Dane</strong>
-                        <p>Możesz zapisać dane kontaktowe i domyślny adres dostawy.</p>
-                    </div>
-                </div>
+            <div class="profile-form-wide">
+                <label asp-for="Haslo" class="form-label">Hasło</label>
+                <input asp-for="Haslo"
+                       class="form-control"
+                       placeholder="Hasło" />
+                <span asp-validation-for="Haslo" class="text-danger"></span>
             </div>
         </div>
 
-        <div class="details-card">
-            <div class="account-section-header">
-                <div>
-                    <span class="portal-badge">Nie masz konta?</span>
-                    <h2 class="h5 mt-2 mb-0">Rejestracja</h2>
-                </div>
-            </div>
-
-            <div class="simple-note mb-3">
-                <strong>Załóż konto klienta</strong>
-                <span>Konto pozwoli Ci sprawdzać zamówienia bez ręcznego wpisywania numeru.</span>
-            </div>
-
-            <div class="order-detail-actions">
-                <a asp-controller="KontoKlienta"
-                   asp-action="Rejestracja"
-                   class="btn btn-primary w-100">
-                    Utwórz konto
-                </a>
-
-                <a href="/Sklep/Index"
-                   class="btn btn-outline-secondary w-100">
-                    Wróć do sklepu
-                </a>
-            </div>
+        <div class="form-check mt-3">
+            <input asp-for="ZapamietajMnie" class="form-check-input" />
+            <label asp-for="ZapamietajMnie" class="form-check-label"></label>
         </div>
-    </aside>
+
+        <div class="checkout-actions">
+            <button type="submit" class="btn btn-primary">
+                Zaloguj
+            </button>
+
+            <a asp-controller="KontoKlienta"
+               asp-action="Rejestracja"
+               class="btn btn-outline-secondary">
+                Utwórz konto
+            </a>
+
+            <a asp-controller="StatusZamowienia"
+               asp-action="Index"
+               class="btn btn-outline-secondary">
+                Status bez logowania
+            </a>
+        </div>
+    </form>
 </section>
 
 @section Scripts {
