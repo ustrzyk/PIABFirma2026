@@ -1,11 +1,12 @@
-﻿@model IEnumerable<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>
+﻿@using Firma.Services.Data.Dto.ZamowieniaPubliczne
+@model IEnumerable<ZamowienieKlientaListaItemDto>
 
 @{
     ViewData["Title"] = "Moje konto";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 
-    var zamowienia = Model?.ToList() ?? new List<Firma.Services.Data.Dto.ZamowieniaPubliczne.ZamowienieKlientaListaItemDto>();
-    var daneKlienta = ViewBag.DaneKlienta as Firma.Services.Data.Dto.ZamowieniaPubliczne.KontoKlientaDaneDto;
+    var zamowienia = Model?.ToList() ?? new List<ZamowienieKlientaListaItemDto>();
+    var daneKlienta = ViewBag.DaneKlienta as KontoKlientaDaneDto;
 
     var liczbaZamowien = zamowienia.Count;
     var liczbaAktywnychZamowien = zamowienia.Count(z =>
@@ -13,16 +14,18 @@
         z.Status != "zakonczone" &&
         z.Status != "anulowane");
 
-    var ostatnieZamowienie = zamowienia
-        .OrderByDescending(z => z.DataZamowienia)
-        .ThenByDescending(z => z.IdZamowienia)
-        .FirstOrDefault();
-
     var czyMaAdres = daneKlienta != null
         && !string.IsNullOrWhiteSpace(daneKlienta.Ulica)
         && !string.IsNullOrWhiteSpace(daneKlienta.NumerDomu)
         && !string.IsNullOrWhiteSpace(daneKlienta.KodPocztowy)
         && !string.IsNullOrWhiteSpace(daneKlienta.Miasto);
+}
+
+@functions {
+    private static bool CzyStatusAnulowany(string? status)
+    {
+        return (status ?? string.Empty).Trim().ToLowerInvariant() == "anulowane";
+    }
 }
 
 <section class="client-portal-hero mb-4">
@@ -35,7 +38,7 @@
             </h1>
 
             <p class="hero-text mb-0">
-                Zarządzaj danymi, adresem dostawy i sprawdzaj swoje zamówienia w jednym miejscu.
+                W tym miejscu widzisz swoje dane, adres dostawy oraz statusy swoich zamówień.
             </p>
 
             <div class="hero-actions">
@@ -62,6 +65,11 @@
                 </div>
 
                 <div>
+                    <span>📦</span>
+                    <p>W realizacji: <strong>@liczbaAktywnychZamowien</strong></p>
+                </div>
+
+                <div>
                     <span>📍</span>
                     <p>
                         @if (czyMaAdres && daneKlienta != null)
@@ -70,7 +78,7 @@
                         }
                         else
                         {
-                            <span>Uzupełnij domyślny adres dostawy.</span>
+                            <span>Uzupełnij adres dostawy.</span>
                         }
                     </p>
                 </div>
@@ -90,8 +98,8 @@
     <a asp-controller="KontoKlienta"
        asp-action="Panel"
        class="account-tab-card account-tab-card-active">
-        <span>Podsumowanie</span>
-        <strong>Konto klienta</strong>
+        <span>Konto</span>
+        <strong>Panel klienta</strong>
     </a>
 
     <a asp-controller="KontoKlienta"
@@ -104,7 +112,7 @@
     <a href="#moje-zamowienia"
        class="account-tab-card">
         <span>Zamówienia</span>
-        <strong>Historia zakupów</strong>
+        <strong>Statusy zamówień</strong>
     </a>
 
     <a href="/Sklep/Index"
@@ -112,35 +120,6 @@
         <span>Sklep</span>
         <strong>Nowe zakupy</strong>
     </a>
-</section>
-
-<section class="account-summary-grid mb-4">
-    <article class="account-summary-card">
-        <span class="account-summary-label">Wszystkie zamówienia</span>
-        <strong>@liczbaZamowien</strong>
-        <p>Liczba zamówień przypisanych do Twojego konta.</p>
-    </article>
-
-    <article class="account-summary-card">
-        <span class="account-summary-label">W realizacji</span>
-        <strong>@liczbaAktywnychZamowien</strong>
-        <p>Zamówienia, które nie są zakończone ani anulowane.</p>
-    </article>
-
-    <article class="account-summary-card">
-        <span class="account-summary-label">Ostatnie zamówienie</span>
-
-        @if (ostatnieZamowienie != null)
-        {
-            <strong>@ostatnieZamowienie.NumerZamowienia</strong>
-            <p>Status: @ostatnieZamowienie.Status</p>
-        }
-        else
-        {
-            <strong>brak</strong>
-            <p>Nie masz jeszcze zamówień na tym koncie.</p>
-        }
-    </article>
 </section>
 
 <section class="customer-account-grid mb-4">
@@ -191,8 +170,8 @@
     <article class="details-card">
         <div class="account-section-header">
             <div>
-                <span class="portal-badge">Dostawa</span>
-                <h2 class="h5 mt-2 mb-0">Domyślny adres</h2>
+                <span class="portal-badge">Adres</span>
+                <h2 class="h5 mt-2 mb-0">Adres dostawy</h2>
             </div>
 
             <a asp-controller="KontoKlienta"
@@ -228,7 +207,7 @@
         {
             <div class="simple-note">
                 <strong>Adres nie jest zapisany</strong>
-                <span>Uzupełnij adres, aby formularz zamówienia wypełniał się automatycznie.</span>
+                <span>Uzupełnij adres, aby formularz zamówienia mógł wypełniać się automatycznie.</span>
             </div>
         }
     </article>
@@ -237,21 +216,21 @@
 <section id="moje-zamowienia" class="customer-orders-section">
     <div class="customer-orders-heading">
         <div>
-            <span class="portal-badge">Zamówienia</span>
+            <span class="portal-badge">Moje zamówienia</span>
 
             <h2 class="h4 mt-2 mb-1">
-                Moje zamówienia
+                Statusy zamówień
             </h2>
 
             <p class="text-muted mb-0">
-                Lista zamówień powiązanych z adresem e-mail Twojego konta.
+                Status zamówienia jest widoczny bezpośrednio na karcie zamówienia.
             </p>
         </div>
 
         <a asp-controller="StatusZamowienia"
            asp-action="Index"
            class="btn btn-outline-secondary">
-            Sprawdź zamówienie bez logowania
+            Status bez logowania
         </a>
     </div>
 
@@ -277,7 +256,7 @@
                             }
                         </div>
 
-                        @if (item.Status == "anulowane")
+                        @if (CzyStatusAnulowany(item.Status))
                         {
                             <span class="availability-badge unavailable">@item.Status</span>
                         }
@@ -303,7 +282,7 @@
                        asp-action="Zamowienie"
                        asp-route-id="@item.IdZamowienia"
                        class="btn btn-primary w-100">
-                        Zobacz szczegóły
+                        Szczegóły i status
                     </a>
                 </article>
             }
@@ -315,12 +294,12 @@
             <span class="portal-badge">Moje zamówienia</span>
 
             <h3 class="h4 mt-3">
-                Nie masz jeszcze zamówień na tym koncie
+                Nie masz jeszcze zamówień
             </h3>
 
             <p>
-                Zamówienia pojawią się tutaj, jeżeli przy zakupie użyjesz tego samego adresu e-mail,
-                którym logujesz się do konta klienta.
+                Zamówienia pojawią się tutaj, gdy złożysz zamówienie jako zalogowany klient
+                albo użyjesz tego samego adresu e-mail.
             </p>
 
             <div class="empty-state-actions">
@@ -331,7 +310,7 @@
                 <a asp-controller="StatusZamowienia"
                    asp-action="Index"
                    class="btn btn-outline-secondary">
-                    Sprawdź zamówienie bez logowania
+                    Status bez logowania
                 </a>
             </div>
         </section>
