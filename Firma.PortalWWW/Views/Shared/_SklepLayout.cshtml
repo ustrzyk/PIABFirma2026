@@ -63,12 +63,12 @@
                 <span class="portal-topbar-contact">
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
                     {
-                        <span>☎ @wyglad.StopkaTelefon</span>
+                        <span>Tel. @wyglad.StopkaTelefon</span>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
                     {
-                        <a href="mailto:@wyglad.StopkaEmail">✉ @wyglad.StopkaEmail</a>
+                        <a href="mailto:@wyglad.StopkaEmail">E-mail: @wyglad.StopkaEmail</a>
                     }
                 </span>
             </div>
@@ -101,7 +101,6 @@
                                     id="kontoKlientaMenu"
                                     data-bs-toggle="dropdown"
                                     aria-expanded="false">
-                                <span class="btn-icon">👤</span>
                                 Konto
                             </button>
 
@@ -112,7 +111,6 @@
                                         <a class="dropdown-item"
                                            asp-controller="KontoKlienta"
                                            asp-action="Panel">
-                                            <span class="nav-icon">👤</span>
                                             Moje konto
                                         </a>
                                     </li>
@@ -121,7 +119,6 @@
                                         <a class="dropdown-item"
                                            asp-controller="KontoKlienta"
                                            asp-action="Dane">
-                                            <span class="nav-icon">📍</span>
                                             Dane i adres
                                         </a>
                                     </li>
@@ -138,7 +135,6 @@
 
                                             <button type="submit"
                                                     class="dropdown-item text-danger">
-                                                <span class="nav-icon">🚪</span>
                                                 Wyloguj
                                             </button>
                                         </form>
@@ -150,7 +146,6 @@
                                         <a class="dropdown-item"
                                            asp-controller="KontoKlienta"
                                            asp-action="Logowanie">
-                                            <span class="nav-icon">🔐</span>
                                             Zaloguj
                                         </a>
                                     </li>
@@ -159,7 +154,6 @@
                                         <a class="dropdown-item"
                                            asp-controller="KontoKlienta"
                                            asp-action="Rejestracja">
-                                            <span class="nav-icon">➕</span>
                                             Rejestracja
                                         </a>
                                     </li>
@@ -170,7 +164,6 @@
                         <a asp-controller="Koszyk"
                            asp-action="Index"
                            class="btn btn-primary">
-                            <span class="btn-icon">🛒</span>
                             Koszyk
                             @if (koszykLiczbaSztuk > 0)
                             {
@@ -227,7 +220,7 @@
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaAdres))
                     {
-                        <div class="small mt-2">📍 @wyglad.StopkaAdres</div>
+                        <div class="small mt-2">Adres: @wyglad.StopkaAdres</div>
                     }
                 </div>
 
@@ -236,12 +229,12 @@
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaEmail))
                     {
-                        <a href="mailto:@wyglad.StopkaEmail">✉ @wyglad.StopkaEmail</a>
+                        <a href="mailto:@wyglad.StopkaEmail">E-mail: @wyglad.StopkaEmail</a>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaTelefon))
                     {
-                        <span>☎ @wyglad.StopkaTelefon</span>
+                        <span>Tel. @wyglad.StopkaTelefon</span>
                     }
 
                     @if (!string.IsNullOrWhiteSpace(wyglad.StopkaFacebook))
