@@ -5,9 +5,9 @@
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
 }
 
-<section class="portal-hero mb-4">
+<section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
-        <div class="col-12 col-lg-8">
+        <div class="col-12">
             <span class="portal-badge">Aktualność</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
@@ -15,7 +15,7 @@
             </h1>
 
             <p class="hero-text mb-0">
-                Informacja dla klientów sklepu.
+                Informacja widoczna dla klientów sklepu.
             </p>
 
             <div class="hero-actions">
@@ -31,88 +31,58 @@
                 </a>
             </div>
         </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="hero-card">
-                <div class="hero-card-title">Wpis</div>
-
-                <div class="hero-feature">
-                    <strong>@Model.LinkTytul</strong>
-                    <span>Nazwa wpisu w portalu.</span>
-                </div>
-
-                <div class="hero-feature">
-                    <strong>Sklep 3D</strong>
-                    <span>Aktualność widoczna publicznie.</span>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
 
-<section class="news-details-layout">
-    <article class="details-card">
-        <span class="home-quick-icon">📰</span>
+<section class="details-card mb-4">
+    <div class="account-section-header">
+        <div>
+            <span class="portal-badge">Treść</span>
 
-        <h2 class="h5 mb-3">
-            Treść aktualności
-        </h2>
-
-        <div class="tekst-strony text-muted news-content">
-            @Model.Tresc
+            <h2 class="h5 mt-2 mb-0">
+                Treść aktualności
+            </h2>
         </div>
-    </article>
+    </div>
 
-    <aside class="details-card">
-        <span class="home-quick-icon">➡️</span>
+    <div class="tekst-strony text-muted news-content">
+        @Model.Tresc
+    </div>
+</section>
 
-        <h2 class="h5 mb-3">
-            Szybkie przejścia
-        </h2>
+<section class="details-card">
+    <div class="account-section-header">
+        <div>
+            <span class="portal-badge">Skróty</span>
 
-        <div class="quick-link-grid">
-            <a href="/Sklep/Index"
-               class="quick-link-card">
-                <span class="quick-link-icon">🧩</span>
-
-                <div>
-                    <strong>Produkty</strong>
-                    <small>Przejdź do oferty sklepu.</small>
-                </div>
-            </a>
-
-            <a asp-controller="Promocja"
-               asp-action="Index"
-               class="quick-link-card">
-                <span class="quick-link-icon">🏷️</span>
-
-                <div>
-                    <strong>Promocje</strong>
-                    <small>Zobacz aktywne oferty.</small>
-                </div>
-            </a>
-
-            <a asp-controller="Producent"
-               asp-action="Index"
-               class="quick-link-card">
-                <span class="quick-link-icon">🏭</span>
-
-                <div>
-                    <strong>Producenci</strong>
-                    <small>Sprawdź marki w sklepie.</small>
-                </div>
-            </a>
-
-            <a asp-controller="StatusZamowienia"
-               asp-action="Index"
-               class="quick-link-card">
-                <span class="quick-link-icon">🧾</span>
-
-                <div>
-                    <strong>Portal klienta</strong>
-                    <small>Sprawdź status zamówienia.</small>
-                </div>
-            </a>
+            <h2 class="h5 mt-2 mb-0">
+                Przejdź dalej
+            </h2>
         </div>
-    </aside>
+    </div>
+
+    <div class="checkout-actions">
+        <a href="/Sklep/Index"
+           class="btn btn-primary">
+            Produkty
+        </a>
+
+        <a asp-controller="Promocja"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Promocje
+        </a>
+
+        <a asp-controller="Producent"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Producenci
+        </a>
+
+        <a asp-controller="StatusZamowienia"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Status zamówienia
+        </a>
+    </div>
 </section>
