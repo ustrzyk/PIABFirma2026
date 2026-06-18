@@ -7,55 +7,143 @@
 
 <section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
-        <div class="col-12 col-lg-7">
-            <span class="portal-badge">👤 Konto klienta</span>
+        <div class="col-12 col-lg-8">
+            <span class="portal-badge">Konto klienta</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
                 Utwórz konto klienta
             </h1>
 
             <p class="hero-text mb-0">
-                Konto pozwala wrócić do swoich zamówień bez wpisywania numeru zamówienia za każdym razem.
+                Konto pozwala wrócić do zamówień, sprawdzać status realizacji i zapisać dane dostawy.
             </p>
+
+            <div class="hero-actions">
+                <button form="formularz-rejestracji"
+                        type="submit"
+                        class="btn btn-primary btn-lg">
+                    Utwórz konto
+                </button>
+
+                <a asp-controller="KontoKlienta"
+                   asp-action="Logowanie"
+                   class="btn btn-outline-secondary btn-lg">
+                    Mam już konto
+                </a>
+            </div>
         </div>
 
-        <div class="col-12 col-lg-5">
-            <div class="details-card">
-                <h2 class="h5 mb-3">Rejestracja</h2>
+        <div class="col-12 col-lg-4">
+            <div class="client-login-card">
+                <strong>Nowe konto</strong>
 
-                <form asp-controller="KontoKlienta"
-                      asp-action="Rejestracja"
-                      method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div>
+                    <span>✉️</span>
+                    <p>E-mail będzie loginem do panelu klienta.</p>
+                </div>
 
-                    <div class="row g-3">
-                        <div class="col-12 col-md-6">
+                <div>
+                    <span>🔐</span>
+                    <p>Hasło musi spełniać wymagania bezpieczeństwa.</p>
+                </div>
+
+                <div>
+                    <span>📦</span>
+                    <p>Zamówienia będą widoczne w panelu klienta.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="account-tabs mb-4">
+    <a asp-controller="KontoKlienta"
+       asp-action="Logowanie"
+       class="account-tab-card">
+        <span>Konto</span>
+        <strong>Logowanie</strong>
+    </a>
+
+    <a asp-controller="KontoKlienta"
+       asp-action="Rejestracja"
+       class="account-tab-card account-tab-card-active">
+        <span>Nowy klient</span>
+        <strong>Rejestracja</strong>
+    </a>
+
+    <a asp-controller="StatusZamowienia"
+       asp-action="Index"
+       class="account-tab-card">
+        <span>Zamówienie</span>
+        <strong>Status bez logowania</strong>
+    </a>
+
+    <a href="/Sklep/Index"
+       class="account-tab-card">
+        <span>Sklep</span>
+        <strong>Zakupy</strong>
+    </a>
+</section>
+
+<section class="checkout-page-layout">
+    <div class="checkout-main-column">
+        <div class="details-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Rejestracja</span>
+                    <h2 class="h5 mt-2 mb-0">Dane nowego konta</h2>
+                </div>
+            </div>
+
+            <form id="formularz-rejestracji"
+                  asp-controller="KontoKlienta"
+                  asp-action="Rejestracja"
+                  method="post">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="checkout-section-box">
+                    <div class="checkout-section-title">Dane kontaktowe</div>
+
+                    <div class="profile-form-grid">
+                        <div>
                             <label asp-for="Imie" class="form-label"></label>
                             <input asp-for="Imie" class="form-control" />
                             <span asp-validation-for="Imie" class="text-danger"></span>
                         </div>
 
-                        <div class="col-12 col-md-6">
+                        <div>
                             <label asp-for="Nazwisko" class="form-label"></label>
                             <input asp-for="Nazwisko" class="form-control" />
                             <span asp-validation-for="Nazwisko" class="text-danger"></span>
                         </div>
 
-                        <div class="col-12">
+                        <div class="profile-form-wide">
                             <label asp-for="Email" class="form-label"></label>
                             <input asp-for="Email"
                                    class="form-control"
-                                   placeholder="email@example.com" />
+                                   placeholder="np. jan.kowalski@example.com" />
                             <span asp-validation-for="Email" class="text-danger"></span>
+                            <div class="form-text">
+                                Ten adres będzie loginem i połączy przyszłe zamówienia z panelem klienta.
+                            </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="profile-form-wide">
                             <label asp-for="Telefon" class="form-label"></label>
-                            <input asp-for="Telefon" class="form-control" />
+                            <input asp-for="Telefon"
+                                   class="form-control"
+                                   placeholder="np. 500600700" />
                             <span asp-validation-for="Telefon" class="text-danger"></span>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="col-12">
+                <div class="checkout-section-box mt-4">
+                    <div class="checkout-section-title">Hasło</div>
+
+                    <div class="profile-form-grid">
+                        <div>
                             <label asp-for="Haslo" class="form-label"></label>
                             <input asp-for="Haslo" class="form-control" />
                             <span asp-validation-for="Haslo" class="text-danger"></span>
@@ -64,28 +152,92 @@
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div>
                             <label asp-for="PowtorzHaslo" class="form-label"></label>
                             <input asp-for="PowtorzHaslo" class="form-control" />
                             <span asp-validation-for="PowtorzHaslo" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
 
-                    <button type="submit" class="btn btn-primary w-100 mt-3">
+                <div class="checkout-actions">
+                    <button type="submit" class="btn btn-primary">
                         Utwórz konto
                     </button>
-                </form>
 
-                <div class="simple-note mt-3">
-                    Masz już konto?
                     <a asp-controller="KontoKlienta"
-                       asp-action="Logowanie">
-                        Zaloguj się
+                       asp-action="Logowanie"
+                       class="btn btn-outline-secondary">
+                        Mam już konto
                     </a>
+
+                    <a href="/Sklep/Index"
+                       class="btn btn-outline-secondary">
+                        Wróć do sklepu
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <aside class="checkout-sidebar-column">
+        <div class="details-card mb-4">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Hasło</span>
+                    <h2 class="h5 mt-2 mb-0">Wymagania</h2>
+                </div>
+            </div>
+
+            <div class="confirmation-help-grid">
+                <div class="confirmation-help-card">
+                    <span>1</span>
+
+                    <div>
+                        <strong>Minimum 8 znaków</strong>
+                        <p>Hasło nie może być zbyt krótkie.</p>
+                    </div>
+                </div>
+
+                <div class="confirmation-help-card">
+                    <span>2</span>
+
+                    <div>
+                        <strong>Różne znaki</strong>
+                        <p>Użyj małej litery, dużej litery, cyfry i znaku specjalnego.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
+        <div class="details-card">
+            <div class="account-section-header">
+                <div>
+                    <span class="portal-badge">Po rejestracji</span>
+                    <h2 class="h5 mt-2 mb-0">Co dalej?</h2>
+                </div>
+            </div>
+
+            <div class="simple-note mb-3">
+                <strong>Panel klienta</strong>
+                <span>Po utworzeniu konta od razu przejdziesz do panelu klienta.</span>
+            </div>
+
+            <div class="order-detail-actions">
+                <a asp-controller="KontoKlienta"
+                   asp-action="Logowanie"
+                   class="btn btn-primary w-100">
+                    Mam już konto
+                </a>
+
+                <a asp-controller="StatusZamowienia"
+                   asp-action="Index"
+                   class="btn btn-outline-secondary w-100">
+                    Sprawdź status zamówienia
+                </a>
+            </div>
+        </div>
+    </aside>
 </section>
 
 @section Scripts {
