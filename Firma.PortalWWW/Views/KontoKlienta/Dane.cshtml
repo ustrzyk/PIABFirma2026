@@ -3,31 +3,19 @@
 @{
     ViewData["Title"] = "Dane klienta";
     Layout = "~/Views/Shared/_SklepLayout.cshtml";
-
-    var czyMaAdres = !string.IsNullOrWhiteSpace(Model.Ulica)
-        && !string.IsNullOrWhiteSpace(Model.NumerDomu)
-        && !string.IsNullOrWhiteSpace(Model.KodPocztowy)
-        && !string.IsNullOrWhiteSpace(Model.Miasto);
-
-    var imieNazwisko = $"{Model.Imie} {Model.Nazwisko}".Trim();
-
-    if (string.IsNullOrWhiteSpace(imieNazwisko))
-    {
-        imieNazwisko = "brak danych";
-    }
 }
 
 <section class="client-portal-hero mb-4">
     <div class="row g-4 align-items-center">
-        <div class="col-12 col-lg-8">
+        <div class="col-12">
             <span class="portal-badge">Moje konto</span>
 
             <h1 class="display-6 fw-bold mt-3 mb-3">
-                Dane klienta i adres dostawy
+                Dane klienta
             </h1>
 
             <p class="hero-text mb-0">
-                Uzupełnij dane kontaktowe oraz domyślny adres dostawy.
+                Tutaj możesz zmienić dane kontaktowe i adres dostawy.
             </p>
 
             <div class="hero-actions">
@@ -43,31 +31,6 @@
                 </a>
             </div>
         </div>
-
-        <div class="col-12 col-lg-4">
-            <div class="client-login-card">
-                <strong>Adres konta</strong>
-
-                <div>
-                    <span>✉️</span>
-                    <p>@Model.Email</p>
-                </div>
-
-                <div>
-                    <span>📍</span>
-                    <p>
-                        @if (czyMaAdres)
-                        {
-                            <span>@Model.Ulica @Model.NumerDomu, @Model.Miasto</span>
-                        }
-                        else
-                        {
-                            <span>Adres dostawy nie jest uzupełniony.</span>
-                        }
-                    </p>
-                </div>
-            </div>
-        </div>
     </div>
 </section>
 
@@ -75,8 +38,8 @@
     <a asp-controller="KontoKlienta"
        asp-action="Panel"
        class="account-tab-card">
-        <span>Panel</span>
-        <strong>Moje konto</strong>
+        <span>Konto</span>
+        <strong>Panel klienta</strong>
     </a>
 
     <a asp-controller="KontoKlienta"
@@ -91,198 +54,118 @@
        fragment="moje-zamowienia"
        class="account-tab-card">
         <span>Zamówienia</span>
-        <strong>Historia zakupów</strong>
+        <strong>Statusy zamówień</strong>
     </a>
 
     <a href="/Sklep/Index"
        class="account-tab-card">
         <span>Sklep</span>
-        <strong>Nowe zakupy</strong>
+        <strong>Zakupy</strong>
     </a>
 </section>
 
-<section class="account-edit-layout">
-    <div class="account-edit-main">
-        <form asp-controller="KontoKlienta"
-              asp-action="Dane"
-              method="post">
+<section class="details-card">
+    <div class="account-section-header">
+        <div>
+            <span class="portal-badge">Edycja</span>
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <div class="details-card mb-4">
-                <div class="account-section-header">
-                    <div>
-                        <span class="portal-badge">Dane</span>
-                        <h2 class="h5 mt-2 mb-0">Dane kontaktowe</h2>
-                    </div>
-                </div>
-
-                <div class="profile-form-grid">
-                    <div>
-                        <label asp-for="Imie" class="form-label"></label>
-                        <input asp-for="Imie" class="form-control" />
-                        <span asp-validation-for="Imie" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="Nazwisko" class="form-label"></label>
-                        <input asp-for="Nazwisko" class="form-control" />
-                        <span asp-validation-for="Nazwisko" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email"
-                               class="form-control readonly-control"
-                               readonly />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                        <div class="form-text">
-                            E-mail jest loginem konta klienta.
-                        </div>
-                    </div>
-
-                    <div>
-                        <label asp-for="Telefon" class="form-label"></label>
-                        <input asp-for="Telefon" class="form-control" />
-                        <span asp-validation-for="Telefon" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="details-card">
-                <div class="account-section-header">
-                    <div>
-                        <span class="portal-badge">Dostawa</span>
-                        <h2 class="h5 mt-2 mb-0">Domyślny adres dostawy</h2>
-                    </div>
-                </div>
-
-                <div class="profile-form-grid">
-                    <div class="profile-form-wide">
-                        <label asp-for="Ulica" class="form-label"></label>
-                        <input asp-for="Ulica" class="form-control" />
-                        <span asp-validation-for="Ulica" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="NumerDomu" class="form-label"></label>
-                        <input asp-for="NumerDomu" class="form-control" />
-                        <span asp-validation-for="NumerDomu" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="NumerLokalu" class="form-label"></label>
-                        <input asp-for="NumerLokalu" class="form-control" />
-                        <span asp-validation-for="NumerLokalu" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="KodPocztowy" class="form-label"></label>
-                        <input asp-for="KodPocztowy" class="form-control" />
-                        <span asp-validation-for="KodPocztowy" class="text-danger"></span>
-                    </div>
-
-                    <div>
-                        <label asp-for="Miasto" class="form-label"></label>
-                        <input asp-for="Miasto" class="form-control" />
-                        <span asp-validation-for="Miasto" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="profile-form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        Zapisz dane
-                    </button>
-
-                    <a asp-controller="KontoKlienta"
-                       asp-action="Panel"
-                       class="btn btn-outline-secondary">
-                        Anuluj
-                    </a>
-                </div>
-            </div>
-        </form>
+            <h2 class="h5 mt-2 mb-0">
+                Dane i adres
+            </h2>
+        </div>
     </div>
 
-    <aside class="account-edit-sidebar">
-        <div class="details-card mb-4">
-            <div class="account-section-header">
+    <form asp-controller="KontoKlienta"
+          asp-action="Dane"
+          method="post">
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="checkout-section-box">
+            <div class="checkout-section-title">Dane kontaktowe</div>
+
+            <div class="profile-form-grid">
                 <div>
-                    <span class="portal-badge">Podgląd</span>
-                    <h2 class="h5 mt-2 mb-0">Aktualne dane</h2>
+                    <label asp-for="Imie" class="form-label"></label>
+                    <input asp-for="Imie" class="form-control" />
+                    <span asp-validation-for="Imie" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Nazwisko" class="form-label"></label>
+                    <input asp-for="Nazwisko" class="form-control" />
+                    <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                </div>
+
+                <div class="profile-form-wide">
+                    <label asp-for="Email" class="form-label">Login</label>
+                    <input asp-for="Email"
+                           class="form-control readonly-control"
+                           readonly />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="profile-form-wide">
+                    <label asp-for="Telefon" class="form-label"></label>
+                    <input asp-for="Telefon" class="form-control" />
+                    <span asp-validation-for="Telefon" class="text-danger"></span>
                 </div>
             </div>
-
-            <dl class="details-list-clean mb-0">
-                <dt>Klient</dt>
-                <dd>@imieNazwisko</dd>
-
-                <dt>E-mail</dt>
-                <dd>@Model.Email</dd>
-
-                <dt>Telefon</dt>
-                <dd>
-                    @if (!string.IsNullOrWhiteSpace(Model.Telefon))
-                    {
-                        @Model.Telefon
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak</span>
-                    }
-                </dd>
-
-                <dt>Adres</dt>
-                <dd>
-                    @if (czyMaAdres)
-                    {
-                        <span>@Model.Ulica @Model.NumerDomu</span>
-
-                        @if (!string.IsNullOrWhiteSpace(Model.NumerLokalu))
-                        {
-                            <span>/@Model.NumerLokalu</span>
-                        }
-
-                        <br />
-                        <span>@Model.KodPocztowy @Model.Miasto</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">brak</span>
-                    }
-                </dd>
-            </dl>
         </div>
 
-        <div class="details-card">
-            <div class="account-section-header">
+        <div class="checkout-section-box mt-4">
+            <div class="checkout-section-title">Adres dostawy</div>
+
+            <div class="profile-form-grid">
+                <div class="profile-form-wide">
+                    <label asp-for="Ulica" class="form-label"></label>
+                    <input asp-for="Ulica" class="form-control" />
+                    <span asp-validation-for="Ulica" class="text-danger"></span>
+                </div>
+
                 <div>
-                    <span class="portal-badge">Akcje</span>
-                    <h2 class="h5 mt-2 mb-0">Skróty</h2>
+                    <label asp-for="NumerDomu" class="form-label"></label>
+                    <input asp-for="NumerDomu" class="form-control" />
+                    <span asp-validation-for="NumerDomu" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="NumerLokalu" class="form-label"></label>
+                    <input asp-for="NumerLokalu" class="form-control" />
+                    <span asp-validation-for="NumerLokalu" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="KodPocztowy" class="form-label"></label>
+                    <input asp-for="KodPocztowy" class="form-control" />
+                    <span asp-validation-for="KodPocztowy" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Miasto" class="form-label"></label>
+                    <input asp-for="Miasto" class="form-control" />
+                    <span asp-validation-for="Miasto" class="text-danger"></span>
                 </div>
             </div>
-
-            <div class="order-detail-actions">
-                <a asp-controller="KontoKlienta"
-                   asp-action="Panel"
-                   class="btn btn-primary w-100">
-                    Moje konto
-                </a>
-
-                <a asp-controller="KontoKlienta"
-                   asp-action="Panel"
-                   fragment="moje-zamowienia"
-                   class="btn btn-outline-secondary w-100">
-                    Moje zamówienia
-                </a>
-
-                <a href="/Sklep/Index"
-                   class="btn btn-outline-secondary w-100">
-                    Przejdź do sklepu
-                </a>
-            </div>
         </div>
-    </aside>
+
+        <div class="checkout-actions">
+            <button type="submit" class="btn btn-primary">
+                Zapisz dane
+            </button>
+
+            <a asp-controller="KontoKlienta"
+               asp-action="Panel"
+               class="btn btn-outline-secondary">
+                Anuluj
+            </a>
+
+            <a href="/Sklep/Index"
+               class="btn btn-outline-secondary">
+                Przejdź do sklepu
+            </a>
+        </div>
+    </form>
 </section>
 
 @section Scripts {
