@@ -2,10 +2,10 @@
 
 Projekt składa się z dwóch aplikacji ASP.NET Core MVC:
 
-* **Firma.Intranet** — panel administracyjny do zarządzania sklepem.
+* **Firma.Intranet** — panel administracyjny dla pracowników i administratora.
 * **Firma.PortalWWW** — publiczny portal sklepu internetowego.
 
-Projekt wykorzystuje wspólną bazę danych i wspólne modele encji w projekcie **Firma.Data**. Logika biznesowa została rozdzielona do osobnych projektów usługowych, żeby kontrolery były krótsze i odpowiadały głównie za obsługę żądań HTTP.
+Projekt wykorzystuje wspólną bazę danych, wspólne modele encji oraz osobne projekty serwisowe. Dzięki temu kontrolery są krótsze i odpowiadają głównie za obsługę żądań HTTP, a logika biznesowa znajduje się w serwisach.
 
 ## Technologie
 
@@ -66,8 +66,8 @@ Panel administracyjny dla pracowników i administratora.
 
 Najważniejsze funkcje:
 
-* logowanie i wylogowanie,
-* role użytkowników,
+* logowanie i wylogowanie użytkowników,
+* obsługa ról użytkowników,
 * zarządzanie użytkownikami,
 * obsługa towarów,
 * obsługa producentów,
@@ -107,7 +107,7 @@ Projekt zawiera implementacje serwisów dla panelu Intranet.
 Najważniejsze elementy:
 
 * serwisy CRUD dla modułów administracyjnych,
-* logika aktywacji i dezaktywacji rekordów,
+* obsługa aktywacji i dezaktywacji rekordów,
 * bezpieczne usuwanie rekordów powiązanych z innymi danymi,
 * obsługa użytkowników i ról,
 * obsługa logowania,
@@ -135,37 +135,77 @@ Przykładowe klasy:
 
 ### Firma.PortalWWW
 
-Publiczna część sklepu.
+Publiczna część sklepu internetowego.
 
 Najważniejsze funkcje:
 
-* strona główna,
+* strona główna portalu,
 * lista towarów,
 * szczegóły towaru,
-* menu rodzajów,
+* menu rodzajów produktów,
 * aktualności,
 * promocje,
+* producenci,
+* stany magazynowe,
 * strony CMS,
 * ustawienia wyglądu portalu pobierane z bazy,
-* wyświetlanie aktywnych danych publicznych.
+* koszyk klienta,
+* składanie zamówień,
+* potwierdzenie zamówienia,
+* sprawdzanie statusu zamówienia bez logowania,
+* rejestracja klienta,
+* logowanie klienta,
+* panel klienta,
+* edycja danych i adresu klienta,
+* lista zamówień klienta,
+* szczegóły i status zamówienia w panelu klienta.
 
 ### Firma.Interfaces
 
 Projekt zawiera interfejsy serwisów używanych przez publiczny portal.
 
+Przykładowe obszary:
+
+* obsługa sklepu,
+* obsługa koszyka i zamówień publicznych,
+* obsługa konta klienta,
+* obsługa CMS,
+* obsługa ustawień portalu.
+
 ### Firma.Services
 
 Projekt zawiera implementacje serwisów używanych przez publiczny portal.
+
+Najważniejsze elementy:
+
+* pobieranie aktywnych danych do portalu,
+* obsługa list produktów i szczegółów produktu,
+* obsługa koszyka,
+* obsługa składania zamówienia,
+* obsługa statusu zamówienia,
+* obsługa konta klienta,
+* obsługa danych CMS.
 
 ### Firma.Services.Data
 
 Projekt zawiera DTO używane w publicznym portalu.
 
+Przykładowe obszary DTO:
+
+* towary,
+* rodzaje,
+* producenci,
+* promocje,
+* aktualności,
+* zamówienia publiczne,
+* konto klienta,
+* ustawienia portalu.
+
 ## Baza danych
 
 Projekt używa SQL Server oraz Entity Framework Core.
 
-Połączenie do bazy jest konfigurowane w plikach `appsettings.json` projektów:
+Połączenie do bazy jest konfigurowane w plikach:
 
 ```text
 Firma.Intranet/appsettings.json
@@ -194,7 +234,7 @@ W głównym katalogu rozwiązania uruchom:
 dotnet restore
 ```
 
-### 2. Budowanie projektu
+### 2. Budowanie rozwiązania
 
 ```powershell
 dotnet build
@@ -202,7 +242,7 @@ dotnet build
 
 ### 3. Aktualizacja bazy danych
 
-Dla panelu Intranet:
+Migracje znajdują się w projekcie `Firma.Intranet`.
 
 ```powershell
 dotnet ef database update --project Firma.Intranet
@@ -263,7 +303,7 @@ Pracownik ma dostęp do podstawowej obsługi panelu, ale nie widzi akcji adminis
 
 ## Aktywacja i dezaktywacja danych
 
-W projekcie wiele rekordów można aktywować lub dezaktywować zamiast usuwać.
+W projekcie wiele rekordów można aktywować albo dezaktywować zamiast usuwać.
 
 Dotyczy to między innymi:
 
@@ -288,6 +328,122 @@ Przykłady:
 * producent mający towary jest dezaktywowany,
 * rodzaj mający towary jest dezaktywowany,
 * klient mający zamówienia nie może zostać usunięty.
+
+## Portal publiczny
+
+Portal publiczny pozwala klientowi przeglądać ofertę sklepu i składać zamówienia.
+
+Najważniejsze części portalu:
+
+* strona główna,
+* sklep,
+* szczegóły produktu,
+* promocje,
+* aktualności,
+* producenci,
+* dostępność towarów,
+* koszyk,
+* formularz zamówienia,
+* potwierdzenie zamówienia,
+* status zamówienia,
+* konto klienta.
+
+## Koszyk i zamówienia
+
+Klient może:
+
+* dodać produkt do koszyka,
+* zmienić ilość produktu,
+* usunąć produkt z koszyka,
+* wyczyścić koszyk,
+* przejść do formularza zamówienia,
+* złożyć zamówienie.
+
+Zamówienie można złożyć jako:
+
+* klient niezalogowany,
+* klient zalogowany.
+
+Po złożeniu zamówienia klient otrzymuje numer zamówienia.
+
+## Status zamówienia
+
+Status zamówienia jest dostępny na dwa sposoby:
+
+### 1. Status bez logowania
+
+Klient może wejść w stronę `Status zamówienia` i podać:
+
+* numer zamówienia,
+* adres e-mail użyty przy zamówieniu.
+
+Ta opcja jest przydatna dla klientów, którzy złożyli zamówienie bez konta.
+
+### 2. Status w panelu klienta
+
+Zalogowany klient może wejść w:
+
+```text
+Moje konto -> Moje zamówienia -> Szczegóły i status
+```
+
+W panelu klient widzi swoje zamówienia oraz ich aktualne statusy.
+
+## Konto klienta
+
+Portal publiczny posiada prosty panel klienta.
+
+Klient może:
+
+* zarejestrować konto,
+* zalogować się,
+* wylogować się,
+* edytować dane kontaktowe,
+* edytować adres dostawy,
+* przeglądać swoje zamówienia,
+* sprawdzać szczegóły zamówienia,
+* sprawdzać status zamówienia.
+
+Loginem klienta jest adres e-mail.
+
+Wymagania hasła:
+
+```text
+Minimum 8 znaków, mała i duża litera, cyfra oraz znak specjalny.
+```
+
+## Intranet
+
+Intranet służy do administracyjnej obsługi sklepu.
+
+Najważniejsze moduły:
+
+* towary,
+* producenci,
+* rodzaje,
+* stany magazynowe,
+* klienci,
+* zamówienia,
+* pozycje zamówień,
+* załączniki towarów,
+* aktualności,
+* promocje,
+* strony CMS,
+* ustawienia portalu,
+* użytkownicy.
+
+## Obsługa zamówień w Intranecie
+
+Pracownik lub administrator może:
+
+* przeglądać zamówienia,
+* sprawdzać szczegóły zamówienia,
+* zmieniać status zamówienia,
+* eksportować zamówienia do Excela,
+* importować zamówienia z Excela,
+* generować faktury PDF.
+
+Zmiana statusu w Intranecie jest widoczna w portalu publicznym.
 
 ## Dokumenty PDF i Excel
 
@@ -363,11 +519,14 @@ Wygląd portalu publicznego jest sterowany ustawieniami zapisanymi w bazie danyc
 
 Przykładowe ustawienia:
 
+* nazwa portalu,
 * kolor główny,
 * kolor tła,
-* kolor tekstu,
-* tytuł stopki,
+* kolor nawigacji,
+* kolor stopki,
+* kolor przycisków,
 * tekst stopki,
+* dane kontaktowe,
 * widoczność elementów portalu.
 
 ## Migracje
@@ -389,6 +548,27 @@ dotnet build
 ```
 
 Build powinien zakończyć się bez błędów.
+
+## Testy ręczne po uruchomieniu
+
+Po uruchomieniu projektu warto sprawdzić:
+
+* logowanie do Intranetu,
+* listę towarów,
+* listę zamówień,
+* zmianę statusu zamówienia,
+* stronę główną portalu,
+* sklep,
+* szczegóły produktu,
+* koszyk,
+* formularz zamówienia,
+* potwierdzenie zamówienia,
+* status zamówienia bez logowania,
+* rejestrację klienta,
+* logowanie klienta,
+* panel klienta,
+* edycję danych klienta,
+* szczegóły zamówienia w panelu klienta.
 
 ## Licencja
 
