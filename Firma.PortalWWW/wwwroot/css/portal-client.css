@@ -1,4 +1,4 @@
-﻿/* Portal klienta po zakupie i konto klienta */
+﻿/* Portal klienta, koszyk i status zamówienia */
 
 .client-portal-hero {
     background: linear-gradient(135deg, #ffffff 0%, #eef5ff 100%);
@@ -133,11 +133,9 @@
     margin-bottom: 1rem;
 }
 
+.customer-account-grid,
 .customer-panel-grid,
-.account-edit-layout,
-.checkout-page-layout,
-.confirmation-page-layout,
-.cart-layout {
+.checkout-page-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 360px;
     gap: 1.25rem;
@@ -146,21 +144,13 @@
 
 .customer-panel-main,
 .customer-order-sidebar,
-.account-edit-main,
-.account-edit-sidebar,
 .checkout-main-column,
-.checkout-sidebar-column,
-.confirmation-main-column,
-.confirmation-sidebar-column,
-.cart-items,
-.cart-summary {
+.checkout-sidebar-column {
     min-width: 0;
 }
 
 .customer-account-grid {
-    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
 }
 
 .customer-orders-section {
@@ -452,23 +442,6 @@
         color: #991b1b;
     }
 
-.next-step-card {
-    display: grid;
-    gap: 0.25rem;
-    background-color: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 0.95rem;
-    padding: 1rem;
-}
-
-    .next-step-card span {
-        color: #64748b;
-    }
-
-.status-summary-grid-side {
-    grid-template-columns: 1fr;
-}
-
 .client-order-items {
     display: grid;
     gap: 0.65rem;
@@ -562,157 +535,9 @@
     gap: 0.65rem;
 }
 
-/* Koszyk */
-
-.cart-items {
-    display: grid;
-    gap: 1rem;
-}
-
-.cart-item-card {
-    display: grid;
-    grid-template-columns: 150px minmax(0, 1fr) 240px;
-    gap: 1rem;
-    align-items: stretch;
-    background-color: #ffffff;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: var(--portal-radius);
-    padding: 1rem;
-    box-shadow: var(--portal-shadow-soft);
-}
-
-.cart-item-image-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8fafc;
-    border-radius: 1rem;
-    overflow: hidden;
-}
-
-.cart-item-image {
-    width: 100%;
-    max-height: 130px;
-    object-fit: contain;
-}
-
-.cart-item-main {
-    display: grid;
-    align-content: start;
-}
-
-.cart-item-values {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-    .cart-item-values div {
-        background-color: #f8fafc;
-        border-radius: 0.85rem;
-        padding: 0.75rem;
-    }
-
-    .cart-item-values span,
-    .cart-item-values strong {
-        display: block;
-    }
-
-    .cart-item-values span {
-        color: #64748b;
-        font-size: 0.85rem;
-        font-weight: 700;
-    }
-
-.cart-item-actions {
-    display: grid;
-    align-content: start;
-    gap: 0.75rem;
-}
-
-.cart-quantity-form {
-    display: grid;
-    gap: 0.35rem;
-}
-
-/* Potwierdzenie zamówienia */
-
-.confirmation-number-card {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 1rem;
-    align-items: center;
-    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-    border-color: rgba(22, 101, 52, 0.2);
-}
-
-.confirmation-success-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 1.25rem;
-    background-color: #16a34a;
-    color: #ffffff;
-    font-size: 2rem;
-    font-weight: 900;
-}
-
-.confirmation-order-number {
-    margin: 0.65rem 0;
-    font-size: clamp(1.7rem, 4vw, 3rem);
-    font-weight: 900;
-    color: #0f172a;
-    word-break: break-word;
-}
-
-.confirmation-help-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-}
-
-.confirmation-help-card {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.85rem;
-    align-items: flex-start;
-    background-color: #f8fafc;
-    border: 1px solid rgba(15, 23, 42, 0.08);
-    border-radius: 1rem;
-    padding: 1rem;
-}
-
-    .confirmation-help-card > span {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 999px;
-        background-color: var(--portal-button-color);
-        color: #ffffff;
-        font-weight: 900;
-    }
-
-    .confirmation-help-card strong,
-    .confirmation-help-card p {
-        display: block;
-    }
-
-    .confirmation-help-card p {
-        color: #64748b;
-        margin: 0.35rem 0 0.8rem 0;
-    }
-
 @media (max-width: 1199.98px) {
     .customer-panel-grid,
-    .account-edit-layout,
-    .checkout-page-layout,
-    .confirmation-page-layout,
-    .cart-layout {
+    .checkout-page-layout {
         grid-template-columns: 1fr;
     }
 
@@ -728,14 +553,6 @@
 
     .client-order-row {
         grid-template-columns: minmax(0, 1fr) 80px 120px 120px;
-    }
-
-    .cart-item-card {
-        grid-template-columns: 130px minmax(0, 1fr);
-    }
-
-    .cart-item-actions {
-        grid-column: 1 / -1;
     }
 }
 
@@ -775,16 +592,6 @@
     .profile-form-wide {
         grid-column: auto;
     }
-
-    .cart-item-values {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 767.98px) {
-    .confirmation-help-grid {
-        grid-template-columns: 1fr;
-    }
 }
 
 @media (max-width: 575.98px) {
@@ -799,15 +606,12 @@
     .order-progress,
     .customer-orders-grid,
     .customer-order-card-body,
-    .client-order-row,
-    .cart-item-card {
+    .client-order-row {
         grid-template-columns: 1fr;
     }
 
     .customer-order-card-header,
-    .account-section-header,
-    .confirmation-number-card,
-    .confirmation-help-card {
+    .account-section-header {
         display: grid;
         grid-template-columns: 1fr;
     }
@@ -824,16 +628,5 @@
     .checkout-total {
         display: grid;
         grid-template-columns: 1fr;
-    }
-
-    .confirmation-success-icon {
-        width: 3.25rem;
-        height: 3.25rem;
-        border-radius: 1rem;
-        font-size: 1.6rem;
-    }
-
-    .cart-item-image {
-        max-height: 180px;
     }
 }
